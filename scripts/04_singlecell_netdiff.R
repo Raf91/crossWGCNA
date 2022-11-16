@@ -79,10 +79,10 @@ pdf("results/singlecell_boxplot_stroma_netdiff.pdf",3,5)
 ggboxplot(df, x="dir", y="sc")+stat_compare_means(comparisons=my_comparisons,label = "p.signif")+ylab("Comm. score single cell")+xlab("")
 dev.off()
 
-top50LCM<-rownames(rankprod)[(order(rankprod[,2], decreasing=F))][1:500]
-top50sc<-names(sort(coef_gsea_sc, decreasing=T))[1:500]
+top50LCM<-rownames(rankprod)[(order(rankprod[,2], decreasing=F))][1:547]
+top50sc<-names(sort(coef_gsea_sc, decreasing=T))[1:1519]
 intersect(top50LCM, top50sc)
-
+write.csv(intersect(top50LCM, top50sc), "stroma_netdiff_1decile.csv")
 
 ####################EPI
 ###rank product dei 6 network
@@ -143,9 +143,10 @@ ggboxplot(df, x="dir", y="sc")+stat_compare_means(comparisons=my_comparisons,lab
 dev.off()
 
 
-top50LCM<-rownames(rankprod)[(order(rankprod[,2], decreasing=F))][1:500]
-top50sc<-names(sort(coef_gsea_sc, decreasing=T))[1:500]
+top50LCM<-rownames(rankprod)[(order(rankprod[,2], decreasing=F))][1:547]
+top50sc<-names(sort(coef_gsea_sc, decreasing=T))[1:1519]
 intersect(top50LCM, top50sc)
+write.csv(intersect(top50LCM, top50sc), "epi_netdiff_1decile.csv")
 
 ###GSEA
 library(msigdbr)
