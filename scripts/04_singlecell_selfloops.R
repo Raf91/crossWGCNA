@@ -2,18 +2,18 @@ rm(list=ls())
 library(openxlsx)
 library(ggplot2)
 library(ggpubr)
-load("results/degs_3rd.RData")
+load("results/degs_3rd_selfloops.RData")
 names(degs)<-c("GSE5847", "GSE10797", "GSE14548", "GSE83591",
                "GSE68744", "GSE88715")
-load("degsc.RData")
+load("degsc_selfloops.RData")
 
 library(biomaRt)
-ensembl.human<- useEnsembl(biomart = 'genes', 
+ensembl.human<- useEnsembl(biomart = 'genes',
                            dataset = 'hsapiens_gene_ensembl')
 #extracellular region
 GO<-getBM(attributes = c('hgnc_symbol'),
-          filters = 'go', 
-          values = "GO:0005576", 
+          filters = 'go',
+          values = "GO:0005576",
           mart = ensembl.human)
 
 extracellular<-GO[,1]
@@ -39,7 +39,7 @@ for(j in 1:length(degs)){
 rankprod<-apply(rankings,1,prod)
 names(rankprod)<-incommon
 
-write.xlsx(rankprod, file="results/rankprod_stroma.xlsx")
+write.xlsx(rankprod, file="results/rankprod_stroma_selfloops.xlsx")
 
 sort(rankprod[intersect(names(rankprod), extracellular)], decreasing=F)[1:10]
 
@@ -51,7 +51,7 @@ inboth<-intersect(names(rankprod), names(coef_gsea_sc))
 cor.test(coef_gsea_sc[inboth], log2(rankprod[inboth]))
 
 df<-data.frame(rankproduct=log2(rankprod[inboth]), sc=coef_gsea_sc[inboth])
-pdf("results/singlecell_scatter_stroma.pdf",5,4)
+pdf("results/singlecell_scatter_stroma_selfloops.pdf",5,4)
 ggplot(df, aes(x=rankproduct,y=sc))+geom_hex(bins=60)+ylab(label = "Comm. score single cell")+xlab(label = "Rank product")+geom_smooth(method="lm")+theme_classic()
 dev.off()
 
@@ -62,7 +62,7 @@ bottom<-names(rankprodinboth)[which(rankprodinboth>quantile(rankprodinboth, c(0.
 df<-data.frame(sc=c(coef_gsea_sc[top], coef_gsea_sc[bottom]), dir=factor(c(rep("Top", length(top)), rep("Bottom", length(bottom)))))
 
 my_comparisons <- list( c("Top", "Bottom"))
-pdf("results/singlecell_boxplot_stroma.pdf",3,5)
+pdf("results/singlecell_boxplot_stroma_selfloops.pdf",3,5)
 ggboxplot(df, x="dir", y="sc")+stat_compare_means(comparisons=my_comparisons,label = "p.signif")+ylab("Comm. score single cell")+xlab("")
 dev.off()
 
@@ -90,7 +90,7 @@ for(j in 1:length(degs)){
 rankprod<-apply(rankings,1,prod)
 names(rankprod)<-incommon
 
-write.xlsx(rankprod, file="rankprod_epi.xlsx")
+write.xlsx(rankprod, file="rankprod_epi_selfloops.xlsx")
 sort(rankprod[intersect(names(rankprod), extracellular)], decreasing=F)[1:10]
 
 coef_gsea_sc<-degsc$kExt2/degsc$kInt2
@@ -101,7 +101,7 @@ inboth<-intersect(names(rankprod), names(coef_gsea_sc))
 cor.test(coef_gsea_sc[inboth], log2(rankprod[inboth]))
 
 df<-data.frame(rankproduct=log2(rankprod[inboth]), sc=coef_gsea_sc[inboth])
-pdf("results/singlecell_scatter_epi.pdf",5,4)
+pdf("results/singlecell_scatter_epi_selfloops.pdf",5,4)
 ggplot(df, aes(x=rankproduct,y=sc))+geom_hex(bins=60)+ylab(label = "Comm. score single cell")+xlab(label = "Rank product")+geom_smooth(method="lm")+theme_classic()
 dev.off()
 
@@ -112,7 +112,7 @@ bottom<-names(rankprodinboth)[which(rankprodinboth>quantile(rankprodinboth, c(0.
 df<-data.frame(sc=c(coef_gsea_sc[top], coef_gsea_sc[bottom]), dir=factor(c(rep("Top", length(top)), rep("Bottom", length(bottom)))))
 
 my_comparisons <- list( c("Top", "Bottom"))
-pdf("results/singlecell_boxplot_epi.pdf",3,5)
+pdf("results/singlecell_boxplot_epi_selfloops.pdf",3,5)
 ggboxplot(df, x="dir", y="sc")+stat_compare_means(comparisons=my_comparisons,label = "p.signif")+ylab("Comm. score single cell")+xlab("")
 dev.off()
 
@@ -133,20 +133,20 @@ m_list = m_df %>% split(x = .$gene_symbol, f = .$gs_name)
 
   coef_gsea<-degsc$kExt1/degsc$kInt1
   names(coef_gsea)<-gsub("_1", "", names(coef_gsea))
-  
+
   fgseaRes <- fgseaMultilevel(m_list, coef_gsea, scoreType = "pos")
   fgseaRes<-fgseaRes[fgseaRes$padj<0.05,]
   if(nrow(fgseaRes)>0){
-    write.xlsx(as.data.frame(fgseaRes[,c(1,2,3,6,7)]), paste("results/fgsea_ratio_stroma_sc.xlsx", sep=""))
+    write.xlsx(as.data.frame(fgseaRes[,c(1,2,3,6,7)]), paste("results/fgsea_ratio_stroma_sc_selfloops.xlsx", sep=""))
   }
-  
+
   coef_gsea<-degsc$kExt2/degsc$kInt2
   names(coef_gsea)<-gsub("_2", "", names(coef_gsea))
-  
+
   fgseaRes2 <- fgseaMultilevel(m_list, coef_gsea, scoreType = "pos")
   fgseaRes2<-fgseaRes2[fgseaRes2$padj<0.05,]
   if(nrow(fgseaRes2)>0){
-    write.xlsx(as.data.frame(fgseaRes2[,c(1,2,3,6,7)]), paste("results/fgsea_ratio_epi_sc.xlsx", sep=""))
+    write.xlsx(as.data.frame(fgseaRes2[,c(1,2,3,6,7)]), paste("results/fgsea_ratio_epi_sc_selfloops.xlsx", sep=""))
 }
 
-  
+

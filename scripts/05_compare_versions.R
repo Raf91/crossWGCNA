@@ -205,7 +205,7 @@ data_merged_GSE88715<-rbind(stroma, epi)
 
 
 #######################RUN
-source("scripts/crossWGCNA_alt2.R")
+source("scripts/crossWGCNA_functions_netdiff.R")
 net_GSE5847<-crossWGCNA(data=data_merged_GSE5847, Adj_type="signed", cortype="pearson", pval="none", thr=0.05, beta=6, comp1="_tis1", comp2="_tis2")
 net_GSE10797<-crossWGCNA(data=data_merged_GSE10797, Adj_type="signed", cortype="pearson", pval="none", thr=0.05, beta=6, comp1="_tis1", comp2="_tis2")
 net_GSE14548<-crossWGCNA(data=data_merged_GSE14548, Adj_type="signed", cortype="pearson", pval="none", thr=0.05, beta=6, comp1="_tis1", comp2="_tis2")
@@ -213,7 +213,7 @@ net_GSE83591<-crossWGCNA(data=data_merged_GSE83591, Adj_type="signed", cortype="
 net_GSE68744<-crossWGCNA(data=data_merged_GSE68744, Adj_type="signed", cortype="pearson", pval="none", thr=0.05, beta=6, comp1="_tis1", comp2="_tis2")
 net_GSE88715<-crossWGCNA(data=data_merged_GSE88715, Adj_type="signed", cortype="pearson", pval="none", thr=0.05, beta=6, comp1="_tis1", comp2="_tis2")
 
-source("scripts/crossWGCNA_functions.R")
+source("scripts/crossWGCNA_functions_selfloops.R")
 net_GSE5847_old<-crossWGCNA(data=data_merged_GSE5847, Adj_type="signed", cortype="pearson", pval="none", thr=0.05, beta=6, comp1="_tis1", comp2="_tis2")
 net_GSE10797_old<-crossWGCNA(data=data_merged_GSE10797, Adj_type="signed", cortype="pearson", pval="none", thr=0.05, beta=6, comp1="_tis1", comp2="_tis2")
 net_GSE14548_old<-crossWGCNA(data=data_merged_GSE14548, Adj_type="signed", cortype="pearson", pval="none", thr=0.05, beta=6, comp1="_tis1", comp2="_tis2")
@@ -286,9 +286,9 @@ dev.off()
 #######
 ##Confronto adjacencies
 ######
-source("scripts/crossWGCNA_alt2.R")
+source("scripts/crossWGCNA_functions_netdiff.R")
 adj_GSE5847<-Adjacency(data=data_merged_GSE5847, Adj_type="signed", cortype="pearson", pval="none", thr=0.05, beta=6, comp1="_tis1", comp2="_tis2")
-source("scripts/crossWGCNA_functions.R")
+source("scripts/crossWGCNA_functions_selfloops.R")
 adj_GSE5847_old<-Adjacency(data=data_merged_GSE5847, Adj_type="signed", cortype="pearson", pval="none", thr=0.05, beta=6, comp1="_tis1", comp2="_tis2")
 
 ##la correlazione di un gene con glo altri all'interno e all'esterno del tessuto è simile perché in entrambi i tessuti è coinvolto negli stessi pathway
@@ -296,7 +296,7 @@ i<-10
 corr_tis1<-adj_GSE5847_old[i,grep("tis1", colnames(adj_GSE5847_old))][-i]
 corr_tis2<-adj_GSE5847_old[i,grep("tis2", colnames(adj_GSE5847_old))][-i]
 cor(corr_tis1, corr_tis2)
-pdf("Example_cor_old.pdf",5,5)
+pdf("Example_cor_selfloops.pdf",5,5)
 plot(corr_tis1, corr_tis2, pch=19)
 dev.off()
 
@@ -307,7 +307,7 @@ corr_tis2<-adj_GSE5847_old[i,grep("tis2", colnames(adj_GSE5847_old))][-i]
 cor_tot<-c(cor_tot, cor(corr_tis1, corr_tis2))
 }
 
-pdf("All_cor_old.pdf",5,5)
+pdf("All_cor_selfloops.pdf",5,5)
 hist(cor_tot)
 dev.off()
 
@@ -317,7 +317,7 @@ i<-10
 corr_tis1<-adj_GSE5847[i,grep("tis1", colnames(adj_GSE5847))][-i]
 corr_tis2<-adj_GSE5847[i,grep("tis2", colnames(adj_GSE5847))][-i]
 cor(corr_tis1, corr_tis2)
-pdf("Example_cor_alt.pdf",5,5)
+pdf("Example_cor_netdiff.pdf",5,5)
 plot(corr_tis1, corr_tis2, pch=19)
 dev.off()
 
@@ -328,6 +328,6 @@ corr_tis2<-adj_GSE5847[i,grep("tis2", colnames(adj_GSE5847))][-i]
 cor_tot_alt<-c(cor_tot_alt, cor(corr_tis1, corr_tis2))
 }
 
-pdf("All_cor_alt.pdf",5,5)
+pdf("All_cor_netdiff.pdf",5,5)
 hist(cor_tot_alt)
 dev.off()

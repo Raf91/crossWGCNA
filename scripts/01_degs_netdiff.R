@@ -5,7 +5,7 @@ library(pheatmap)
 library(Hmisc)
 load("data/metadataAll.RData")
 load("data/datasetsAll.RData")
-source("scripts/crossWGCNA_alt2.R")
+source("scripts/crossWGCNA_functions_netdiff.R")
 
 changenames<-function(data, anno){
   annotation_sel=anno[match( rownames(data), anno[,1]),2]
@@ -224,4 +224,4 @@ degrees_GSE88715<-degrees(A=Adj_GSE88715, comp1="_tis1", comp2="_tis2")
 degs<-list(degrees_GSE5847, degrees_GSE10797, degrees_GSE14548,
            degrees_GSE83591, degrees_GSE68744, degrees_GSE88715)
 
-save(degs, file="results/degs_3rd_alt.RData")
+save(degs, file="results/degs_3rd_netdiff.RData")

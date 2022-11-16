@@ -1,5 +1,5 @@
 
-load("results/degs_3rd.RData")
+load("results/degs_3rd_selfloops.RData")
 library(clusterProfiler)
 library(openxlsx)
 names(degs)<-c("GSE5847", "GSE10797", "GSE14548", "GSE83591",
@@ -22,7 +22,7 @@ library(org.Hs.eg.db)
   fgseaRes <- fgseaMultilevel(m_list, coef_gsea)
   fgseaRes<-fgseaRes[fgseaRes$padj<0.05,]
   if(nrow(fgseaRes)>0){
-  write.xlsx(as.data.frame(fgseaRes[,c(1,2,3,6,7)]), paste("fgsea_ratio_stroma_", names(degs)[j], ".xlsx", sep=""))
+  write.xlsx(as.data.frame(fgseaRes[,c(1,2,3,6,7)]), paste("fgsea_ratio_stroma_selfloops_", names(degs)[j], ".xlsx", sep=""))
   }
 
   coef_gsea<-degs[[j]]$kExt2/degs[[j]]$kInt2
@@ -31,7 +31,7 @@ library(org.Hs.eg.db)
   fgseaRes2 <- fgseaMultilevel(m_list, coef_gsea)
   fgseaRes2<-fgseaRes2[fgseaRes2$padj<0.05,]
   if(nrow(fgseaRes2)>0){
-  write.xlsx(as.data.frame(fgseaRes2[,c(1,2,3,6,7)]), paste("fgsea_ratio_epi_", names(degs)[j], ".xlsx", sep=""))
+  write.xlsx(as.data.frame(fgseaRes2[,c(1,2,3,6,7)]), paste("fgsea_ratio_epi_selfloops_", names(degs)[j], ".xlsx", sep=""))
   }
   }
 
@@ -92,7 +92,7 @@ library(org.Hs.eg.db)
   length(myBreaks) == length(paletteLength) + 1
   pheatmap(toplot,   cellwidth=8, cellheight=8, breaks=myBreaks, color = myColor, keep.dendro=T)
 
-  pdf("results/summary_GSEA_stroma.pdf", 10, 15)
+  pdf("results/summary_GSEA_stroma_selfloops.pdf", 10, 15)
   pheatmap(toplot,   cellwidth=10, cellheight=10, breaks=myBreaks, color = myColor, keep.dendro=T)
   dev.off()
 
@@ -130,7 +130,7 @@ library(org.Hs.eg.db)
   length(myBreaks) == length(paletteLength) + 1
   pheatmap(toplot,   cellwidth=5, cellheight=5, breaks=myBreaks, color = myColor, keep.dendro=T)
 
-  pdf("results/summary_GSEA_epi.pdf", 10, 15)
+  pdf("results/summary_GSEA_epi_selfloops.pdf", 10, 15)
   pheatmap(toplot,   cellwidth=10, cellheight=10, breaks=myBreaks, color = myColor, keep.dendro=T)
   dev.off()
 

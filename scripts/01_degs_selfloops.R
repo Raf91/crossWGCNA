@@ -5,6 +5,8 @@ library(pheatmap)
 library(Hmisc)
 load("data/metadataAll.RData")
 load("data/datasetsAll.RData")
+source("scripts/01_degs_selfloops.R")
+
 changenames<-function(data, anno){
   annotation_sel=anno[match( rownames(data), anno[,1]),2]
 
@@ -52,8 +54,8 @@ epi<-datasetsAll[["GSE5847"]][,epiID]
 ###filtering data
 genes<-unique(c(which(apply(stroma,1,var)>=quantile(apply(stroma,1,var),0.25)),
 which(apply(epi,1,var)>=quantile(apply(epi,1,var),0.25))))
-stroma<-stroma[which(apply(stroma,1,var)>=quantile(apply(stroma,1,var),0.25)),]
-epi<-epi[which(apply(epi,1,var)>=quantile(apply(epi,1,var),0.25)),]
+stroma<-stroma[genes,]
+epi<-epi[genes,]
 
 #merging stroma and epi
 rownames(stroma)<-paste(rownames(stroma), "tis1", sep="_")
@@ -81,8 +83,8 @@ epi<-datasetsAll[["GSE10797"]][,epiID]
 ###filtering data
 genes<-unique(c(which(apply(stroma,1,var)>=quantile(apply(stroma,1,var),0.25)),
                 which(apply(epi,1,var)>=quantile(apply(epi,1,var),0.25))))
-stroma<-stroma[which(apply(stroma,1,var)>=quantile(apply(stroma,1,var),0.25)),]
-epi<-epi[which(apply(epi,1,var)>=quantile(apply(epi,1,var),0.25)),]
+stroma<-stroma[genes,]
+epi<-epi[genes,]
 ##############All genes double WGCNA
 ###use WGCNA with twice the genes
 rownames(stroma)<-paste(rownames(stroma), "tis1", sep="_")
@@ -109,8 +111,8 @@ epi<-datasetsAll[["GSE14548"]][,epiID]
 ###filtering data
 genes<-unique(c(which(apply(stroma,1,var)>=quantile(apply(stroma,1,var),0.25)),
                 which(apply(epi,1,var)>=quantile(apply(epi,1,var),0.25))))
-stroma<-stroma[which(apply(stroma,1,var)>=quantile(apply(stroma,1,var),0.25)),]
-epi<-epi[which(apply(epi,1,var)>=quantile(apply(epi,1,var),0.25)),]
+stroma<-stroma[genes,]
+epi<-epi[genes,]
 
 rownames(stroma)<-paste(rownames(stroma), "tis1", sep="_")
 rownames(epi)<-paste(rownames(epi), "tis2", sep="_")
@@ -167,8 +169,8 @@ epi<-datasetsAll[["GSE68744"]][,epiID]
 ###filtering data
 genes<-unique(c(which(apply(stroma,1,var)>=quantile(apply(stroma,1,var),0.25)),
                 which(apply(epi,1,var)>=quantile(apply(epi,1,var),0.25))))
-stroma<-stroma[which(apply(stroma,1,var)>=quantile(apply(stroma,1,var),0.25)),]
-epi<-epi[which(apply(epi,1,var)>=quantile(apply(epi,1,var),0.25)),]
+stroma<-stroma[genes,]
+epi<-epi[genes,]
 
 rownames(stroma)<-paste(rownames(stroma), "tis1", sep="_")
 rownames(epi)<-paste(rownames(epi), "tis2", sep="_")
@@ -194,8 +196,8 @@ epi<-datasetsAll[["GSE88715"]][,epiID]
 ###filtering data
 genes<-unique(c(which(apply(stroma,1,var)>=quantile(apply(stroma,1,var),0.25)),
                 which(apply(epi,1,var)>=quantile(apply(epi,1,var),0.25))))
-stroma<-stroma[which(apply(stroma,1,var)>=quantile(apply(stroma,1,var),0.25)),]
-epi<-epi[which(apply(epi,1,var)>=quantile(apply(epi,1,var),0.25)),]
+stroma<-stroma[genes,]
+epi<-epi[genes,]
 
 rownames(stroma)<-paste(rownames(stroma), "tis1", sep="_")
 rownames(epi)<-paste(rownames(epi), "tis2", sep="_")
@@ -216,4 +218,4 @@ degrees_GSE88715<-network(data=data_merged_GSE88715, Adj_type="signed", cortype=
 degs<-list(degrees_GSE5847, degrees_GSE10797, degrees_GSE14548,
            degrees_GSE83591, degrees_GSE68744, degrees_GSE88715)
 
-save(degs, file="results/degs_3rd_var.RData")
+save(degs, file="results/degs_3rd_selfloops.RData")

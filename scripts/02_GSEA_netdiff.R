@@ -1,6 +1,6 @@
 
-load("results/degs_3rd_alt.RData")
-source("scripts/crossWGCNA_alt2.R")
+load("results/degs_3rd_netdiff.RData")
+source("scripts/01_degs_netdiff.R")
 
 library(clusterProfiler)
 library(openxlsx)
@@ -24,7 +24,7 @@ library(org.Hs.eg.db)
   fgseaRes <- fgseaMultilevel(m_list, coef_gsea)
   fgseaRes<-fgseaRes[fgseaRes$padj<0.05,]
   if(nrow(fgseaRes)>0){
-  write.xlsx(as.data.frame(fgseaRes[,c(1,2,3,6,7)]), paste("fgsea_ratio_stroma_alt", names(degs)[j], ".xlsx", sep=""))
+  write.xlsx(as.data.frame(fgseaRes[,c(1,2,3,6,7)]), paste("fgsea_ratio_stroma_netdiff", names(degs)[j], ".xlsx", sep=""))
   }
 
   coef_gsea<-degs[[j]]$kExt2/degs[[j]]$kInt2
@@ -33,7 +33,7 @@ library(org.Hs.eg.db)
   fgseaRes2 <- fgseaMultilevel(m_list, coef_gsea)
   fgseaRes2<-fgseaRes2[fgseaRes2$padj<0.05,]
   if(nrow(fgseaRes2)>0){
-  write.xlsx(as.data.frame(fgseaRes2[,c(1,2,3,6,7)]), paste("fgsea_ratio_epi_alt", names(degs)[j], ".xlsx", sep=""))
+  write.xlsx(as.data.frame(fgseaRes2[,c(1,2,3,6,7)]), paste("fgsea_ratio_epi_netdiff", names(degs)[j], ".xlsx", sep=""))
   }
   }
 
@@ -91,8 +91,8 @@ library(org.Hs.eg.db)
   myColor <- colorRampPalette(c( "white", "red"))(paletteLength)
   myBreaks <- c(seq(0, max(unlist(toplot), na.rm=T), length.out=floor(paletteLength)))
   length(myBreaks) == length(paletteLength) + 1
- 
-  pdf("results/summary_GSEA_stroma_alt_2.pdf", 20, 30)
+
+  pdf("results/summary_GSEA_stroma_netdiff_2.pdf", 20, 30)
   pheatmap(toplot,   cellwidth=10, cellheight=10, breaks=myBreaks, color = myColor, keep.dendro=T)
   dev.off()
 
@@ -104,8 +104,8 @@ colnames(toplot)<-names(degs)
   myColor <- colorRampPalette(c( "white", "red"))(paletteLength)
   myBreaks <- c(seq(0, max(unlist(toplot), na.rm=T), length.out=floor(paletteLength)))
   length(myBreaks) == length(paletteLength) + 1
-  
-  pdf("results/summary_GSEA_stroma_alt_3.pdf", 20, 10)
+
+  pdf("results/summary_GSEA_stroma_netdiff_3.pdf", 20, 10)
   pheatmap(toplot,   cellwidth=10, cellheight=10, breaks=myBreaks, color = myColor, keep.dendro=T)
   dev.off()
 
@@ -141,8 +141,8 @@ colnames(toplot)<-names(degs)
   myColor <- colorRampPalette(c( "white", "red"))(paletteLength)
   myBreaks <- c(seq(0, max(unlist(toplot), na.rm=T), length.out=floor(paletteLength)))
   length(myBreaks) == length(paletteLength) + 1
-  
-  pdf("results/summary_GSEA_epi_alt_3.pdf", 20, 30)
+
+  pdf("results/summary_GSEA_epi_netdiff_3.pdf", 20, 30)
   pheatmap(toplot,   cellwidth=10, cellheight=10, breaks=myBreaks, color = myColor, keep.dendro=T)
   dev.off()
 
@@ -155,7 +155,7 @@ toplot<-allpaths_mat[rowSums(sign(allpaths_mat))>4,]
   myColor <- colorRampPalette(c( "white", "red"))(paletteLength)
   myBreaks <- c(seq(0, max(unlist(toplot), na.rm=T), length.out=floor(paletteLength)))
   length(myBreaks) == length(paletteLength) + 1
-  
-  pdf("results/summary_GSEA_epi_alt_4.pdf", 20, 10)
+
+  pdf("results/summary_GSEA_epi_netdiff_4.pdf", 20, 10)
   pheatmap(toplot,   cellwidth=10, cellheight=10, breaks=myBreaks, color = myColor, keep.dendro=T)
   dev.off()
