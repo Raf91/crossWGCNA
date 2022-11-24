@@ -171,7 +171,7 @@ myBreaks <-
   c(seq(0, max(unlist(toplot), na.rm = T), length.out = floor(paletteLength)))
 length(myBreaks) == length(paletteLength) + 1
 
-pdf("results/summary_GSEA_epi_netdiff_3.pdf", 20, 30)
+pdf("results/summary_GSEA_epi_netdiff_3.pdf", 20, 35)
 pheatmap(
   toplot,
   cellwidth = 10,
@@ -191,7 +191,7 @@ myBreaks <-
   c(seq(0, max(unlist(toplot), na.rm = T), length.out = floor(paletteLength)))
 length(myBreaks) == length(paletteLength) + 1
 
-pdf("results/summary_GSEA_epi_netdiff_4.pdf", 20, 10)
+pdf("results/summary_GSEA_epi_netdiff_4.pdf", 20, 15)
 pheatmap(
   toplot,
   cellwidth = 10,
