@@ -37,7 +37,7 @@ Adjacency <-
         }
       }
     }
-
+    A_orig<-A
     #computes average conserved interactions
     #assumes that genes are in the same order in the two compartments
     avgpath <- matrix(ncol = nrow(A) / 2, nrow = nrow(A) / 2)
@@ -52,6 +52,14 @@ Adjacency <-
       A[grep(comp1, rownames(A)), grep(comp2, rownames(A))] - avgpath
     A[grep(comp2, rownames(A)), grep(comp1, rownames(A))] <-
       A[grep(comp2, rownames(A)), grep(comp1, rownames(A))] - avgpath
+
+    ##take the lowest absolute value
+    diff<-abs(A_orig[grep(comp1, rownames(A_orig)), grep(comp2, rownames(A_orig))])-abs(A[grep(comp1, rownames(A)), grep(comp2, rownames(A))])
+    A[grep(comp1, rownames(A)), grep(comp2, rownames(A))][diff<0]<-A_orig[grep(comp1, rownames(A_orig)), grep(comp2, rownames(A_orig))][diff<0]
+
+    diff<-abs(A_orig[grep(comp2, rownames(A_orig)), grep(comp1, rownames(A_orig))])-abs(A[grep(comp2, rownames(A)), grep(comp1, rownames(A))])
+    A[grep(comp2, rownames(A)), grep(comp1, rownames(A))][diff<0]<-A_orig[grep(comp2, rownames(A_orig)), grep(comp1, rownames(A_orig))][diff<0]
+
 
     ###make A ranges between -1 and 1
     A <- A / 2
