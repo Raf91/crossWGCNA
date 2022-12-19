@@ -78,7 +78,7 @@ x_bin<-peaks
 x_bin<-as.numeric(x_bin)
 y_bin<-as.numeric(y_bin)
 #transform ycoordinates so that they represent the height of an equilateral triangle
-y_bin<-(y_bin*sqrt(3))/2
+y_bin<-(y_bin*sqrt(3))
 #compute the distances between spots
 coords<-cbind(x_bin, y_bin)
 eucl_dist<-dist(coords)
@@ -102,7 +102,7 @@ for(es in 1:ncol(expr_data)){
   class_es<-class[es]
   if(class_es %in% c("Epi", "Stroma")){
     dist_es<-as.matrix(eucl_dist)[,es]
-    sel_spots<-which(dist_es<3 & class==class_es)
+    sel_spots<-which(dist_es<5 & class==class_es)
     weights<-1/(dist_es[sel_spots]+1)
     if(length(sel_spots)>1){
       averaged_expr_all[,es]<-apply((exp(expr_data[,sel_spots])-1), 1, function(x){log(weighted.mean(x, weights)+1)})
@@ -112,7 +112,7 @@ for(es in 1:ncol(expr_data)){
   }
 }
 rownames(averaged_expr_all)<-rownames(expr_data)
-save(averaged_expr_all, file="results/averaged_expr_all2.RData")
+save(averaged_expr_all, file="results/averaged_expr_all3.RData")
 
 ###coordinates of epi spots
 pdf("results/spots_class.pdf",5,6)
@@ -136,7 +136,7 @@ dev.off()
 included_es_spots<-c()
 for(es in epi_spots){
   which_x_coord<-which(x_bin>=x_bin[es]-2 & x_bin<=x_bin[es]+2)
-  which_y_coord<-which(y_bin>=y_bin[es]-sqrt(3)/2 & y_bin<=y_bin[es]+sqrt(3)/2)
+  which_y_coord<-which(y_bin>=y_bin[es]-sqrt(3)-0.1 & y_bin<=y_bin[es]+sqrt(3)+0.1)
   sel_spots<-intersect(which_x_coord, which_y_coord)
   neighbour_spots_epi<-intersect(epi_spots, sel_spots)
   if(length(neighbour_spots_epi)>1){
@@ -148,7 +148,7 @@ for(es in epi_spots){
 included_ss_spots<-c()
 for(ss in stroma_spots){
   which_x_coord<-which(x_bin>=x_bin[ss]-2 & x_bin<=x_bin[ss]+2)
-  which_y_coord<-which(y_bin>=y_bin[ss]-sqrt(3)/2 & y_bin<=y_bin[ss]+sqrt(3)/2)
+  which_y_coord<-which(y_bin>=y_bin[ss]-sqrt(3)-0.1 & y_bin<=y_bin[ss]+sqrt(3)+0.1)
   sel_spots<-intersect(which_x_coord, which_y_coord)
   neighbour_spots_stroma<-intersect(stroma_spots, sel_spots)
   if(length(neighbour_spots_stroma)>1){
@@ -164,7 +164,7 @@ dev.off()
 sel_es_spots<-c()
 for(es in included_es_spots){
   which_x_coord<-which(x_bin>=x_bin[es]-2 & x_bin<=x_bin[es]+2)
-  which_y_coord<-which(y_bin>=y_bin[es]-sqrt(3)/2 & y_bin<=y_bin[es]+sqrt(3)/2)
+  which_y_coord<-which(y_bin>=y_bin[es]-sqrt(3)-0.1 & y_bin<=y_bin[es]+sqrt(3)+0.1)
   sel_spots<-intersect(which_x_coord, which_y_coord)
   neighbour_spots_stroma<-intersect(included_ss_spots, sel_spots)
   if(length(neighbour_spots_stroma)>0){
@@ -189,7 +189,7 @@ stroma_expr_all<-matrix(ncol=1, nrow=nrow(averaged_expr_all))
 
 for(es in sel_es_spots){
   which_x_coord<-which(x_bin>=x_bin[es]-2 & x_bin<=x_bin[es]+2)
-  which_y_coord<-which(y_bin>=y_bin[es]-sqrt(3)/2 & y_bin<=y_bin[es]+sqrt(3)/2)
+  which_y_coord<-which(y_bin>=y_bin[es]-sqrt(3)-0.1 & y_bin<=y_bin[es]+sqrt(3)+0.1)
   sel_spots<-intersect(which_x_coord, which_y_coord)
   sel_spots_stroma<-intersect(stroma_spots, sel_spots)
   neighbour_spots_epi<-intersect(sel_es_spots, sel_spots)
@@ -220,7 +220,7 @@ included_spots_epi<-c()
 included_spots_stroma<-c()
 for(es in included_spots){
   which_x_coord<-which(x_bin>=x_bin[es]-2 & x_bin<=x_bin[es]+2)
-  which_y_coord<-which(y_bin>=y_bin[es]-sqrt(3)/2 & y_bin<=y_bin[es]+sqrt(3)/2)
+  which_y_coord<-which(y_bin>=y_bin[es]-sqrt(3)-0.1 & y_bin<=y_bin[es]+sqrt(3)+0.1)
   sel_spots<-intersect(which_x_coord, which_y_coord)
   sel_spots_stroma<-intersect(stroma_spots, sel_spots)
   included_spots_stroma<-c(included_spots_stroma, sel_spots_stroma)
@@ -228,14 +228,14 @@ for(es in included_spots){
 }
 
 ##points in contact
-df<-data.frame(x_coord= c(x_bin[included_spots_epi],x_bin[included_spots_stroma]),y_coord= c(-(y_bin[included_spots_epi]), -(y_bin[included_spots_stroma])),
-               compartment=c(rep("epi", length(included_spots_epi)),rep("stroma", length(included_spots_stroma))))
-
 pdf("results/spots_class_filt4.pdf",5,6)
-ggplot(data=df, aes(x=x_coord, y=y_coord, colour=compartment))+geom_point(size=2)+theme_classic()
+plot(as.numeric(x_bin[included_spots_epi]),-as.numeric(y_bin[included_spots_epi]), cex=0.5, pch=19, xlab="x", ylab="y")
+points(as.numeric(x_bin[included_spots_stroma]),-as.numeric(y_bin[included_spots_stroma]), cex=0.5, pch=19, col="red")
 dev.off()
 
 ##midpoints coordinates
+df<-data.frame(x_coord= c(x_bin[included_spots_epi],x_bin[included_spots_stroma]),y_coord= c(-(y_bin[included_spots_epi]), -(y_bin[included_spots_stroma])))
+
 midpoints_x<-(df$x_coord[c(1:length(included_spots_epi))]+df$x_coord[-c(1:length(included_spots_epi))])/2
 midpoints_y<-(df$y_coord[c(1:length(included_spots_epi))]+df$y_coord[-c(1:length(included_spots_epi))])/2
 
@@ -272,10 +272,10 @@ library(WGCNA)
 source("scripts/crossWGCNA_functions_netdiff.R")
 
 adj<-Adjacency(data=data_merged, Adj_type="signed", cortype="pearson", pval="none", thr=0.05, beta=6, comp1="_tis1", comp2="_tis2")
-save(adj, file="ST_adj_weighted_netdiff.RData")
+save(adj, file="ST_adj_weighted_netdiff2.RData")
 
 net<-network(data=data_merged, Adj_type="signed", cortype="pearson", pval="none", thr=0.05, beta=6, comp1="_tis1", comp2="_tis2")
-save(net, file="ST_net_weighted_netdiff.RData")
+save(net, file="ST_net_weighted_netdiff2.RData")
 
 
 #functional enrichment of the most communicative genes
@@ -304,21 +304,21 @@ sort(coef_gsea2, decreasing = T)[1:10]
 
 plot(coef_gsea1, coef_gsea2)
 
-sort(adj["MALAT1_tis1", grep("tis2", colnames(adj))], decreasing=T)[1:10]
+sort(adj["IGLC2_tis1", grep("tis2", colnames(adj))], decreasing=T)[1:10]
 sort(A["GSTP1_tis1", grep("tis2", colnames(A))], decreasing=T)[1:10]
 
-sort(adj["RPS11_tis2", grep("tis1", colnames(adj))], decreasing=T)[1:10]
+sort(adj["MT-CO2_tis2", grep("tis1", colnames(adj))], decreasing=T)[1:10]
 sort(A["VIM_tis2", grep("tis1", colnames(A))], decreasing=T)[1:10]
 
 #MALAT1 UGCG
 # SFRP2 MORF4L2
 
 m<-max(adj[grep("tis1", rownames(adj)), grep("tis2", colnames(adj))])
-m<-sort(adj[grep("tis1", rownames(adj)), grep("tis2", colnames(adj))], decreasing=T)[7]
+m<-sort(adj[grep("tis1", rownames(adj)), grep("tis2", colnames(adj))], decreasing=T)[3]
 which(adj==m, arr.ind=T)
 #COL6A2, EFNA1
-gene1<-"COL6A2"
-gene2<-"EFNA1"
+gene1<-"LGALS9"
+gene2<-"ACTG1"
 
 df<-data.frame(x_coord= c(x_bin[epi_spots],x_bin[stroma_spots], x_bin[included_spots]),y_coord= c(-(y_bin[epi_spots]), -(y_bin[stroma_spots]), -y_bin[included_spots]),
                compartment=c(rep("epi", length(epi_spots)),rep("stroma", length(stroma_spots)), rep("edge", length(included_spots))),
@@ -409,3 +409,63 @@ ggplot(data=df, aes(x=x_coord, y=y_coord, colour=gene))+geom_point()+
   scale_color_continuous(type = "viridis")+
   new_scale_colour()+geom_point(data=df_midpoint, size=1, colour="black")+theme_classic()
 dev.off()
+
+
+###########
+##compare the expression before and after the smoothing
+###########
+
+gene<-gene1
+df<-data.frame(x_coord= c(x_bin[c(stroma_spots, epi_spots)], x_bin[c(stroma_spots, epi_spots)]),
+               y_coord= c(-(y_bin[c(stroma_spots, epi_spots)]), -(y_bin[c(stroma_spots, epi_spots)])),
+               gene=c(expr_data[gene,c(stroma_spots, epi_spots)], averaged_expr_all[gene,c(stroma_spots, epi_spots)]),
+               type=c(rep("original", length(c(stroma_spots, epi_spots))), rep("averaged", length(c(stroma_spots, epi_spots)))))
+df$type<-factor(df$type, levels=c("original", "averaged"))
+df_midpoint<-data.frame(x_coord= midpoints_x,
+                        y_coord= midpoints_y,
+                        gene=averaged_expr_all[gene,included_spots_stroma])
+
+pdf(paste("results/", gene1, "origVSave.pdf", sep="_"),12,6)
+ggplot(data=df, aes(x=x_coord, y=y_coord, colour=gene))+geom_point()+
+  scale_color_continuous(type = "viridis")+facet_grid(~type)+
+  new_scale_colour()+geom_point(data=df_midpoint, size=1, colour="black")+theme_classic()
+dev.off()
+
+
+gene<-gene2
+df<-data.frame(x_coord= c(x_bin[c(stroma_spots, epi_spots)], x_bin[c(stroma_spots, epi_spots)]),
+               y_coord= c(-(y_bin[c(stroma_spots, epi_spots)]), -(y_bin[c(stroma_spots, epi_spots)])),
+               gene=c(expr_data[gene,c(stroma_spots, epi_spots)], averaged_expr_all[gene,c(stroma_spots, epi_spots)]),
+               type=c(rep("original", length(c(stroma_spots, epi_spots))), rep("averaged", length(c(stroma_spots, epi_spots)))))
+df$type<-factor(df$type, levels=c("original", "averaged"))
+df_midpoint<-data.frame(x_coord= midpoints_x,
+                        y_coord= midpoints_y,
+                        gene=averaged_expr_all[gene,included_spots_stroma])
+
+pdf(paste("results/", gene2, "origVSave.pdf", sep="_"),12,6)
+ggplot(data=df, aes(x=x_coord, y=y_coord, colour=gene))+geom_point()+
+  scale_color_continuous(type = "viridis")+facet_grid(~type)+
+  new_scale_colour()+geom_point(data=df_midpoint, size=1, colour="black")+theme_classic()
+dev.off()
+
+##########
+##scheme of averaging
+##########
+
+  class_es<-class[es]
+     dist_es<-as.matrix(eucl_dist)[,es]
+    sel_spots<-which(dist_es<5 & class==class_es)
+    weights<-1/(dist_es[sel_spots]+1)
+ all_weights<-rep(0,ncol(expr_data))
+ all_weights[sel_spots]<-weights
+#all_weights<-dist_es
+ df<-data.frame(x_coord= c(x_bin[c(stroma_spots, epi_spots)]),
+                   y_coord= c(-(y_bin[c(stroma_spots, epi_spots)])),
+                   weights=all_weights[c(stroma_spots, epi_spots)])
+    df_midpoint<-data.frame(x_coord= midpoints_x,
+                            y_coord= midpoints_y,
+                            gene=averaged_expr_all[gene,included_spots_stroma])
+
+    ggplot(data=df, aes(x=x_coord, y=y_coord, colour=weights))+geom_point()+scale_color_gradient(low = "white", high = "red")
+
+
