@@ -272,10 +272,10 @@ library(WGCNA)
 source("scripts/crossWGCNA_functions_netdiff.R")
 
 adj<-Adjacency(data=data_merged, Adj_type="signed", cortype="pearson", pval="none", thr=0.05, beta=6, comp1="_tis1", comp2="_tis2")
-save(adj, file="ST_adj_weighted_netdiff2.RData")
+save(adj, file="results/ST_adj_weighted_netdiff2.RData")
 
 net<-network(data=data_merged, Adj_type="signed", cortype="pearson", pval="none", thr=0.05, beta=6, comp1="_tis1", comp2="_tis2")
-save(net, file="ST_net_weighted_netdiff2.RData")
+save(net, file="results/ST_net_weighted_netdiff2.RData")
 
 
 #functional enrichment of the most communicative genes
