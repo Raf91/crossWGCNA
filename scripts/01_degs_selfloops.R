@@ -5,7 +5,7 @@ library(pheatmap)
 library(Hmisc)
 load("data/metadataAll.RData")
 load("data/datasetsAll.RData")
-source("scripts/01_degs_selfloops.R")
+source("scripts/crossWGCNA_functions_selfloops.R")
 
 changenames<-function(data, anno){
   annotation_sel=anno[match( rownames(data), anno[,1]),2]
