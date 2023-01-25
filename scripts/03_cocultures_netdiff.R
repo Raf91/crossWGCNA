@@ -40,7 +40,7 @@ set.seed(46956305)
 random_repeated_stroma<-c()
 for(i in 1:100){
 names(DE_stroma)<-c(1:length(DE_stroma))
-gsea_stroma_rand<-matrix(nrow=length(DE_epi), ncol=length(DEGs))
+gsea_stroma_rand<-matrix(nrow=length(DE_stroma), ncol=length(degs))
 
 for(j in 1:length(degs)){
   coef_gsea<-degs[[j]]$kExt1/degs[[j]]$kInt1
