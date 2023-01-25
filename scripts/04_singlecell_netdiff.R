@@ -5,7 +5,7 @@ library(ggpubr)
 load("results/degs_3rd_netdiff.RData")
 names(degs)<-c("GSE5847", "GSE10797", "GSE14548", "GSE83591",
                "GSE68744", "GSE88715")
-load("degsc_netdiff.RData")
+load("results/degsc_netdiff.RData")
 
 library(biomaRt)
 ensembl.human<- useEnsembl(biomart = 'genes',
