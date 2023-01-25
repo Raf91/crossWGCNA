@@ -8,7 +8,7 @@ library(org.Hs.eg.db)
 
 
 load("results/degs_3rd_netdiff.RData")
-source("scripts/01_degs_netdiff.R")
+source("scripts/crossWGCNA_functions_netdiff.R")
 
 names(degs) <- c("GSE5847",
                  "GSE10797",
