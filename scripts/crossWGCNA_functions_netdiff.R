@@ -151,7 +151,7 @@ clusteringWGCNA <-
     A[Idx1] <- 0
 
     Idx2 <-
-      cbind(grep(comp2, rownames(A)), grep(comp1, rownames(A))[match(genes1, genes2)])
+      cbind(grep(comp2, rownames(A)), grep(comp1, rownames(A))[match(genes2, genes1)])
     A[Idx2] <- 0
 
     if (TOM == T) {
@@ -196,7 +196,7 @@ degrees <- function(A, comp1 = "_1", comp2 = "_2") {
   A[Idx1] <- 0
 
   Idx2 <-
-    cbind(grep(comp2, rownames(A)), grep(comp1, rownames(A))[match(genes1, genes2)])
+    cbind(grep(comp2, rownames(A)), grep(comp1, rownames(A))[match(genes2, genes1)])
   A[Idx2] <- 0
 
   kTot <- rowSums(A)
