@@ -271,13 +271,13 @@ data_merged<-rbind(stroma, epi)
 library(WGCNA)
 source("scripts/crossWGCNA_functions_netdiff.R")
 
-adj<-Adjacency(data=data_merged, Adj_type="signed", cortype="pearson", pval="none", thr=0.05, beta=6, comp1="_tis1", comp2="_tis2")
-save(adj, file="results/ST_adj_weighted_netdiff2.RData")
+adj<-Adjacency(data=data_merged, Adj_type="signed", cortype="spearman", pval="none", thr=0.05, beta=6, comp1="_tis1", comp2="_tis2")
+save(adj, file="results/ST_adj_weighted_netdiff3_s.RData")
 
-net<-network(data=data_merged, Adj_type="signed", cortype="pearson", pval="none", thr=0.05, beta=6, comp1="_tis1", comp2="_tis2")
-save(net, file="results/ST_net_weighted_netdiff2.RData")
+net<-network(data=data_merged, Adj_type="signed", cortype="spearman", pval="none", thr=0.05, beta=6, comp1="_tis1", comp2="_tis2")
+save(net, file="results/ST_net_weighted_netdiff3_s.RData")
 
-
+mods<-crossWGCNA(data=data_merged, Adj_type="signed", cortype="spearman", pval="none", thr=0.05, beta=6, comp1="_tis1", comp2="_tis2")
 #functional enrichment of the most communicative genes
 #######################
 library(msigdbr)
@@ -290,14 +290,14 @@ coef_gsea1 <- net$kExt1 / net$kInt1
 names(coef_gsea1) <- gsub("_tis1", "", names(coef_gsea1))
 
 fgseaRes1 <- fgseaMultilevel(m_list, coef_gsea1)
-write.xlsx(data.frame(fgseaRes1), file="results/ST_GSEA_stroma_ratio.xlsx")
+write.xlsx(data.frame(fgseaRes1), file="results/ST_GSEA_stroma_ratio2_s.xlsx")
 
 
 coef_gsea2 <- net$kExt2 / net$kInt2
 names(coef_gsea2) <- gsub("_tis2", "", names(coef_gsea2))
 
 fgseaRes2 <- fgseaMultilevel(m_list, coef_gsea2)
-write.xlsx(data.frame(fgseaRes2), file="results/ST_GSEA_epi_ratio.xlsx")
+write.xlsx(data.frame(fgseaRes2), file="results/ST_GSEA_epi_ratio2_s.xlsx")
 
 sort(coef_gsea1, decreasing = T)[1:10]
 sort(coef_gsea2, decreasing = T)[1:10]
@@ -467,5 +467,191 @@ dev.off()
                             gene=averaged_expr_all[gene,included_spots_stroma])
 
     ggplot(data=df, aes(x=x_coord, y=y_coord, colour=weights))+geom_point()+scale_color_gradient(low = "white", high = "red")
+
+
+
+    cor_inspect<-function(data=data_merged_GSE88715, gene1, gene2, comp1="_tis1", comp2="_tis2"){
+
+      df<-data.frame(gene1=c(data[paste(gene1, comp1, sep=""),], data[paste(gene1, comp2, sep=""),], data[paste(gene1, comp1, sep=""),], data[paste(gene1, comp2, sep=""),]),
+                     gene2=c(data[paste(gene2, comp1, sep=""),], data[paste(gene2, comp2, sep=""),], data[paste(gene2, comp2, sep=""),], data[paste(gene2, comp2, sep=""),]),
+                     compartment=c(rep(c("comp1 vs comp1","comp2 vs comp2","comp1 vs comp2", "comp2 vs comp1"), each=ncol(data)) ))
+      p<-ggplot(df, aes(x=gene1, y=gene2))+geom_point()+facet_wrap(.~compartment)+geom_smooth(method = "lm")+theme_classic()+labs(x=gene1, y=gene2)
+      return(p)
+    }
+
+
+    pdf("results/ST_COL6A2_EFNA1_cor_inspect.pdf", 6, 6)
+    cor_inspect(data_merged, gene1="COL6A2", gene2="EFNA1")
+    dev.off()
+
+    pdf("results/ST_HLA-DRB1_ACTG1_cor_inspect.pdf", 6, 6)
+    cor_inspect(data_merged, gene1="HLA-DRB1", gene2="ACTG1")
+    dev.off()
+
+    pdf("results/ST_LGALS9_ACTG1_cor_inspect.pdf", 6, 6)
+    cor_inspect(data_merged, gene1="LGALS9", gene2="ACTG1")
+    dev.off()
+
+
+    df<-cytoscape_net(adjacency = adj, dataset=as.matrix(data_merged), gene="COL6A2", comp1="tis1", comp2="tis2", num=10)
+    df$Target<-factor(df$Target, levels=df$Target[df$Edge_type=="inter"][order(df$Weight[df$Edge_type=="inter"], decreasing = T)])
+    pdf("results/ST_COL6A2_top10_corrs.pdf", 8,7 )
+    ggplot(df, aes(x=Target, y=Weight))+geom_col()+facet_grid(Edge_type~.)+theme_classic()
+    dev.off()
+
+
+    ################
+    #### GO for modules
+    #################
+    library(clusterProfiler)
+    modules<-mods[[2]]$colors
+
+    #GO for stroma
+    background_1<-gsub("_tis1", "", names(modules)[grep("_tis1",names(modules))])
+    background_2<-gsub("_tis2", "", names(modules)[grep("_tis2",names(modules))])
+    mod_sel<-unique(modules)
+    ego_1<-list()
+    for(i in 1:length(mod_sel)){
+      module_1<-gsub("_tis1", "", names(modules)[modules==mod_sel[i]][grep("_tis1",names(modules)[modules==mod_sel[i]])])
+      if(length(module_1)>0 & mod_sel[i]!=0){
+        ego_1[[i]]<- enrichGO(gene = module_1,
+                              keyType="SYMBOL",
+                              ont           = "BP",
+                              pAdjustMethod = "BH",
+                              pvalueCutoff  = 1,
+                              qvalueCutoff  = 1,
+                              universe=background_1, OrgDb="org.Hs.eg.db")
+
+        if(nrow(summary(ego_1[[i]]))>0){
+          write.xlsx( summary(ego_1[[i]]) , paste("Stroma", "ST", mod_sel[i], "GO_s.xlsx", sep="_"))
+        }
+      }
+    }
+
+
+    ##GO for epi
+    ego_2<-list()
+    for(i in 1:length(mod_sel)){
+      module_2<-gsub("_tis2", "", names(modules)[modules==mod_sel[i]][grep("_tis2",names(modules)[modules==mod_sel[i]])])
+      if(length(module_2)>0){
+        ego_2[[i]]<- enrichGO(gene = module_2,
+                              keyType="SYMBOL",
+                              ont           = "BP",
+                              pAdjustMethod = "BH",
+                              pvalueCutoff  = 1,
+                              qvalueCutoff  = 1,
+                              universe=background_2, OrgDb="org.Hs.eg.db")
+
+        if(nrow(summary(ego_2[[i]]))>0){
+          write.xlsx( summary(ego_2[[i]]) , paste("Epi", "ST", mod_sel[i], "GO_s.xlsx", sep="_"))
+        }
+
+      }
+    }
+
+
+    kwithin<-degrees_mod(data=data_merged, modules=mods[[2]]$colors, Adj_type = "signed",
+                         cortype = "spearman",
+                         pval = "none",
+                         thr = 0.05,
+                         beta = 6,
+                         comp1 = "_tis1",
+                         comp2 = "_tis2")
+
+    #weighted module expression
+
+    genes<-unique(gsub(comp2, "", gsub(comp1, "", mod)))
+    c(kwithin[[1]]$kExt1, kwithin[[1]]$kExt2)[mod]
+    c(kwithin[[1]]$kExt1, kwithin[[1]]$kExt2)[mod]
+
+    kwithin[[1]]$kExt2[mod[grep("_tis2", mod)]]
+
+    ########
+    i<-3
+    mod<-names(modules)[which(modules==unique(modules)[i])]
+
+     weights<-kwithin[[i]]$kExt1[mod[grep("_tis1", mod)]]
+    epi_wm1<-apply((averaged_expr_all[gsub("_tis1", "", mod[grep("_tis1", mod)]),epi_spots]), 2, function(x){weighted.mean(x, weights)})
+    stroma_wm1<-apply((averaged_expr_all[gsub("_tis1", "", mod[grep("_tis1", mod)]),stroma_spots]), 2, function(x){weighted.mean(x, weights)})
+    edge_wm1<-apply((averaged_expr_all[gsub("_tis1", "", mod[grep("_tis1", mod)]),included_spots]), 2, function(x){weighted.mean(x, weights)})
+
+    #epi_wm<-colMeans(averaged_expr_all[gsub("_tis1", "", mod[grep("_tis1", mod)]),epi_spots])
+    #stroma_wm<-colMeans(averaged_expr_all[gsub("_tis1", "", mod[grep("_tis1", mod)]),stroma_spots])
+    #edge_wm<-colMeans(averaged_expr_all[gsub("_tis1", "", mod[grep("_tis1", mod)]),included_spots])
+
+    df<-data.frame(x_coord= c(x_bin[epi_spots],x_bin[stroma_spots], x_bin[included_spots]),y_coord= c(-(y_bin[epi_spots]), -(y_bin[stroma_spots]), -y_bin[included_spots]),
+                   compartment=c(rep("epi", length(epi_spots)),rep("stroma", length(stroma_spots)), rep("edge", length(included_spots))),
+                   gene=c(epi_wm1, stroma_wm1, edge_wm1))
+    df_midpoint<-data.frame(x_coord= midpoints_x,
+                            y_coord= midpoints_y,
+                            gene=averaged_expr_all[gene,included_spots_stroma])
+
+    p1<-ggplot(data=df, aes(x=x_coord, y=y_coord, colour=gene))+geom_point()+
+      scale_color_continuous(type = "viridis")+
+      geom_point(data=df_midpoint, size=1, colour="black")+theme_classic()
+
+    weights<-kwithin[[i]]$kExt2[mod[grep("_tis2", mod)]]
+    epi_wm2<-apply((averaged_expr_all[gsub("_tis2", "", mod[grep("_tis2", mod)]),epi_spots]), 2, function(x){weighted.mean(x, weights)})
+    stroma_wm2<-apply((averaged_expr_all[gsub("_tis2", "", mod[grep("_tis2", mod)]),stroma_spots]), 2, function(x){weighted.mean(x, weights)})
+    edge_wm2<-apply((averaged_expr_all[gsub("_tis2", "", mod[grep("_tis2", mod)]),included_spots]), 2, function(x){weighted.mean(x, weights)})
+
+    #epi_wm<-colMeans(averaged_expr_all[gsub("_tis2", "", mod[grep("_tis2", mod)]),epi_spots])
+    #stroma_wm<-colMeans(averaged_expr_all[gsub("_tis2", "", mod[grep("_tis2", mod)]),stroma_spots])
+    #edge_wm<-colMeans(averaged_expr_all[gsub("_tis2", "", mod[grep("_tis2", mod)]),included_spots])
+
+    df<-data.frame(x_coord= c(x_bin[epi_spots],x_bin[stroma_spots], x_bin[included_spots]),y_coord= c(-(y_bin[epi_spots]), -(y_bin[stroma_spots]), -y_bin[included_spots]),
+                   compartment=c(rep("epi", length(epi_spots)),rep("stroma", length(stroma_spots)), rep("edge", length(included_spots))),
+                   gene=c(epi_wm2, stroma_wm2, edge_wm2))
+    df_midpoint<-data.frame(x_coord= midpoints_x,
+                            y_coord= midpoints_y,
+                            gene=averaged_expr_all[gene,included_spots_stroma])
+
+    p2<-ggplot(data=df, aes(x=x_coord, y=y_coord, colour=gene))+geom_point()+
+      scale_color_continuous(type = "viridis")+
+      geom_point(data=df_midpoint, size=1, colour="black")+theme_classic()
+
+
+    ##midpoints coordinates
+    df<-data.frame(x_coord= c(x_bin[included_spots],x_bin[included_spots]),y_coord= c(-(y_bin[included_spots]), -(y_bin[included_spots])))
+
+    midpoints_x1<-(df$x_coord[c(1:length(included_spots))]+df$x_coord[-c(1:length(included_spots))])/2
+    midpoints_y1<-(df$y_coord[c(1:length(included_spots))]+df$y_coord[-c(1:length(included_spots))])/2
+
+    df_midpoint<-data.frame(x_coord= midpoints_x1,
+                            y_coord= midpoints_y1,
+                            comm_score=edge_wm1*edge_wm2)
+
+    ggplot(data=df, aes(x=x_coord, y=y_coord))+geom_point(data=df_midpoint, size=1, aes(colour=comm_score))+scale_color_continuous(type = "viridis")
+
+
+    p1
+    p2
+
+
+    mod<-names(modules)[which(modules==unique(modules)[i])]
+    weights<-kwithin[[i]]$kExt1[mod[grep("_tis1", mod)]]
+    wm1<-apply((data_merged[mod[grep("_tis1", mod)],]), 2, function(x){weighted.mean(x, weights)})
+
+    weights<-kwithin[[i]]$kExt2[mod[grep("_tis2", mod)]]
+    wm2<-apply((data_merged[mod[grep("_tis2", mod)],]), 2, function(x){weighted.mean(x, weights)})
+
+    plot(wm1, wm2)
+
+pdf("results/ST_mod1_tis1.pdf", 5,6)
+p1
+dev.off()
+
+pdf("results/ST_mod1_tis2.pdf", 5,6)
+p2
+dev.off()
+
+pdf("results/ST_mod1_corr.pdf", 5,5)
+plot(wm1, wm2,pch=19, xlab="weighted expression comp1", ylab="weighted expression comp2")
+dev.off()
+
+pdf("results/ST_mod1_comm.pdf", 5,6)
+ggplot(data=df, aes(x=x_coord, y=y_coord))+geom_point(data=df_midpoint, size=1, aes(colour=comm_score))+scale_color_continuous(type = "viridis")
+dev.off()
+
 
 
