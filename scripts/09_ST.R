@@ -317,8 +317,8 @@ m<-max(adj[grep("tis1", rownames(adj)), grep("tis2", colnames(adj))])
 m<-sort(adj[grep("tis1", rownames(adj)), grep("tis2", colnames(adj))], decreasing=T)[3]
 which(adj==m, arr.ind=T)
 #COL6A2, EFNA1
-gene1<-"LGALS9"
-gene2<-"ACTG1"
+gene1<-"COL6A2"
+gene2<-"EFNA1"
 
 df<-data.frame(x_coord= c(x_bin[epi_spots],x_bin[stroma_spots], x_bin[included_spots]),y_coord= c(-(y_bin[epi_spots]), -(y_bin[stroma_spots]), -y_bin[included_spots]),
                compartment=c(rep("epi", length(epi_spots)),rep("stroma", length(stroma_spots)), rep("edge", length(included_spots))),
@@ -375,9 +375,7 @@ ggplot(data=df, aes(x=x_coord, y=y_coord))+geom_point(size=1, colour=rgb(red=df$
 
 
 pdf(paste("results/", gene1, gene2, "comm.pdf", sep="_"),6,5)
-ggplot(data=df, aes(x=x_coord, y=y_coord, colour=compartment))+
-  geom_point(data=df_midpoint, aes(x=x_coord, y=y_coord, colour=comm_score))+scale_colour_gradientn(colours = c("purple", "orange"))+
-  theme_classic()
+ggplot(data=df, aes(x=x_coord, y=y_coord))+geom_point(data=df_midpoint, size=1, aes(colour=comm_score))+scale_color_continuous(type = "viridis")+theme_classic()
 dev.off()
 
 
@@ -425,7 +423,7 @@ df_midpoint<-data.frame(x_coord= midpoints_x,
                         y_coord= midpoints_y,
                         gene=averaged_expr_all[gene,included_spots_stroma])
 
-pdf(paste("results/", gene1, "origVSave.pdf", sep="_"),6,5)
+pdf(paste("results/", gene1, "origVSave.pdf", sep="_"),9,5)
 ggplot(data=df, aes(x=x_coord, y=y_coord, colour=gene))+geom_point()+
   scale_color_continuous(type = "viridis")+facet_grid(~type)+
   new_scale_colour()+geom_point(data=df_midpoint, size=1, colour="black")+theme_classic()
@@ -442,7 +440,7 @@ df_midpoint<-data.frame(x_coord= midpoints_x,
                         y_coord= midpoints_y,
                         gene=averaged_expr_all[gene,included_spots_stroma])
 
-pdf(paste("results/", gene2, "origVSave.pdf", sep="_"),6,5)
+pdf(paste("results/", gene2, "origVSave.pdf", sep="_"),9,5)
 ggplot(data=df, aes(x=x_coord, y=y_coord, colour=gene))+geom_point()+
   scale_color_continuous(type = "viridis")+facet_grid(~type)+
   new_scale_colour()+geom_point(data=df_midpoint, size=1, colour="black")+theme_classic()
@@ -652,6 +650,5 @@ dev.off()
 pdf("results/ST_mod1_comm.pdf", 6,5)
 ggplot(data=df, aes(x=x_coord, y=y_coord))+geom_point(data=df_midpoint, size=1, aes(colour=comm_score))+scale_color_continuous(type = "viridis")+theme_classic()
 dev.off()
-
 
 
