@@ -334,7 +334,7 @@ df<-df[!is.na(df$gene1.scale) & !is.na(df$gene2.scale),]
 #  geom_point(data=df, aes(x=x_coord, y=y_coord, size=compartment), color="black") +
 #  scale_size_manual(values = c("epi" = 0, "stroma"=0, "edge"=0.8))
 
-pdf(paste("results/", gene1, gene2, "scatter.pdf", sep="_"),6,6)
+pdf(paste("results/", gene1, gene2, "scatter.pdf", sep="_"),5,5)
 plot(stroma[paste(gene1, "tis1", sep="_"),], epi[paste(gene2, "tis2", sep="_"),], pch=19, xlab=paste(gene1, "stroma"), ylab=paste(gene2, "epi"))
 dev.off()
 
@@ -374,7 +374,7 @@ ggplot(data=df, aes(x=x_coord, y=y_coord))+geom_point(size=1, colour=rgb(red=df$
   new_scale_colour()+geom_point(data=df_midpoint, size=1, aes(colour=comm_score))+scale_color_continuous(type = "viridis")
 
 
-pdf(paste("results/", gene1, gene2, "comm.pdf", sep="_"),7,6)
+pdf(paste("results/", gene1, gene2, "comm.pdf", sep="_"),6,5)
 ggplot(data=df, aes(x=x_coord, y=y_coord, colour=compartment))+
   geom_point(data=df_midpoint, aes(x=x_coord, y=y_coord, colour=comm_score))+scale_colour_gradientn(colours = c("purple", "orange"))+
   theme_classic()
@@ -390,7 +390,7 @@ df_midpoint<-data.frame(x_coord= midpoints_x,
                         y_coord= midpoints_y,
                         gene=averaged_expr_all[gene,included_spots_stroma])
 
-pdf(paste("results/", gene1, "expr.pdf", sep="_"),7,6)
+pdf(paste("results/", gene1, "expr.pdf", sep="_"),6,5)
 ggplot(data=df, aes(x=x_coord, y=y_coord, colour=gene))+geom_point()+
   scale_color_continuous(type = "viridis")+
   new_scale_colour()+geom_point(data=df_midpoint, size=1, colour="black")+theme_classic()
@@ -404,7 +404,7 @@ df_midpoint<-data.frame(x_coord= midpoints_x,
                         y_coord= midpoints_y,
                         gene=averaged_expr_all[gene,included_spots_stroma])
 
-pdf(paste("results/", gene2, "expr.pdf", sep="_"),7,6)
+pdf(paste("results/", gene2, "expr.pdf", sep="_"),6,5)
 ggplot(data=df, aes(x=x_coord, y=y_coord, colour=gene))+geom_point()+
   scale_color_continuous(type = "viridis")+
   new_scale_colour()+geom_point(data=df_midpoint, size=1, colour="black")+theme_classic()
@@ -425,7 +425,7 @@ df_midpoint<-data.frame(x_coord= midpoints_x,
                         y_coord= midpoints_y,
                         gene=averaged_expr_all[gene,included_spots_stroma])
 
-pdf(paste("results/", gene1, "origVSave.pdf", sep="_"),12,6)
+pdf(paste("results/", gene1, "origVSave.pdf", sep="_"),6,5)
 ggplot(data=df, aes(x=x_coord, y=y_coord, colour=gene))+geom_point()+
   scale_color_continuous(type = "viridis")+facet_grid(~type)+
   new_scale_colour()+geom_point(data=df_midpoint, size=1, colour="black")+theme_classic()
@@ -442,7 +442,7 @@ df_midpoint<-data.frame(x_coord= midpoints_x,
                         y_coord= midpoints_y,
                         gene=averaged_expr_all[gene,included_spots_stroma])
 
-pdf(paste("results/", gene2, "origVSave.pdf", sep="_"),12,6)
+pdf(paste("results/", gene2, "origVSave.pdf", sep="_"),6,5)
 ggplot(data=df, aes(x=x_coord, y=y_coord, colour=gene))+geom_point()+
   scale_color_continuous(type = "viridis")+facet_grid(~type)+
   new_scale_colour()+geom_point(data=df_midpoint, size=1, colour="black")+theme_classic()
@@ -480,22 +480,22 @@ dev.off()
     }
 
 
-    pdf("results/ST_COL6A2_EFNA1_cor_inspect.pdf", 6, 6)
+    pdf("results/ST_COL6A2_EFNA1_cor_inspect_s.pdf", 6, 6)
     cor_inspect(data_merged, gene1="COL6A2", gene2="EFNA1")
     dev.off()
 
-    pdf("results/ST_HLA-DRB1_ACTG1_cor_inspect.pdf", 6, 6)
+    pdf("results/ST_HLA-DRB1_ACTG1_cor_inspect_s.pdf", 6, 6)
     cor_inspect(data_merged, gene1="HLA-DRB1", gene2="ACTG1")
     dev.off()
 
-    pdf("results/ST_LGALS9_ACTG1_cor_inspect.pdf", 6, 6)
+    pdf("results/ST_LGALS9_ACTG1_cor_inspect_s.pdf", 6, 6)
     cor_inspect(data_merged, gene1="LGALS9", gene2="ACTG1")
     dev.off()
 
 
     df<-cytoscape_net(adjacency = adj, dataset=as.matrix(data_merged), gene="COL6A2", comp1="tis1", comp2="tis2", num=10)
     df$Target<-factor(df$Target, levels=df$Target[df$Edge_type=="inter"][order(df$Weight[df$Edge_type=="inter"], decreasing = T)])
-    pdf("results/ST_COL6A2_top10_corrs.pdf", 8,7 )
+    pdf("results/ST_COL6A2_top10_corrs_s.pdf", 8,7 )
     ggplot(df, aes(x=Target, y=Weight))+geom_col()+facet_grid(Edge_type~.)+theme_classic()
     dev.off()
 
@@ -637,11 +637,11 @@ dev.off()
 
     plot(wm1, wm2)
 
-pdf("results/ST_mod1_tis1.pdf", 5,6)
+pdf("results/ST_mod1_tis1.pdf", 6,5)
 p1
 dev.off()
 
-pdf("results/ST_mod1_tis2.pdf", 5,6)
+pdf("results/ST_mod1_tis2.pdf", 6,5)
 p2
 dev.off()
 
@@ -649,8 +649,8 @@ pdf("results/ST_mod1_corr.pdf", 5,5)
 plot(wm1, wm2,pch=19, xlab="weighted expression comp1", ylab="weighted expression comp2")
 dev.off()
 
-pdf("results/ST_mod1_comm.pdf", 5,6)
-ggplot(data=df, aes(x=x_coord, y=y_coord))+geom_point(data=df_midpoint, size=1, aes(colour=comm_score))+scale_color_continuous(type = "viridis")
+pdf("results/ST_mod1_comm.pdf", 6,5)
+ggplot(data=df, aes(x=x_coord, y=y_coord))+geom_point(data=df_midpoint, size=1, aes(colour=comm_score))+scale_color_continuous(type = "viridis")+theme_classic()
 dev.off()
 
 
