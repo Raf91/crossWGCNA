@@ -139,3 +139,73 @@ network<-function(data, Adj_type="signed", cortype="spearman", pval="none", thr=
   k<-degrees(A=Adj, comp1=comp1, comp2=comp2)
   return(k)
 }
+
+
+degrees_mod<-function(data,
+                      modules,
+                      Adj_type = "signed",
+                      cortype = "spearman",
+                      pval = "none",
+                      thr = 0.05,
+                      beta = 6,
+                      comp1 = "_1",
+                      comp2 = "_2") {
+
+
+  k<-list()
+  for(i in 1:length(unique(modules))){
+    mod<-names(modules)[which(modules==unique(modules)[i])]
+    genes<-unique(gsub(comp2, "", gsub(comp1, "", mod)))
+    Adj <-
+      Adjacency(
+        data = data[c(paste(genes, comp1, sep=""), paste(genes, comp2, sep="")),],
+        Adj_type = Adj_type,
+        cortype = cortype,
+        pval = pval,
+        thr = thr,
+        beta = beta,
+        comp1 = comp1,
+        comp2 = comp2
+      )
+    Adj<-Adj[mod, mod]
+    k[[i]] <- degrees(A = Adj, comp1 = comp1, comp2 = comp2)
+
+  }
+  return(k)
+}
+
+
+cytoscape_net<-function(adjacency=adj_GSE10797, dataset=data_merged_GSE10797, gene, comp1, comp2, num, corr="spearman"){
+  interactors<-c(names(sort(adjacency[paste(gene, comp1, sep="_"),grep(comp2, colnames(adjacency))], decreasing=T))[1:num])
+
+  inter_edges<-cor(dataset[paste(gene, comp1, sep="_"),], t(dataset[intersect(interactors, rownames(dataset)),]), method=corr)
+  intra_1<-cor(dataset[paste(gene, comp1, sep="_"),], t(dataset[gsub(comp2, comp1, intersect(interactors, rownames(dataset))),]), method=corr)
+  intra_2<-cor(dataset[paste(gene, comp2, sep="_"),], t(dataset[intersect(interactors, rownames(dataset)),]), method=corr)
+
+  df<-data.frame(Source=c(rep(gene, length(inter_edges)),
+                          rep(gene, length(intra_1)),
+                          rep(gene, length(intra_2))),
+                 Target=c(gsub(paste("_", comp2, sep=""), "", colnames(inter_edges)),
+                          gsub(paste("_", comp1, sep=""), "", colnames(intra_1)),
+                          gsub(paste("_", comp2, sep=""), "", colnames(intra_2))
+                 ),
+                 Weight=c(inter_edges,
+                          intra_1,
+                          intra_2
+                 ),
+                 Edge_type=c(rep("inter", length(inter_edges)),
+                             rep("intra1", length(intra_1)),
+                             rep("intra2", length(intra_2))),
+                 Source_type=c(rep(comp1, length(inter_edges)),
+                               rep(comp1, length(intra_1)),
+                               rep(comp2,  length(intra_2))),
+                 Target_type=c(rep(comp2, length(inter_edges)),
+                               rep(comp1, length(intra_1)),
+                               rep(comp2,  length(intra_2)))
+  )
+
+  write.csv(df, file=paste("Cytoscape", gene, comp1, "egdes.csv", sep="_"))
+
+  return(df)
+}
+
