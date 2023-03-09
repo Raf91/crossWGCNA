@@ -209,3 +209,11 @@ cytoscape_net<-function(adjacency=adj_GSE10797, dataset=data_merged_GSE10797, ge
   return(df)
 }
 
+cor_inspect<-function(data=data_merged_GSE88715, gene1, gene2, comp1="_tis1", comp2="_tis2"){
+
+  df<-data.frame(gene1=c(data[paste(gene1, comp1, sep=""),], data[paste(gene1, comp2, sep=""),], data[paste(gene1, comp1, sep=""),], data[paste(gene1, comp2, sep=""),]),
+                 gene2=c(data[paste(gene2, comp1, sep=""),], data[paste(gene2, comp2, sep=""),], data[paste(gene2, comp2, sep=""),], data[paste(gene2, comp2, sep=""),]),
+                 compartment=c(rep(c("comp1 vs comp1","comp2 vs comp2","comp1 vs comp2", "comp2 vs comp1"), each=ncol(data)) ))
+  p<-ggplot(df, aes(x=gene1, y=gene2))+geom_point()+facet_wrap(.~compartment)+geom_smooth(method = "lm")+theme_classic()+labs(x=gene1, y=gene2)
+  return(p)
+}
