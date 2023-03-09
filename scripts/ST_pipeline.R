@@ -80,10 +80,15 @@ md<-merged_dataset(sel_spots=sf, coords=coords, averaged_expr_all=averaged_expr_
 
 
 adj<-Adjacency(data=md[[1]], Adj_type="signed", cortype="spearman", pval="none", thr=0.05, beta=6, comp1="_tis1", comp2="_tis2")
+save(adj, file="results/ST_adj_pipeline.RData")
 
 net<-network(data=md[[1]], Adj_type="signed", cortype="spearman", pval="none", thr=0.05, beta=6, comp1="_tis1", comp2="_tis2")
+save(net, file="results/ST_net_pipeline.RData")
 
 mods<-crossWGCNA(data=md[[1]], Adj_type="signed", cortype="spearman", pval="none", thr=0.05, beta=6, comp1="_tis1", comp2="_tis2")
+save(mods, file="results/ST_mods_pipeline.RData")
+
+
 #functional enrichment of the most communicative genes
 #######################
 library(msigdbr)
