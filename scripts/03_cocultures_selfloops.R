@@ -1,5 +1,5 @@
 load("data/CAFs_cocultures.RData")
-load("results/degs_3rd.RData")
+load("results/degs_3rd_selfloops.RData")
 library(clusterProfiler)
 library(openxlsx)
 library(ggplot)
@@ -66,13 +66,13 @@ data <- data.frame(
   sd=c(0, sd(random_repeated_stroma))
 )
 
-pdf("results/stroma_gsea_signif.pdf", 4,5)
+pdf("results/stroma_gsea_signif_selfloops.pdf", 4,5)
 ggplot(data) +
   geom_bar( aes(x=name, y=value), stat="identity", fill="darkgreen") +
   geom_errorbar( aes(x=name, ymin=value-sd, ymax=value+sd), width=0.4, size=1.3) + theme_bw()
 dev.off()
 
-save(random_repeated_stroma, file="results/random_repeated_stroma.RData")
+save(random_repeated_stroma, file="results/random_repeated_stroma_selfloops.RData")
 
 set.seed(46956305)
 random_repeated_epi<-c()
@@ -93,7 +93,7 @@ for(j in 1:length(degs)){
 random_repeated_epi<-c(random_repeated_epi, sum(gsea_epi_rand<0.05, na.rm = T))
 }#5
 
-save(random_repeated_epi, file="results/random_repeated_epi.RData")
+save(random_repeated_epi, file="results/random_repeated_epi_selfloops.RData")
 
 data <- data.frame(
   name=c("observed", "random"),
@@ -101,7 +101,7 @@ data <- data.frame(
   sd=c(0, sd(random_repeated_epi))
 )
 
-pdf("results/epi_gsea_signif.pdf", 4,5)
+pdf("results/epi_gsea_signif_selfloops.pdf", 4,5)
 ggplot(data) +
   geom_bar( aes(x=name, y=value), stat="identity", fill="brown2") +
   geom_errorbar( aes(x=name, ymin=value-sd, ymax=value+sd), width=0.4, size=1.3) + theme_bw()

@@ -13,11 +13,11 @@ mtx<-list.files(pattern="mtx", recursive = T)
 barcodes<-list.files(pattern="tsv", recursive = T)
 barcodes<-barcodes[-1]
 data<-list()
-for(i in 1:length(mtx)){ 
+for(i in 1:length(mtx)){
   data[[i]]<-edgeR::read10X(mtx=mtx[i], genes="/single cell/GSE161529_features.tsv", barcodes=gsub("-matrix.mtx.gz", "-barcodes.tsv.gz", mtx[i]))
 }
 
-for(i in 1:length(mtx)){ 
+for(i in 1:length(mtx)){
   colnames(data[[i]])<-paste(mtx[i], 1:ncol(data[[i]]), sep="-")
 }
 
@@ -28,14 +28,14 @@ cancers<-data[c(38:64,66,68,70,72,74)]
 rm(data)
 
 cancersdata<-list()
-for(i in 1:length(cancers)){ 
+for(i in 1:length(cancers)){
   cancersdata[[i]]<-cancers[[i]]$counts
 }
 
 rm(cancers)
 
 genes<-read.csv("/home/aurora.savino/crossWGCNA/single cell/GSE161529_features.tsv", sep="\t", header=F)
-for(i in 1:length(cancersdata)){ 
+for(i in 1:length(cancersdata)){
 rownames(cancersdata[[i]])<-genes[match(rownames(cancersdata[[i]]), genes[,1]),2]
 }
 
@@ -66,12 +66,12 @@ save(cancersdata, file="cancersdata.RData")
 
 mergedTNBC<-CreateSeuratObject(TNmerge)
 mergedTNBC <- NormalizeData(mergedTNBC, verbose = FALSE)
-mergedTNBC <- FindVariableFeatures(mergedTNBC, selection.method = "vst", 
+mergedTNBC <- FindVariableFeatures(mergedTNBC, selection.method = "vst",
                                        nfeatures = 2000, verbose = FALSE)
 mergedTNBC <- ScaleData(mergedTNBC, verbose = FALSE)
 mergedTNBC <- RunPCA(mergedTNBC, npcs = 30, verbose = FALSE)
 mergedTNBC <- RunUMAP(mergedTNBC, reduction = "pca", dims = 1:30)
-  
+
 FeaturePlot(mergedTNBC, features = c("CD34",  "COL8A1", "NOTCH3", "C1QC", "CD8A",  "KRT17"))
 FeaturePlot(mergedTNBC, features = c("PDGFRA", "COL10A1","COL8A1", "KRT17", "KRT5"))
 FeaturePlot(mergedTNBC, features = c("CD4", "CD8A","FOXP3", "PDGFRA", "MCAM", "KRT17"))
@@ -122,7 +122,7 @@ mergedTNBC <- FindClusters(mergedTNBC, resolution = 0.1)
 
 DoHeatmap(mergedTNBC, features = c("PDGFRA", "COL10A1","COL8A1", "KRT17", "KRT5",
                                    "CD4", "CD8A","FOXP3", "PDGFRA", "MCAM","NKG7", "CD19","CD68", "CD14", "VWF",  "CD34"),size = 4,
-          angle = 90) 
+          angle = 90)
 DimPlot(mergedTNBC, reduction = "umap")
 
 markers <- FindMarkers(object = mergedTNBC, ident.1 = 13)
@@ -164,7 +164,7 @@ save(TNBCplasma, file="TNBCplasma.RData")
 mergedHER2<-CreateSeuratObject(HER2merge)
 
 mergedHER2 <- NormalizeData(mergedHER2, verbose = FALSE)
-mergedHER2 <- FindVariableFeatures(mergedHER2, selection.method = "vst", 
+mergedHER2 <- FindVariableFeatures(mergedHER2, selection.method = "vst",
                                    nfeatures = 2000, verbose = FALSE)
 mergedHER2 <- ScaleData(mergedHER2, verbose = FALSE)
 mergedHER2 <- RunPCA(mergedHER2, npcs = 30, verbose = FALSE)
@@ -221,7 +221,7 @@ dev.off()
 
 DoHeatmap(mergedHER2, features = c("PDGFRA", "COL10A1","COL8A1", "KRT17", "KRT5",
                                    "CD4", "CD8A","FOXP3", "PDGFRA", "MCAM","NKG7", "CD19","CD68", "CD14", "VWF",  "CD34"),size = 4,
-          angle = 90) 
+          angle = 90)
 plot<-DimPlot(mergedHER2, reduction = "umap")
 pdf("HER2_ctust.pdf",10,10)
 LabelClusters(plot=plot, id="ident")
@@ -255,7 +255,7 @@ save(HER2plasma, file="HER2plasma.RData")
 
 mergedER<-CreateSeuratObject(ERmerge)
 mergedER <- NormalizeData(mergedER, verbose = FALSE)
-mergedER <- FindVariableFeatures(mergedER, selection.method = "vst", 
+mergedER <- FindVariableFeatures(mergedER, selection.method = "vst",
                                    nfeatures = 2000, verbose = FALSE)
 mergedER <- ScaleData(mergedER, verbose = FALSE)
 mergedER <- RunPCA(mergedER, npcs = 30, verbose = FALSE)
@@ -313,7 +313,7 @@ mergedER <- FindClusters(mergedER, resolution = 0.1)
 
 DoHeatmap(mergedER, features = c("PDGFRA", "COL10A1","COL8A1", "KRT17", "KRT5",
                                    "CD4", "CD8A","FOXP3", "PDGFRA", "MCAM","NKG7", "CD19","CD68", "CD14", "VWF",  "CD34"),size = 4,
-          angle = 90) 
+          angle = 90)
 plot<-DimPlot(mergedER, reduction = "umap")
 pdf("ER_clust.pdf", 10,10)
 LabelClusters(plot=plot, id="ident")
@@ -345,7 +345,7 @@ save(mergedER, file="mergedER.RData")
 #######################################
 #####Versione con pi? cluster epi e stroma
 ###############################################
-source("scripts/crossWGCNA_alt2.R")
+source("scripts/crossWGCNA_netdiff.R")
 
 
 ###selezione delle sole cellule epiteliali e CAF
@@ -461,12 +461,12 @@ data_merged<-rbind(stroma, epi)
 
 #Functions da A_L.R
 degsc<-network(data=data_merged, Adj_type="signed", cortype="pearson", pval="none", thr=0.05, beta=6, comp1="_1", comp2="_2", doTOM=T, ds=4, crossOnly=T)
-save(degsc, file="degsc_alt.RData")
+save(degsc, file="degsc_netdiff.RData")
 
 ###############
 ### ER only
 ##############
-source("scripts/crossWGCNA_alt2.R")
+source("scripts/crossWGCNA_netdiff.R")
 ###filtering data
 rownames(averagedEpiER)<-rownames(TNmerge)
 rownames(averagedStromaER)<-rownames(TNmerge)
@@ -486,4 +486,4 @@ data_merged<-rbind(stroma, epi)
 
 #Functions da A_L.R
 degsc<-network(data=data_merged, Adj_type="signed", cortype="pearson", pval="none", thr=0.05, beta=6, comp1="_1", comp2="_2", doTOM=T, ds=4, crossOnly=T)
-save(degsc, file="degsc_alt_ER.RData")
+save(degsc, file="degsc_netdiff_ER.RData")

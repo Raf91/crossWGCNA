@@ -5,38 +5,13 @@ library(pheatmap)
 library(Hmisc)
 load("data/metadataAll.RData")
 load("data/datasetsAll.RData")
-source("scripts/crossWGCNA_alt2.R")
+source("scripts/crossWGCNA_functions_netdiff.R")
 
-changenames<-function(data, anno){
-  annotation_sel=anno[match( rownames(data), anno[,1]),2]
+########################
+#Format data as necessary
+##########################
 
-  if(length(which(annotation_sel==""))>0){
-    data<-data[-which(annotation_sel==""),]
-    annotation_sel<-annotation_sel[-which(annotation_sel=="")]
-  }
-
-  a<-which(duplicated(annotation_sel))
-  while(length(a)>0){
-    for(i in 1:length(unique(annotation_sel))){
-      if(length(which(annotation_sel==unique(annotation_sel)[i]))>1){
-        m=which.max(rowMeans(data[which(annotation_sel==unique(annotation_sel)[i]),], na.rm=T))
-        data=data[-which(annotation_sel==unique(annotation_sel)[i])[-m],]
-        annotation_sel=annotation_sel[-which(annotation_sel==unique(annotation_sel)[i])[-m]]
-      }
-    }
-
-    data=data[which(is.na(annotation_sel)==F),]
-    annotation_sel=na.omit(annotation_sel)
-    a<-which(duplicated(annotation_sel))
-  }
-
-  rownames(data)=annotation_sel
-  return(data)
-}
-
-#Datasets
-###dataset GSE5847
-
+###GSE5847
 stromaID<-metadataAll$id[which(metadataAll$dataset=="GSE5847" & metadataAll$compartment=="Stroma" & metadataAll$diseaseStatus=="InvasiveBC")]
 epiID<-metadataAll$id[which(metadataAll$dataset=="GSE5847" & metadataAll$compartment=="Epi" & metadataAll$diseaseStatus=="InvasiveBC")]
 
@@ -51,13 +26,13 @@ epiID<-epiID[match(inboth, epiMatch)]
 stroma<-datasetsAll[["GSE5847"]][,stromaID]
 epi<-datasetsAll[["GSE5847"]][,epiID]
 
-###filtering data
+###filter genes
 genes<-unique(c(which(apply(stroma,1,var)>=quantile(apply(stroma,1,var),0.25)),
 which(apply(epi,1,var)>=quantile(apply(epi,1,var),0.25))))
 stroma<-stroma[genes,]
 epi<-epi[genes,]
 
-#merging stroma and epi
+#merge stroma and epi
 rownames(stroma)<-paste(rownames(stroma), "tis1", sep="_")
 rownames(epi)<-paste(rownames(epi), "tis2", sep="_")
 colnames(epi)<-colnames(stroma)
@@ -80,16 +55,16 @@ epiID<-epiID[match(inboth, epiMatch)]
 stroma<-datasetsAll[["GSE10797"]][,stromaID]
 epi<-datasetsAll[["GSE10797"]][,epiID]
 
-###filtering data
+###filter genes
 genes<-unique(c(which(apply(stroma,1,var)>=quantile(apply(stroma,1,var),0.25)),
                 which(apply(epi,1,var)>=quantile(apply(epi,1,var),0.25))))
 stroma<-stroma[genes,]
 epi<-epi[genes,]
-##############All genes double WGCNA
-###use WGCNA with twice the genes
+
 rownames(stroma)<-paste(rownames(stroma), "tis1", sep="_")
 rownames(epi)<-paste(rownames(epi), "tis2", sep="_")
 
+##merge stroma and epi
 colnames(epi)<-colnames(stroma)
 data_merged_GSE10797<-rbind(stroma, epi)
 
@@ -108,7 +83,7 @@ epiID<-epiID[match(inboth, epiMatch)]
 stroma<-datasetsAll[["GSE14548"]][,stromaID]
 epi<-datasetsAll[["GSE14548"]][,epiID]
 
-###filtering data
+###filter genes
 genes<-unique(c(which(apply(stroma,1,var)>=quantile(apply(stroma,1,var),0.25)),
                 which(apply(epi,1,var)>=quantile(apply(epi,1,var),0.25))))
 stroma<-stroma[genes,]
@@ -117,6 +92,7 @@ epi<-epi[genes,]
 rownames(stroma)<-paste(rownames(stroma), "tis1", sep="_")
 rownames(epi)<-paste(rownames(epi), "tis2", sep="_")
 
+### merge stroma and epi
 colnames(epi)<-colnames(stroma)
 data_merged_GSE14548<-rbind(stroma, epi)
 
@@ -146,7 +122,7 @@ GSE83591_meta2<-GSE83591_meta2[-c(15,34,67),]
 stroma<-GSE83591[,which(GSE83591_meta2$Cy3=="TS")]
 epi<-GSE83591[,which(GSE83591_meta2$Cy3=="TE")]
 
-###filtering data
+###filter genes
 genes<-unique(c(which(apply(stroma,1,var)>=quantile(apply(stroma,1,var),0.25)),
                 which(apply(epi,1,var)>=quantile(apply(epi,1,var),0.25))))
 stroma<-stroma[genes,]
@@ -155,18 +131,19 @@ epi<-epi[genes,]
 rownames(stroma)<-paste(rownames(stroma), "tis1", sep="_")
 rownames(epi)<-paste(rownames(epi), "tis2", sep="_")
 
+##merge stroma and epi
 colnames(epi)<-colnames(stroma)
 data_merged_GSE83591<-rbind(stroma, epi)
 
 #######GSE68744
 stromaID<-metadataAll$id[which(metadataAll$dataset=="GSE68744" & metadataAll$compartment=="Stroma" & metadataAll$diseaseStatus=="InvasiveBC")]
 epiID<-metadataAll$id[which(metadataAll$dataset=="GSE68744" & metadataAll$compartment=="Epi" & metadataAll$diseaseStatus=="InvasiveBC")]
-#sono matched, controllato
+#checked matching
 
 stroma<-datasetsAll[["GSE68744"]][,stromaID]
 epi<-datasetsAll[["GSE68744"]][,epiID]
 
-###filtering data
+###filter genes
 genes<-unique(c(which(apply(stroma,1,var)>=quantile(apply(stroma,1,var),0.25)),
                 which(apply(epi,1,var)>=quantile(apply(epi,1,var),0.25))))
 stroma<-stroma[genes,]
@@ -193,7 +170,7 @@ epiID<-epiID[match(inboth, epiMatch)]
 stroma<-datasetsAll[["GSE88715"]][,stromaID]
 epi<-datasetsAll[["GSE88715"]][,epiID]
 
-###filtering data
+###filter genes
 genes<-unique(c(which(apply(stroma,1,var)>=quantile(apply(stroma,1,var),0.25)),
                 which(apply(epi,1,var)>=quantile(apply(epi,1,var),0.25))))
 stroma<-stroma[genes,]
@@ -224,4 +201,4 @@ degrees_GSE88715<-degrees(A=Adj_GSE88715, comp1="_tis1", comp2="_tis2")
 degs<-list(degrees_GSE5847, degrees_GSE10797, degrees_GSE14548,
            degrees_GSE83591, degrees_GSE68744, degrees_GSE88715)
 
-save(degs, file="results/degs_3rd_alt.RData")
+save(degs, file="results/degs_3rd_netdiff.RData")
