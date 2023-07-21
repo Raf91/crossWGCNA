@@ -1,0 +1,33 @@
+exportPattern("^[[:alpha:]]+")
+
+# dependencies
+import(WGCNA)
+import(Seurat)
+import(ggplot2)
+import(ggnewscale)
+import(Hmisc)
+
+# package functions
+export(Adjacency)
+export(Adjacency_sl)
+export(Adjacency_nd)
+export(changenames)
+export(clusteringWGCNA)
+export(cor_inspect)
+export(crossWGCNA)
+export(cytoscape_net)
+export(degrees)
+export(degrees_mod)
+export(network)
+
+# Spatial transcriptomics utils
+export(ST_spots_coords)
+export(ST_expr_smooth)
+export(ST_spots_filt)
+export(ST_merged_dataset)
+export(ST_boundary_spots)
+export(ST_midpoints_def)
+export(ST_plot_expr)
+export(ST_plot_comm)
+export(ST_weighted_mod)
+
