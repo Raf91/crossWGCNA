@@ -1,0 +1,348 @@
+---
+title: "crossWGCNA ST vignette"
+author: "Aurora Savino"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    theme: united
+---
+
+```{r, include=T, warning=FALSE, message=F}
+library(crossWGCNA)
+library(Seurat)
+library(fgsea)
+library(msigdbr)
+library(ggplot2)
+require(ggnewscale)
+```
+
+# Input data
+
+* Load Spatial Transcriptomics data
+* Define clusters
+* Identify cluster identities based on marker genes' expression
+
+```{r, include=T, warning=FALSE, message=F}
+BC <- Load10X_Spatial(data.dir = "~/Project_crossWGCNA/data/Spatial transcriptomics/10x/",
+                      filename = "Visium_Human_Breast_Cancer_filtered_feature_bc_matrix.h5")
+
+
+BC <- SCTransform(BC, assay = "Spatial", verbose = FALSE)
+
+BC <- RunPCA(BC, assay = "SCT", verbose = FALSE)
+BC <- FindNeighbors(BC, reduction = "pca", dims = 1:30)
+BC <- FindClusters(BC, verbose = FALSE)
+BC <- RunUMAP(BC, reduction = "pca", dims = 1:30)
+p1 <- DimPlot(BC, reduction = "umap", label = TRUE)
+p1
+```
+```{r, include=T, warning=FALSE, message=F}
+p2 <- SpatialDimPlot(BC, label = TRUE, label.size = 3)
+p2
+```
+* Plot markers to define epithelial and stromal clusters
+
+```{r, include=T, warning=FALSE, message=F}
+VlnPlot(BC, features = c("FAP", "COL1A1"), pt.size = 0.1, group.by="seurat_clusters")
+```
+
+```{r, include=T, warning=FALSE, message=F}
+VlnPlot(BC, features = c("EPCAM", "KRT14"), pt.size = 0.1, group.by="seurat_clusters")
+```
+
+* Extract expression levels from the Seurat object 
+
+```{r, include=T, warning=FALSE, message=F}
+expr_data <- BC@assays$SCT@data
+```
+
+* Choose clusters to analyze, assigning them a tissue label
+
+```{r, include=T, warning=FALSE, message=F}
+epi_spots <- which(BC$seurat_clusters %in% c(3, 7, 9:15))
+stroma_spots <- which(BC$seurat_clusters %in% c(0, 1:2,4:6,8,16,17))
+```
+
+* Create a vector with tissue labels matching the order of the spots in expression data
+
+```{r, include=T, warning=FALSE, message=F}
+class <- rep(NA, ncol(expr_data))
+class[epi_spots] <- "Epi"
+class[stroma_spots] <- "Stroma"
+```
+
+*Identify spots coordinates
+
+```{r, include=T, warning=FALSE, message=F, fig.show='hide'}
+coords <- ST_spots_coords(BC)
+x_bin <- coords[,1]
+y_bin <- coords[,2]
+```
+
+* Compute smoothed gene expression using the weighted mean (weight = 1/(dist+1)) of neighbouring spots in the same compartment (epithelial or stromal) with a maximum distance of 5 (set through the max_dist parameter). Remove the hashtag to run the computation.
+
+```{r, include=T, warning=FALSE, message=F}
+averaged_expr_all_fun <- ST_expr_smooth(expr_data=expr_data, 
+                                        coords=coords, 
+                                        max_dist=5, 
+                                        spots_class=class, 
+                                        sel_class=c("Epi", "Stroma"))
+#load("averaged_expr_all_fun.RData")
+```
+
+* Refine cluster selection for running crossWGCNA and filter non-isolated spots
+
+```{r, include=T, warning=FALSE, message=F}
+epi_spots <- which(BC$seurat_clusters %in% c(7, 9:12))
+stroma_spots <- which(BC$seurat_clusters %in% c(0, 2,4,6,8,16,17))
+sf <- ST_spots_filt(coords, tis1_spots=epi_spots, tis2_spots=stroma_spots)
+```
+
+* Generate a gene expression matrix formatted for crossWGCNA, with one column for each epithelial spot at the boundaries with the stroma, and one row for each gene measured in the epithelium or in the stroma, labeled with a suffix defined by the parameters comp1 and comp2.
+
+```{r, include=T, warning=FALSE, message=F}
+md <- ST_merged_dataset(sel_spots=sf, 
+                        coords=coords, 
+                        averaged_expr_all=averaged_expr_all_fun, 
+                        var_thr=0.75, 
+                        comp1="_tis1", 
+                        comp2="_tis2")
+```
+
+# Adjacency
+
+* Compute the adjacency. Remove the hashtag to run the code.
+```{r, include=T, warning=FALSE, message=F}
+adj <- Adjacency(data=md[[1]], 
+                 method="netdiff",
+                 Adj_type="signed", 
+                 cortype="spearman", 
+                 pval="none", 
+                 thr=0.05, 
+                 beta=6, 
+                 comp1="_tis1", 
+                 comp2="_tis2")
+#load("ST_adj_pipeline.RData")
+```
+
+* Find the most highly interacting gene pair
+```{r, include=T, warning=FALSE, message=F}
+m <- max(adj[grep("tis2", rownames(adj)), grep("tis1", colnames(adj))])
+which(adj==m, arr.ind=T)
+```
+
+* Plot the correlation between the expression of gene1 in tissue 1 and gene2 in tissue 2
+
+```{r, include=T, warning=FALSE, message=F}
+
+gene1 <- "ACTG1"
+gene2 <- "LGALS9"
+
+plot(md[[1]][paste(gene2, "tis2", sep="_"),], 
+     md[[1]][paste(gene1, "tis1", sep="_"),], 
+     pch=19, 
+     ylab=paste(gene1, "epi"), 
+     xlab=paste(gene2, "stroma"))
+
+```
+
+* Plot the communication score at the boundaries of tissue 1 and tissue 2
+
+```{r, include=T, warning=FALSE, message=F}
+#find the tissue1 spots at the boundary with tissue2
+sp <- ST_boundary_spots(coords, included_spots=md[[2]], tis2_spots = stroma_spots)
+
+#define the points in between tissue1 and tissue2
+midpoints <- ST_midpoints_def(coords, sp)
+
+#plot the communication score
+p <- ST_plot_comm(gene1, 
+                  gene2,
+                  averaged_expr_all=averaged_expr_all_fun,
+                  coords,  
+                  included_spots=md[[2]], 
+                  sel_spots=sp, 
+                  tis1_spots=epi_spots, 
+                  tis2_spots=stroma_spots, 
+                  midpoints)
+
+print(p)
+```
+
+* Visualize the expression levels of gene1 and gene2 in space
+
+```{r, include=T, warning=FALSE, message=F}
+
+p1 <- ST_plot_expr(gene1, 
+                   averaged_expr_all=averaged_expr_all_fun, 
+                   coords, 
+                   included_spots=md[[2]],
+                   tis1_spots=stroma_spots, 
+                   tis2_spots=epi_spots, 
+                   midpoints)
+
+p2 <- ST_plot_expr(gene2, 
+                   averaged_expr_all=averaged_expr_all_fun, 
+                   coords, 
+                   included_spots=md[[2]],
+                   tis1_spots=stroma_spots, 
+                   tis2_spots=epi_spots, 
+                   midpoints)
+
+print(p1)
+print(p2)
+```
+
+* Plot the correlation between gene1 and gene2 within and between tissues
+
+```{r, include=T, warning=FALSE, message=F}
+cor_inspect(md[[1]], gene1, gene2)
+```
+
+* Find the most strongly inter-tissue connected genes with a specified gene. The parmeter comp1 should be set as the component where the chosen gene was measured.
+
+```{r, include=T, warning=FALSE, message=F}
+df <- cytoscape_net(adjacency = adj, 
+                    dataset=as.matrix(md[[1]]), 
+                    gene="COL6A2", 
+                    comp1="tis2", 
+                    comp2="tis1", 
+                    num=10)
+
+levels <- df$Target[df$Edge_type=="inter"][order(df$Weight[df$Edge_type=="inter"],decreasing = T)]
+df$Target <- factor(df$Target, levels=levels)
+
+ggplot(df, aes(x=Target, y=Weight)) + 
+  geom_col() + 
+  facet_grid(Edge_type~.) + 
+  theme_classic()
+
+```
+
+# Nodes' intra- and inter-tissue degrees
+
+* Generate the network, obtaining intra- ad inter-tissue degrees. Remove the hashtag to run the code.
+```{r, include=T, warning=FALSE, message=F}
+net <- network(data=md[[1]], 
+               Adj_type="signed", 
+               cortype="spearman", 
+               pval="none", 
+               thr=0.05, 
+               beta=6, 
+               comp1="_tis1", 
+               comp2="_tis2")
+
+#load("ST_net_pipeline.RData")
+```
+
+* Perform gene set enrichment analysis of genes ranked based on kRatio.
+
+```{r, include=T, warning=FALSE, message=F}
+m_df <- msigdbr(species = "Homo sapiens", category = "C5")
+m_list <- m_df %>% split(x = .$gene_symbol, f = .$gs_name)
+
+coef_gsea1 <- net$kExt1 / net$kInt1
+names(coef_gsea1) <- gsub("_tis1", "", names(coef_gsea1))
+
+fgseaRes1 <- fgseaMultilevel(m_list, coef_gsea1)
+
+coef_gsea2 <- net$kExt2 / net$kInt2
+names(coef_gsea2) <- gsub("_tis2", "", names(coef_gsea2))
+
+fgseaRes2 <- fgseaMultilevel(m_list, coef_gsea2)
+```
+
+# Co-expression modules
+
+Compute co-expression modules (remove the hashtag to run the code).
+
+```{r, include=T, warning=FALSE, message=F}
+mods <- crossWGCNA(data=md[[1]], 
+                   Adj_type="signed", 
+                   cortype="spearman", 
+                   pval="none", 
+                   thr=0.05, 
+                   beta=6, 
+                   comp1="_tis1", 
+                   comp2="_tis2")
+
+#load("ST_mods_pipeline.RData")
+```
+
+* Compute the intra-modular connectivity (remove the dashes to run the code).
+
+```{r, include=T, warning=FALSE, message=F}
+kwithin <- degrees_mod(data=md[[1]], 
+                       modules=mods[[2]]$colors, 
+                       Adj_type = "signed",
+                       cortype = "spearman",
+                       pval = "none",
+                       thr = 0.05,
+                       beta = 6,
+                       comp1 = "_tis1",
+                       comp2 = "_tis2")
+#load("ST_kWithin.RData")
+```
+
+* Weighted module expression, selecting a specific module
+
+```{r, include=T, warning=FALSE, message=F}
+modules <- mods[[2]]$colors
+
+wm <- ST_weighted_mod(modules=mods[[2]]$colors, 
+                      kwithin, 
+                      mod_sel=1, 
+                      averaged_expr_all=averaged_expr_all_fun, 
+                      comp1="_tis1", 
+                      comp2="_tis2")
+
+```
+
+* Visualize the weighted module expression in space
+```{r, include=T, warning=FALSE, message=F}
+#weighted mean of genes measured in tissue 1
+df <- data.frame(x_coord=c(x_bin[epi_spots],x_bin[stroma_spots]),
+                 y_coord= c(-(y_bin[epi_spots]),-(y_bin[stroma_spots])),
+                 compartment=c(rep("epi", length(epi_spots)),rep("stroma",length(stroma_spots))),
+                 gene=c(wm[[1]][epi_spots], wm[[1]][stroma_spots]))
+
+df_midpoint <- data.frame(x_coord= midpoints[[1]],
+                          y_coord= midpoints[[2]])
+
+p1 <- ggplot(data=df, aes(x=x_coord, y=y_coord, colour=gene)) + 
+  geom_point() +
+  scale_color_continuous(type = "viridis") +
+  geom_point(data=df_midpoint, size=1, colour="black") + 
+  theme_classic()
+
+#weighted mean of genes measured in tissue 2
+df <- data.frame(x_coord= c(x_bin[epi_spots],x_bin[stroma_spots]),
+                 y_coord= c(-(y_bin[epi_spots]), -(y_bin[stroma_spots])),
+                 compartment=c(rep("epi", length(epi_spots)),rep("stroma", length(stroma_spots))),
+                 gene=c(wm[[2]][epi_spots], wm[[2]][stroma_spots]))
+
+df_midpoint <- data.frame(x_coord= midpoints[[1]],
+                          y_coord= midpoints[[2]])
+
+p2 <- ggplot(data=df, aes(x=x_coord, y=y_coord, colour=gene)) + 
+  geom_point() +
+  scale_color_continuous(type = "viridis") +
+  geom_point(data=df_midpoint, size=1, colour="black") + 
+  theme_classic()
+
+p1
+p2
+```
+
+Visualize the communication score of module's genes at the epithelium-stroma boundaries
+```{r, include=T, warning=FALSE, message=F}
+df_midpoint <- data.frame(x_coord= midpoints[[1]],
+                          y_coord= midpoints[[2]],                        
+                          comm_score=wm[[1]][sp[[1]]]*wm[[2]][sp[[2]]])
+
+ggplot(data=df, aes(x=x_coord, y=y_coord))+
+  geom_point(data=df_midpoint, size=1, aes(colour=comm_score))+
+  scale_color_continuous(type = "viridis")+
+  theme_classic()
+```

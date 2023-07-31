@@ -1,0 +1,269 @@
+---
+title: "crossWGCNA BC vignette"
+author: "Aurora Savino"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: yes
+    theme: united
+  pdf_document:
+    toc: yes
+---
+
+```{r, include=T, warning=FALSE, message=F}
+library(crossWGCNA)
+library(WGCNA)
+library(fgsea)
+library(msigdbr)
+library(clusterProfiler)
+library(enrichplot)
+library(ggplot2)
+library(openxlsx)
+```
+
+# Input data
+
+Input data are pairs of normalized and log-transformed gene expression matrices with genes in rows and samples in columns. 
+In this example, we will use GSE5847 (Boersma et al., 2008) gene expression of laser capture microdissected breast tumors, analyzing tumor stroma and tumor epithelium for 34 non-inflammatory breast tumors. Importantly, stromal and epithelial samples include matching information, indicating pairs of stroma-epithelium derived from the same tumor. To speed-up computations, only the top 25% most variably expressed genes will be analysed.
+The two data matrices (stroma and epi) comprise 34 samples from corresponding subjects, i.e. sample 1 in stroma derives from the same subject as sample 1 in epi.
+This is a fundamental feature of input data, so check carefully that the order of samples is matched, or results will be meaningless.
+
+The genes profiled and analyzed for each tissue/organ don't need to be corresponding and can be filtered according to different criteria. In this context, genes have been filtered according to variance. Alternatively, genes can be filtered based on their function. 
+Including a large number of genes allows unbiased analyses, but increases noise and requires a lot of RAM, especially for gene clustering. 
+
+A single gene expression matrix comprising gene expression from both tissues need to be created, merging original data matrices by row. To distinguish genes measured in each tissue/organ, a suffix is added to gene names ("_S" and "_E", in this case).
+
+```{r, include=T, warning=FALSE, message=F}
+load("~/Project_crossWGCNA/data/stroma_GSE5847.RData")
+load("~/Project_crossWGCNA/data/epi_GSE5847.RData")
+
+inboth <- intersect(rownames(stroma), rownames(epi))
+stroma <- stroma[inboth,]
+epi <- epi[inboth,]
+
+rownames(stroma) <- paste(rownames(stroma), "S", sep="_")
+rownames(epi) <- paste(rownames(epi), "E", sep="_")
+
+colnames(stroma) <- paste("Sample", c(1:34), sep="_")
+colnames(epi) <- paste("Sample", c(1:34), sep="_")
+
+print(rownames(stroma)[1:10])
+print(rownames(epi)[1:10])
+BC_merged <- rbind(stroma, epi)
+```
+
+# Quick start: One-step function
+The function crossWGCNA runs the inter-tissue co-expression network analysis, calling the functions Adjacency, degree and clusteringWGCNA, producing a list with intra- and inter-tissue degrees, and gene clustering assignments.
+
+```{r, include=T, warning=FALSE}
+net <- crossWGCNA(data = BC_merged, 
+                  method="netdiff", 
+                  Adj_type="signed", 
+                  ds=2, 
+                  comp1="_S", 
+                  comp2="_E" )
+```
+
+# Step-by-step procedure
+
+## Compute the adjacency
+
+Co-expression network's edges are based on correlations in gene expression, then transformed to adjacencies to follow a power-law typical of biological networks (REF). Signed and unsigned adjacencies are defined as the corresponding WGCNA signed and unsigned adjacencies (Langfelder P, Horvath S, 2008). 
+The choice depends on the specific biological application. Here, we employ the signed adjacency, which shrinks negative correlations to zero so that highly connected genes are positively correlated, facilitating the interpretation. Two alternative methods are available to reduce the influence of external/tissue-independent factors on the network. Depending on the chosen method ("selfloops" or "netdiff") self loops or cross-tissue shared edges are removed from the adjacency (see manuscript for discussion). Here, we employ the netdiff method which has slightly better performances (see manuscript).
+
+Since we used the suffixes "_S" and "_E" to distinguish between genes measured in the stroma and in the epithelium, we indicate the same suffixes in the Adjacency function (comp1 and comp2).
+
+```{r, include=T, warning=FALSE}
+Adj <- Adjacency(data=BC_merged, 
+                 method="netdiff", 
+                 Adj_type="signed", 
+                 comp1="_S", 
+                 comp2="_E")
+```
+
+## Genes with high kRatio
+
+Genes' intra- and inter-tissue degrees are computed as the sum of intra- and inter-tissue adjacencies after removing self loops.
+Again, suffixes need to be specified.
+```{r, include=T, warning=FALSE}
+k <- degrees(A=Adj, comp1="_S", comp2="_E")
+```
+
+Degrees are stored in a list where kInt1, kExt1 and kTot1 indicate intra-, inter- and total connectivity for genes measured in component 1: stroma, in this case. Correspondingly, kInt2, kExt2 and kTot2 indicate connectivities of genes measured in the epithelium.
+
+```{r, include=T, warning=FALSE}
+head(sort(k$kExt1, decreasing = T))
+head(sort(k$kExt2, decreasing = T))
+
+kRatio_S<-k$kExt1/k$kInt1
+kRatio_E<-k$kExt2/k$kInt2
+
+head(sort(kRatio_S, decreasing = T))
+head(sort(kRatio_E, decreasing = T))
+```
+kExt/kInt is employed to score highly coupled with the alternate tissue's gene expression, and these scores can be analyzed through GSEA to investigate their enrichment in functional categories.
+
+```{r, include=T, warning=FALSE, message=F}
+m_df <- msigdbr(species = "Homo sapiens", category = "H") 
+m_list <- m_df %>% split(x = .$gene_symbol, f = .$gs_name)
+
+names(kRatio_S) <- gsub("_S$", "", names(kRatio_S))
+names(kRatio_E) <- gsub("_E$", "", names(kRatio_E))
+fgsea_S <- fgsea(m_list, sort(kRatio_S, decreasing = T), scoreType="pos")
+fgsea_E <- fgsea(m_list, sort(kRatio_E, decreasing = T), scoreType="pos")
+
+head(fgsea_S[order(fgsea_S$NES, decreasing=T),])
+head(fgsea_E[order(fgsea_E$NES, decreasing=T),])
+```
+
+## Clusters
+
+Clusters of co-expressed genes are can be either based on a previous computation of the Topological Associated Matrix (TOM) or on the adjacency itself. In line with WGCNA, and to reduce the result's dependency on outliers, TOM is calculated by default (TOM=T). This step might require a few hours to complete, depending on the dataset's size.
+
+Since intra-tissue gene correlations are much stronger than inter-tissue correlations, intra-tissue edges are removed prior to clustering. Nevertheless, this choice can be changed through the crossOnly parameter (crossOnly=T by default). Clustering granularity can be controlled through the ds parameter, which changes the deepSplit parameter of the WGCNA cutreeDynamic function (higher values result in more clusters).
+
+```{r, include=T, warning=FALSE}
+clusts <- clusteringWGCNA(data = BC_merged, 
+                          A=Adj, 
+                          ds=2, 
+                          comp1="_S", 
+                          comp2="_E")
+table(clusts$colors)
+region <- rep("S", length(clusts$colors))
+region[grep("_E", names(clusts$colors))] <- "E"
+
+df <- data.frame(cluster=factor(clusts$colors), region=region)
+
+ggplot(df, aes(x=cluster, fill=region))+
+  geom_bar(position = "dodge")+
+  theme_classic()
+
+```
+
+# Visualize results
+The adjacency of clusters is higher than inter-cluster adjacency, as shown for clusters 2 and 4.
+
+```{r, include=T, warning=FALSE, message=F}
+df <- data.frame(
+  adjacency=c(c(Adj[clusts$colors==3,clusts$colors==3]),
+              c(Adj[clusts$colors==6,clusts$colors==6]),
+              c(Adj[clusts$colors==3,clusts$colors==6])), 
+  comparison=c(rep("3 vs 3",length(c(Adj[clusts$colors==3,clusts$colors==3]))),
+               rep("6 vs 6",length(c(Adj[clusts$colors==6,clusts$colors==6]))),
+               rep("3 vs 6",length(c(Adj[clusts$colors==3,clusts$colors==6])))
+               ))
+
+ggplot(df, aes(x=comparison, y=adjacency))+
+  geom_boxplot()+
+  theme_classic()
+```
+ 
+Showing the top 10 genes with the highest kRatio in cluster 3.
+
+```{r, include=T, warning=FALSE, message=F}
+sort((k$kExt1/k$kInt1)[names(clusts$colors)[clusts$colors==3]],decreasing=T)[1:10]
+```
+Performing functional enrichment of genes in cluster 3, for genes measured in the stroma and in the epithelium separately.
+
+```{r, include=T, warning=FALSE, message=F}
+module3 <- names(clusts$colors)[clusts$colors==6]
+module3_S <- gsub("_S$", "", module3[grep("_S$", module3)])
+universe_S <- gsub("_S$", "", rownames(stroma))
+module3_E <- gsub("_E$", "", module3[grep("_E$", module3)])
+universe_E <- gsub("_E$", "", rownames(epi))
+
+GO_S <- enrichGO(gene=module3_S, 
+                 keyType="SYMBOL", 
+                 universe=universe_S, 
+                 ont="BP", 
+                 OrgDb="org.Hs.eg.db")
+
+GO_E <- enrichGO(gene=module3_E, 
+                 keyType="SYMBOL", 
+                 universe=universe_E,
+                 ont="BP", 
+                 OrgDb="org.Hs.eg.db")
+
+dotplot(GO_S, showCategory=10)
+dotplot(GO_E, showCategory=10)
+```
+
+Indentify samples with the highest expression of a module
+```{r, include=T, warning=FALSE}
+ME <- moduleEigengenes(expr = t(BC_merged), colors = clusts$colors)
+hist(ME$eigengenes[,"ME6"], xlab="Module Eigengene 6")
+abline(v=quantile(ME$eigengenes[,"ME6"], 0.9), col="red")
+
+rownames(ME$eigengenes)[order(ME$eigengenes[,"ME6"], decreasing=T)[1:10]]
+```
+
+# Pathway-specific analyses
+
+Pathway-specific analyses can be performed in several ways
+
+* filtering a posteriori the genes belonging to the pathway of interest, keeping in mind that connectivities were computed with the whole set of input genes
+
+* filtering a priori the genes belonging to the pathway of interest without providing any sign of individual genes' influence on the pathway activity
+
+* filtering a priori the genes belonging to the pathway of interest providing the additional information on the sign of individual genes' influence on the pathway activity
+
+In this example, we will use cell cycle genes with the corresponding information on the sign of their influence on cell cycle progression.
+
+```{r, include=T, warning=FALSE, message=F}
+hippo <- read.xlsx("~/Project_crossWGCNA/data/Pathways.xlsx",2)[-1,1]
+sign_hippo <- read.xlsx("~/Project_crossWGCNA/data/Pathways.xlsx",2)[-1,3]
+sign_hippo[which(sign_hippo=="OG")] <- 1
+sign_hippo[which(sign_hippo=="TSG")] <- (-1)
+sign_hippo[-which(sign_hippo %in% c("1", "-1"))] <- NA
+hippo <- hippo[which(sign_hippo %in% c("1", "-1"))]
+sign_hippo <- as.numeric(sign_hippo[which(sign_hippo %in% c("1", "-1"))])
+names(sign_hippo) <- hippo
+```
+
+In the first case, the previously-computed interaction network will be filtered to retrieve information on stromal genes interacting with cell cycle genes in the epithelium.
+
+```{r, include=T, warning=FALSE, message=F}
+genes_tokeep <- c(rownames(BC_merged)[grep("_S$", rownames(BC_merged))],
+                intersect(rownames(BC_merged), paste(hippo,"_E", sep="")))
+Adj_sel <- Adj[genes_tokeep, genes_tokeep]
+k <- degrees(A=Adj_sel, comp1="_S", comp2="_E")
+kRatio_S< - k$kExt1/k$kInt1
+head(sort(kRatio_S, decreasing = T))
+```
+
+In the second and third cases, the adjacency is computed considering only the selected subset of genes. 
+The compartment with gene filtering is specified in the "compartment_sel" parameter ("comp2" in this case, as cell cycle genes are selected in the epithelium). 
+Selected genes are provided through the "selgenes" parameter.
+Finally, the direction of each gene's influence on the specified pathway can be provided in the "sign_net" parameter, a named vector of 1 and -1 corresponding to genes in "selgenes", with matching names.
+
+When signs are not known, do not indicate them, and they will be considered positive by default.
+
+```{r, include=T, warning=FALSE, message=F}
+#sign list contains the signs of the genes from the selected pathway -> leads to discard genes not in the list in the selected compartment (which.sign)
+
+sign_net <- na.omit(sign_hippo[gsub("_E$","",rownames(BC_merged)[grep("_E$",rownames(BC_merged))])])
+
+Adj_hippo <- Adjacency(data=BC_merged, 
+                       method="netdiff",
+                       Adj_type="keep sign", 
+                       cortype="pearson", 
+                       pval="none", 
+                       thr=0.05, 
+                       beta=6, 
+                       comp1="_S", 
+                       comp2="_E", 
+                       sign_list=sign_net, 
+                       compartment_sel = "comp2", 
+                       selgenes=names(sign_net))
+
+k <- degrees(A=Adj_hippo, comp1="_S", comp2="_E")
+kRatio_S <- k$kExt1/k$kInt1
+head(sort(kRatio_S, decreasing = T))
+head(sort(k$kExt1, decreasing = T))
+
+sort(Adj_hippo["PTGDS_S",grep("_E", colnames(Adj_hippo))], decreasing=T)
+sort(Adj_hippo["PTGDS_S",grep("_S", colnames(Adj_hippo))], decreasing=T)[2:11]
+```
+
+
+# References
