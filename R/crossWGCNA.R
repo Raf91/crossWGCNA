@@ -552,7 +552,7 @@ ST_expr_smooth<-function(expr_data, coords, max_dist=5, spots_class, sel_class=c
     class_es<-spots_class[es]
     if(class_es %in% sel_class){
       dist_es<-as.matrix(spots_dist)[,es]
-      sel_spots<-which(dist_es<max_dist & class==class_es)
+      sel_spots<-which(dist_es<max_dist & spots_class==class_es)
       weights<-1/(dist_es[sel_spots]+1)
       if(length(sel_spots)>1){
         averaged_expr_all[,es]<-apply((exp(expr_data[,sel_spots])-1), 1, function(x){log(weighted.mean(x, weights)+1)})
