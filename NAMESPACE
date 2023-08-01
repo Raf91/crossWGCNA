@@ -3,6 +3,7 @@ exportPattern("^[[:alpha:]]+")
 # dependencies
 import(WGCNA)
 import(Seurat)
+import(dynamicTreeCut)
 import(ggplot2)
 import(ggnewscale)
 import(Hmisc)
