@@ -2,7 +2,7 @@
 \alias{ST_weighted_mod}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+  ST_weighted_mod
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

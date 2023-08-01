@@ -2,13 +2,13 @@
 \alias{Adjacency_nd}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+    Adjacency_nd (netdiff)
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-Adjacency_nd(data, comp1 = "_1", comp2 = "_2", Adj_type = "signed", cortype = "spearman", pval = "none", thr = 0.05, beta = 6, sign_list = 1, compartment_sel = "none", selgenes = NA)
+    Adjacency_nd(data, comp1 = "_1", comp2 = "_2", Adj_type = "signed", cortype = "spearman", pval = "none", thr = 0.05, beta = 6, sign_list = 1, compartment_sel = "none", selgenes = NA)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

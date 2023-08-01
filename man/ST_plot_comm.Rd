@@ -2,7 +2,7 @@
 \alias{ST_plot_comm}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-ST_plot_comm
+    ST_plot_comm
 }
 \description{
 Generates a plot showing the communication score of two genes along the boundries between the two tissues/compartments.

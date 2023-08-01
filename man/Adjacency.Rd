@@ -2,13 +2,13 @@
 \alias{Adjacency}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Adjacency
+  Adjacency
 }
 \description{
-Wrapper function to compute cross-tissue gene expression adjacencies. The adjacencies are computed accordingly to the method selected (i.e., "self-loop" or "netdiff").
+  Wrapper function to compute cross-tissue gene expression adjacencies. The adjacencies are computed accordingly to the method selected (i.e., "self-loop" or "netdiff").
 }
 \usage{
-Adjacency(data)
+  Adjacency(data)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

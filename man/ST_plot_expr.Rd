@@ -2,7 +2,7 @@
 \alias{ST_plot_expr}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+ST_plot_expr
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
