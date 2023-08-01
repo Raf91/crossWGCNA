@@ -2,29 +2,51 @@
 \alias{ST_plot_comm}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+ST_plot_comm
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+Generates a plot showing the communication score of two genes along the boundries between the two tissues/compartments.
 }
 \usage{
-ST_plot_comm(x)
+ST_plot_comm(gene1, gene2, averaged_expr_all, coords, included_spots, sel_spots, tis1_spots, tis2_spots, midpoints)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{
-%%     ~~Describe \code{x} here~~
+  \item{gene1}{
+    First gene, measured in compartment1.
+}
+ \item{gene2}{
+    Second gene, measured in compartment2.
+}
+ \item{averaged_expr_all}{
+    Gene expression data matrix where rows are genes and columns are spots. Output of the \code{ST_expr_smooth} function.
+}
+ \item{coords}{
+    X and y coordinates for each spot, obtained from the \code{ST_spots_coords} function.
+}
+ \item{included_spots}{
+    Spots of compartment1 along the boundaries of compartment1 and 2.
+}
+ \item{sel_spots}{
+    List of two vectors of indexes (matched) for compartment1 and compartment2 spots. 
+    Output of the \code{ST_boundary_spots} function.
+}
+ \item{tis1_spots}{
+    Indexes of compartment1 spots.
+}
+ \item{tis2_spots}{
+    Indexes of compartment2 spots.
+}
+ \item{midpoints}{
+    List of two vectors with x and y coordinates of the midpoints between 
+    neighbouring compartment1 and compartment2 spots. Output of the \code{ST_midpoints_df} function.
 }
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+Returns a plot.
 }
 \references{
 %% ~put references to the literature/web site here ~
@@ -39,8 +61,12 @@ ST_plot_comm(x)
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+\code{ST_expr_smooth},
+\code{ST_spots_coords},
+\code{ST_boundary_spots},
+\code{ST_midpoints_df}
 }
+
 \examples{
 ##---- Should be DIRECTLY executable !! ----
 ##-- ==>  Define data, use random,

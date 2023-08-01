@@ -2,7 +2,7 @@
 \alias{changenames}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+Change Row names based on Annotations
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

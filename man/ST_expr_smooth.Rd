@@ -2,29 +2,37 @@
 \alias{ST_expr_smooth}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+  ST_expr_smooth
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+  Smooths spatial transcriptomics gene expression using the weighted mean of neighbouring spots in the same compartment.
 }
 \usage{
-ST_expr_smooth(x)
+  ST_expr_smooth(expr_data, coords, max_dist, spots_class, sel_class)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{
-%%     ~~Describe \code{x} here~~
+  \item{expr_data}{
+    Input data matrix, where rows are genes and columns are spots.
+}
+  \item{coords}{
+    Dataframe with columns specyfing x and y coordinates for each spot, obtained from the \code{ST_spots_coords} function.
+}
+  \item{max_dist}{
+    Integer specifying maximum spots distance to be included in the weighed mean. Default=5.
+}
+  \item{spots_class}{
+    Charater vector with labels indicating the compartment to which each spot belongs.
+}
+  \item{sel_class}{
+    Character vector with the labels of the two compartments to analyze. Can be "Epi" and "Stroma".
 }
 }
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+  Input data is obtained from \code{@assay$SCT@data} slot of the Seurat object.
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+  Smoothed data matrix, where rows are genes and columns are spots.
 }
 \references{
 %% ~put references to the literature/web site here ~
@@ -39,7 +47,7 @@ ST_expr_smooth(x)
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+  \code{ST_spots_coords}
 }
 \examples{
 ##---- Should be DIRECTLY executable !! ----
