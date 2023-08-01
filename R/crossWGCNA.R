@@ -4,16 +4,16 @@ Adjacency <- function(data, method=c("netdiff", "selfloop"), comp1="_1",comp2="_
 
   if (method=="selfloop"){
     A <- Adjacency_sl(data=data,
-                    comp1=comp1,
-                    comp2=comp2,
-                    Adj_type=Adj_type,
-                    cortype=cortype,
-                    pval=pval,
-                    thr=thr,
-                    beta=beta,
-                    sign_list=sign_list,
-                    compartment_sel=compartment_sel,
-                    selgenes=selgenes )
+                      comp1=comp1,
+                      comp2=comp2,
+                      Adj_type=Adj_type,
+                      cortype=cortype,
+                      pval=pval,
+                      thr=thr,
+                      beta=beta,
+                      sign_list=sign_list,
+                      compartment_sel=compartment_sel,
+                      selgenes=selgenes )
 
   } else if (method=="netdiff"){
     A <- Adjacency_nd(data=data,
@@ -107,18 +107,8 @@ Adjacency_sl <- function(data, comp1="_1",comp2="_2", Adj_type="signed",
   return(A)
 }
 
-Adjacency_nd <-
-  function(data,
-           comp1="_1",
-           comp2="_2",
-           Adj_type="signed",
-           cortype="spearman",
-           pval="none",
-           thr=0.05,
-           beta=6,
-           sign_list=1,
-           compartment_sel="none" ,
-           selgenes=NA) {
+Adjacency_nd <- function(data,comp1="_1",comp2="_2",Adj_type="signed",cortype="spearman",
+                         pval="none",thr=0.05,beta=6,sign_list=1,compartment_sel="none" ,selgenes=NA) {
 
     comp1 <- paste(comp1, "$", sep = "")
     comp2 <- paste(comp2, "$", sep = "")
@@ -362,19 +352,8 @@ crossWGCNA <-
   }
 
 ##crossWGCNA pipeline avoiding clustering (output: kInt, kExt, kTot)
-network <-
-  function(data,
-           method="netdiff",
-           Adj_type = "signed",
-           cortype = "spearman",
-           pval = "none",
-           thr = 0.05,
-           beta = 6,
-           comp1 = "_1",
-           comp2 = "_2",
-           sign_list = 1,
-           compartment_sel = "none",
-           selgenes = NA) {
+network <- function(data,method="netdiff",Adj_type = "signed",cortype = "spearman",pval = "none",thr = 0.05,
+                    beta = 6,comp1 = "_1",comp2 = "_2",sign_list = 1,compartment_sel = "none",selgenes = NA) {
 
     comp1 <- paste(comp1, "$", sep = "")
     comp2 <- paste(comp2, "$", sep = "")
@@ -402,46 +381,31 @@ network <-
 
 changenames <- function(data, anno) {
   annotation_sel <- anno[match(rownames(data), anno[, 1]), 2]
-
   if (length(which(annotation_sel == "")) > 0) {
     data <- data[-which(annotation_sel == ""), ]
     annotation_sel <- annotation_sel[-which(annotation_sel == "")]
   }
-
   a <- which(duplicated(annotation_sel))
   while (length(a) > 0) {
-    for (i in 1:length(unique(annotation_sel))) {
-      if (length(which(annotation_sel == unique(annotation_sel)[i])) > 1) {
+    for(i in 1:length(unique(annotation_sel))) {
+      if(length(which(annotation_sel == unique(annotation_sel)[i])) > 1) {
         m <- which.max(rowMeans(data[which(annotation_sel == unique(annotation_sel)[i]), ], na.rm =T))
         data <- data[-which(annotation_sel == unique(annotation_sel)[i])[-m], ]
         annotation_sel <- annotation_sel[-which(annotation_sel == unique(annotation_sel)[i])[-m]]
       }
     }
-
     data <- data[which(is.na(annotation_sel) == F), ]
     annotation_sel <- na.omit(annotation_sel)
     a <- which(duplicated(annotation_sel))
   }
-
   rownames(data) - annotation_sel
   return(data)
 }
 
-
-degrees_mod<-function(data,
-                      method = "netdiff",
-                      modules,
-                      Adj_type = "signed",
-                      cortype = "spearman",
-                      pval = "none",
-                      thr = 0.05,
-                      beta = 6,
-                      comp1 = "_1",
-                      comp2 = "_2") {
-
+degrees_mod <- function(data,method = "netdiff",modules,Adj_type = "signed",cortype = "spearman",pval = "none",
+                        thr = 0.05,beta = 6,comp1 = "_1",comp2 = "_2") {
 
   k <- list()
-  
   for (i in 1:length(unique(modules))){
     mod <- names(modules)[which(modules==unique(modules)[i])]
     genes <- unique(gsub(comp2, "", gsub(comp1, "", mod)))
@@ -457,7 +421,7 @@ degrees_mod<-function(data,
         comp1 = comp1,
         comp2 = comp2
       )
-    Adj<-Adj[mod, mod]
+    Adj <- Adj[mod, mod]
     k[[i]] <- degrees(A = Adj, comp1 = comp1, comp2 = comp2)
 
   }
@@ -466,12 +430,11 @@ degrees_mod<-function(data,
 
 
 
-cytoscape_net<-function(adjacency=adj_GSE10797, dataset=data_merged_GSE10797, gene, comp1, comp2, num, corr="spearman"){
-  interactors<-c(names(sort(adjacency[paste(gene, comp1, sep="_"),grep(comp2, colnames(adjacency))], decreasing=T))[1:num])
-
-  inter_edges<-cor(dataset[paste(gene, comp1, sep="_"),], t(dataset[intersect(interactors, rownames(dataset)),]), method=corr)
-  intra_1<-cor(dataset[paste(gene, comp1, sep="_"),], t(dataset[gsub(comp2, comp1, intersect(interactors, rownames(dataset))),]), method=corr)
-  intra_2<-cor(dataset[paste(gene, comp2, sep="_"),], t(dataset[intersect(interactors, rownames(dataset)),]), method=corr)
+cytoscape_net <- function(adjacency=adj_GSE10797, dataset=data_merged_GSE10797, gene, comp1, comp2, num, corr="spearman"){
+  interactors <- c(names(sort(adjacency[paste(gene, comp1, sep="_"),grep(comp2, colnames(adjacency))], decreasing=T))[1:num])
+  inter_edges <- cor(dataset[paste(gene, comp1, sep="_"),], t(dataset[intersect(interactors, rownames(dataset)),]), method=corr)
+  intra_1 <- cor(dataset[paste(gene, comp1, sep="_"),], t(dataset[gsub(comp2, comp1, intersect(interactors, rownames(dataset))),]), method=corr)
+  intra_2 <- cor(dataset[paste(gene, comp2, sep="_"),], t(dataset[intersect(interactors, rownames(dataset)),]), method=corr)
 
   df<-data.frame(Source=c(rep(gene, length(inter_edges)),
                           rep(gene, length(intra_1)),
@@ -498,19 +461,26 @@ cytoscape_net<-function(adjacency=adj_GSE10797, dataset=data_merged_GSE10797, ge
 }
 
 
-cor_inspect<-function(data=data_merged_GSE88715, gene1, gene2, comp1="_tis1", comp2="_tis2"){
+cor_inspect <- function(data=data_merged_GSE88715, gene1, gene2, comp1="_tis1", comp2="_tis2"){
+  
   df <- data.frame(
     gene1=c(data[paste(gene1, comp1, sep=""),], data[paste(gene1, comp2, sep=""),], data[paste(gene1, comp1, sep=""),], data[paste(gene1, comp2, sep=""),]),
     gene2=c(data[paste(gene2, comp1, sep=""),], data[paste(gene2, comp2, sep=""),], data[paste(gene2, comp2, sep=""),], data[paste(gene2, comp2, sep=""),]),
-    compartment=c(rep(c("comp1 vs comp1","comp2 vs comp2","comp1 vs comp2", "comp2 vs comp1"), each=ncol(data)) ))
-  p <- ggplot(df, aes(x=gene1, y=gene2))+geom_point()+facet_wrap(.~compartment)+geom_smooth(method = "lm")+theme_classic()+labs(x=gene1, y=gene2)
+    compartment=c(rep(c("comp1 vs comp1","comp2 vs comp2","comp1 vs comp2", "comp2 vs comp1"), each=ncol(data))))
+  
+  p <- ggplot(df, aes(x=gene1, y=gene2))+
+    geom_point()+
+    facet_wrap(.~compartment)+
+    geom_smooth(method = "lm")+
+    theme_classic()+
+    labs(x=gene1, y=gene2)
+  
   return(p)
 }
 
 ###define spots coordinates
 #data is the Seurat object
 ST_spots_coords <- function(data, br=1000){
-  require(Seurat)
   y <- GetTissueCoordinates(data)[,1]
   p <- hist(y, breaks=br)
   #1000 is way higher than the number of peaks. If using another array, change this number
@@ -521,8 +491,6 @@ ST_spots_coords <- function(data, br=1000){
   peaks <- cut(y, breaks = c(min(y),breaks, max(y)))
   levels(peaks) <- c(1:length(unique(peaks)))
   y_bin <- peaks
-
-
   x <- GetTissueCoordinates(data)[,2]
   p <- hist(x, breaks=br)
   breaks <- p$breaks[p$counts==0]
@@ -531,7 +499,6 @@ ST_spots_coords <- function(data, br=1000){
   peaks <- cut(x, breaks = c(min(x),breaks, max(x)))
   levels(peaks) <- c(1:length(unique(peaks)))
   x_bin <- peaks
-
   x_bin <- as.numeric(x_bin)
   y_bin <- as.numeric(y_bin)
   #transform ycoordinates so that they represent the height of an equilateral triangle
@@ -548,7 +515,6 @@ ST_spots_coords <- function(data, br=1000){
 ST_expr_smooth <- function(expr_data, coords, max_dist=5, spots_class, sel_class=c("Epi", "Stroma")){
   spots_dist <- dist(coords)
   averaged_expr_all <- matrix(ncol=ncol(expr_data), nrow=nrow(expr_data))
-
   for (es in 1:ncol(expr_data)){
     class_es <- spots_class[es]
     if (class_es %in% sel_class){
@@ -556,7 +522,8 @@ ST_expr_smooth <- function(expr_data, coords, max_dist=5, spots_class, sel_class
       sel_spots <- which(dist_es<max_dist & spots_class==class_es)
       weights <- 1/(dist_es[sel_spots]+1)
       if (length(sel_spots)>1){
-        averaged_expr_all[,es] <- apply((exp(expr_data[,sel_spots])-1), 1, function(x){log(weighted.mean(x, weights)+1)})
+        averaged_expr_all[,es] <- apply(
+          (exp(expr_data[,sel_spots])-1), 1, function(x){log(weighted.mean(x, weights)+1)})
       } else {
         averaged_expr_all[,es] <- expr_data[,sel_spots]
       }
@@ -571,10 +538,8 @@ ST_expr_smooth <- function(expr_data, coords, max_dist=5, spots_class, sel_class
 ##stroma with at least 1 neighbouring stroma spot
 ##epi with at least 1 selected sroma spot
 ST_spots_filt <- function(coords, tis1_spots, tis2_spots){
-  
   x_bin <- coords[,1]
   y_bin <- coords[,2]
-
   included_es_spots <- c()
   for(es in tis1_spots){
     which_x_coord <- which(x_bin>=x_bin[es]-2 & x_bin<=x_bin[es]+2)
@@ -613,10 +578,8 @@ ST_spots_filt <- function(coords, tis1_spots, tis2_spots){
 ST_merged_dataset <- function(sel_spots, coords, averaged_expr_all, var_thr=0.75, comp1="_tis1", comp2="_tis2"){
   included_es_spots <- sel_spots[[1]]
   included_ss_spots <- sel_spots[[2]]
-
   x_bin<-coords[,1]
   y_bin<-coords[,2]
-
   sel_es_spots <- c()
   for (es in included_es_spots){
     which_x_coord <- which(x_bin>=x_bin[es]-2 & x_bin<=x_bin[es]+2)
@@ -649,7 +612,6 @@ ST_merged_dataset <- function(sel_spots, coords, averaged_expr_all, var_thr=0.75
       tis1_expr <- averaged_expr_all[,es]
       tis1_expr_all <- cbind(tis1_expr_all, tis1_expr)
       tis2_expr_all <- cbind(tis2_expr_all, tis2_expr)
-
       included_spots <- c(included_spots, es)
     }
 
@@ -664,10 +626,11 @@ ST_merged_dataset <- function(sel_spots, coords, averaged_expr_all, var_thr=0.75
   var_tis2 <- apply(tis2_expr_all,1,var)
   var_tis1 <- apply(tis1_expr_all,1,var)
 
-  genes <- intersect(which(var_tis2>quantile(var_tis2, var_thr, na.rm=T)), which(var_tis1>quantile(var_tis1, var_thr, na.rm=T)))
-  
-  genes <- rownames(averaged_expr_all)[genes]
+  genes <- intersect(
+    which(var_tis2>quantile(var_tis2, var_thr, na.rm=T)), 
+    which(var_tis1>quantile(var_tis1, var_thr, na.rm=T)))
 
+  genes <- rownames(averaged_expr_all)[genes]
   tis2 <- tis2_expr_all[genes,]
   tis1 <- tis1_expr_all[genes,]
 
@@ -675,28 +638,25 @@ ST_merged_dataset <- function(sel_spots, coords, averaged_expr_all, var_thr=0.75
   rownames(tis2) <- paste(rownames(tis2), comp2, sep="")
   rownames(tis1) <- paste(rownames(tis1), comp1, sep="")
   colnames(tis1) <- colnames(tis2)
-
   data_merged <- rbind(tis2, tis1)
-
   return(list(data_merged, included_spots))
 }
 
 
 ##finds spots included in the boundaries
 #included_spots output of merged_dataset [[2]]
-ST_boundary_spots<-function(included_spots, coords, tis2_spots){
-  x_bin<-coords[,1]
-  y_bin<-coords[,2]
-
-  included_spots_tis1<-c()
-  included_spots_tis2<-c()
+ST_boundary_spots <- function(included_spots, coords, tis2_spots){
+  x_bin <- coords[,1]
+  y_bin <- coords[,2]
+  included_spots_tis1 <- c()
+  included_spots_tis2 <- c()
   for(es in included_spots){
-    which_x_coord<-which(x_bin>=x_bin[es]-2 & x_bin<=x_bin[es]+2)
-    which_y_coord<-which(y_bin>=y_bin[es]-sqrt(3)-0.1 & y_bin<=y_bin[es]+sqrt(3)+0.1)
-    sel_spots<-intersect(which_x_coord, which_y_coord)
-    sel_spots_tis2<-intersect(tis2_spots, sel_spots)
-    included_spots_tis2<-c(included_spots_tis2, sel_spots_tis2)
-    included_spots_tis1<-c(included_spots_tis1, rep(es, length(sel_spots_tis2)))
+    which_x_coord <- which(x_bin>=x_bin[es]-2 & x_bin<=x_bin[es]+2)
+    which_y_coord <- which(y_bin>=y_bin[es]-sqrt(3)-0.1 & y_bin<=y_bin[es]+sqrt(3)+0.1)
+    sel_spots <- intersect(which_x_coord, which_y_coord)
+    sel_spots_tis2 <- intersect(tis2_spots, sel_spots)
+    included_spots_tis2 <- c(included_spots_tis2, sel_spots_tis2)
+    included_spots_tis1 <- c(included_spots_tis1, rep(es, length(sel_spots_tis2)))
   }
 
   return(list(included_spots_tis1, included_spots_tis2))
@@ -707,11 +667,12 @@ ST_boundary_spots<-function(included_spots, coords, tis2_spots){
 ST_midpoints_def <- function(coords, sel_spots){
   x_bin <- coords[,1]
   y_bin <- coords[,2]
-
   included_spots_tis1 <- sel_spots[[1]]
   included_spots_tis2 <- sel_spots[[2]]
-
-  df <- data.frame(x_coord= c(x_bin[included_spots_tis1],x_bin[included_spots_tis2]),y_coord= c(-(y_bin[included_spots_tis1]), -(y_bin[included_spots_tis2])))
+  
+  df <- data.frame(
+    x_coord=c(x_bin[included_spots_tis1],x_bin[included_spots_tis2]),
+    y_coord= c(-(y_bin[included_spots_tis1]), -(y_bin[included_spots_tis2])))
 
   midpoints_x <- (df$x_coord[c(1:length(included_spots_tis1))]+df$x_coord[-c(1:length(included_spots_tis1))])/2
   midpoints_y <- (df$y_coord[c(1:length(included_spots_tis1))]+df$y_coord[-c(1:length(included_spots_tis1))])/2
@@ -729,14 +690,18 @@ ST_plot_expr <- function(gene, averaged_expr_all, coords, included_spots, tis1_s
   midpoints_x <- midpoints[[1]]
   midpoints_y <- midpoints[[2]]
 
-  df <- data.frame(x_coord= c(x_bin[tis1_spots],x_bin[tis2_spots], x_bin[included_spots]),y_coord= c(-(y_bin[tis1_spots]), -(y_bin[tis2_spots]), -y_bin[included_spots]),
-                 compartment=c(rep("tis1", length(tis1_spots)),rep("tis2", length(tis2_spots)), rep("edge", length(included_spots))),
-                 gene=c(averaged_expr_all[gene,tis1_spots], averaged_expr_all[gene,tis2_spots], averaged_expr_all[gene,included_spots]))
+  df <- data.frame(
+    x_coord= c(x_bin[tis1_spots],x_bin[tis2_spots], x_bin[included_spots]),y_coord= c(-(y_bin[tis1_spots]), -(y_bin[tis2_spots]), -y_bin[included_spots]),
+    compartment=c(rep("tis1", length(tis1_spots)),rep("tis2", length(tis2_spots)), rep("edge", length(included_spots))),
+    gene=c(averaged_expr_all[gene,tis1_spots], averaged_expr_all[gene,tis2_spots], averaged_expr_all[gene,included_spots]))
   
-  df_midpoint <- data.frame(x_coord= midpoints_x,
-                          y_coord= midpoints_y)
+  df_midpoint <- data.frame(x_coord= midpoints_x,y_coord= midpoints_y)
 
-  p <- ggplot(data=df, aes(x=x_coord, y=y_coord, colour=gene))+geom_point()+scale_color_continuous(type = "viridis")+geom_point(data=df_midpoint, size=1, colour="black")+theme_classic()
+  p <- ggplot(
+    data=df, aes(x=x_coord, y=y_coord, colour=gene))+
+    geom_point()+scale_color_continuous(type = "viridis")+
+    geom_point(data=df_midpoint, size=1, colour="black")+
+    theme_classic()
 
   return(p)
 }
@@ -749,19 +714,21 @@ ST_plot_expr <- function(gene, averaged_expr_all, coords, included_spots, tis1_s
 
 ST_plot_comm <- function(gene1, gene2, averaged_expr_all, coords, included_spots, sel_spots, tis1_spots, tis2_spots, midpoints){
 
-  midpoints_x<-midpoints[[1]]
-  midpoints_y<-midpoints[[2]]
+  midpoints_x <- midpoints[[1]]
+  midpoints_y <- midpoints[[2]]
 
-  x_bin<-coords[,1]
-  y_bin<-coords[,2]
+  x_bin <- coords[,1]
+  y_bin <- coords[,2]
 
-  included_spots_tis1<-sel_spots[[1]]
-  included_spots_tis2<-sel_spots[[2]]
+  included_spots_tis1 <- sel_spots[[1]]
+  included_spots_tis2 <- sel_spots[[2]]
   
-  df <- data.frame(x_coord= c(x_bin[tis1_spots],x_bin[tis2_spots], x_bin[included_spots]),y_coord= c(-(y_bin[tis1_spots]), -(y_bin[tis2_spots]), -y_bin[included_spots]),
-                 compartment=c(rep("tis1", length(tis1_spots)),rep("tis2", length(tis2_spots)), rep("edge", length(included_spots))),
-                 gene1=c(averaged_expr_all[gene1,tis1_spots], averaged_expr_all[gene1,tis2_spots], averaged_expr_all[gene1,included_spots]),
-                 gene2=c(averaged_expr_all[gene2,tis1_spots], averaged_expr_all[gene2,tis2_spots], averaged_expr_all[gene2,included_spots]))
+  df <- data.frame(
+    x_coord=c(x_bin[tis1_spots],x_bin[tis2_spots], x_bin[included_spots]),y_coord= c(-(y_bin[tis1_spots]), -(y_bin[tis2_spots]), -y_bin[included_spots]),
+    compartment=c(rep("tis1", length(tis1_spots)),rep("tis2", length(tis2_spots)), rep("edge", length(included_spots))),
+    gene1=c(averaged_expr_all[gene1,tis1_spots], averaged_expr_all[gene1,tis2_spots], averaged_expr_all[gene1,included_spots]),
+    gene2=c(averaged_expr_all[gene2,tis1_spots], averaged_expr_all[gene2,tis2_spots], averaged_expr_all[gene2,included_spots])
+    )
 
 
   df$gene1.scale <- with(df, (gene1-min(gene1, na.rm=T))/diff(range(gene1, na.rm=T)))
@@ -777,17 +744,13 @@ ST_plot_comm <- function(gene1, gene2, averaged_expr_all, coords, included_spots
   return(p)
 }
 
-
-
 ##compute weighted average of a module
 #modules vector with module labels assignments
 ST_weighted_mod <- function(modules, kw, mod_sel, averaged_expr_all, comp1="_tis1", comp2="_tis2"){
   mod <- names(modules)[which(modules==mod_sel)]
   weights <- kw[[which(unique(modules)==mod_sel)]]$kExt1[mod[grep(comp1, mod)]]
   wm1 <- apply((averaged_expr_all[gsub(comp1, "", mod[grep(comp1, mod)]),]), 2, function(x){weighted.mean(x, weights)})
-
   weights <- kw[[which(unique(modules)==mod_sel)]]$kExt2[mod[grep(comp2, mod)]]
   wm2 <- apply((averaged_expr_all[gsub(comp2, "", mod[grep(comp2, mod)]),]), 2, function(x){weighted.mean(x, weights)})
-
   return(list(wm1, wm2))
 }
