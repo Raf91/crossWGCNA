@@ -14,7 +14,7 @@ library(Seurat)
 library(fgsea)
 library(msigdbr)
 library(ggplot2)
-require(ggnewscale)
+library(ggnewscale)
 ```
 
 # Input data
@@ -24,12 +24,11 @@ require(ggnewscale)
 * Identify cluster identities based on marker genes' expression
 
 ```{r, include=T, warning=FALSE, message=F}
-BC <- Load10X_Spatial(data.dir = "~/Project_crossWGCNA/data/Spatial transcriptomics/10x/",
-                      filename = "Visium_Human_Breast_Cancer_filtered_feature_bc_matrix.h5")
 
+pathTo10Xdata <- "~/Project_crossWGCNA/stable_version/dev_crossWGCNA/data/10x/"
 
+BC <- Load10X_Spatial(data.dir=pathTo10Xdata,filename="Visium_Human_Breast_Cancer_filtered_feature_bc_matrix.h5")
 BC <- SCTransform(BC, assay = "Spatial", verbose = FALSE)
-
 BC <- RunPCA(BC, assay = "SCT", verbose = FALSE)
 BC <- FindNeighbors(BC, reduction = "pca", dims = 1:30)
 BC <- FindClusters(BC, verbose = FALSE)

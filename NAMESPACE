@@ -1,9 +1,9 @@
 exportPattern("^[[:alpha:]]+")
 
 # dependencies
-import(WGCNA)
-import(Seurat)
-import(dynamicTreeCut)
+import(WGCNA) # capire cosa usa di WGCNA
+import(Seurat) # capire cosa usa di Seurat
+import(dynamicTreeCut) # capire cosa usa di dynamicTreeCut
 import(ggplot2)
 import(ggnewscale)
 import(Hmisc)
