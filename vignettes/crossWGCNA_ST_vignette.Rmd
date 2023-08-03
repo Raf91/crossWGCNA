@@ -112,6 +112,7 @@ md <- ST_merged_dataset(sel_spots=sf,
 # Adjacency
 
 * Compute the adjacency. Remove the hashtag to run the code.
+
 ```{r, include=T, warning=FALSE, message=F}
 adj <- Adjacency(data=md[[1]], 
                  method="netdiff",
@@ -222,6 +223,7 @@ ggplot(df, aes(x=Target, y=Weight)) +
 # Nodes' intra- and inter-tissue degrees
 
 * Generate the network, obtaining intra- ad inter-tissue degrees. Remove the hashtag to run the code.
+
 ```{r, include=T, warning=FALSE, message=F}
 net <- network(data=md[[1]], 
                Adj_type="signed", 
@@ -232,7 +234,6 @@ net <- network(data=md[[1]],
                comp1="_tis1", 
                comp2="_tis2")
 
-#load("ST_net_pipeline.RData")
 ```
 
 * Perform gene set enrichment analysis of genes ranked based on kRatio.
@@ -265,8 +266,6 @@ mods <- crossWGCNA(data=md[[1]],
                    beta=6, 
                    comp1="_tis1", 
                    comp2="_tis2")
-
-#load("ST_mods_pipeline.RData")
 ```
 
 * Compute the intra-modular connectivity (remove the dashes to run the code).
@@ -281,24 +280,23 @@ kwithin <- degrees_mod(data=md[[1]],
                        beta = 6,
                        comp1 = "_tis1",
                        comp2 = "_tis2")
-#load("ST_kWithin.RData")
 ```
 
 * Weighted module expression, selecting a specific module
 
 ```{r, include=T, warning=FALSE, message=F}
 modules <- mods[[2]]$colors
-
+mod_sel <- unique(as.numeric(modules))[1]
 wm <- ST_weighted_mod(modules=mods[[2]]$colors, 
-                      kwithin, 
-                      mod_sel=1, 
+                      kw=kwithin, 
+                      mod_sel=mod_sel, 
                       averaged_expr_all=averaged_expr_all_fun, 
                       comp1="_tis1", 
                       comp2="_tis2")
-
 ```
 
 * Visualize the weighted module expression in space
+
 ```{r, include=T, warning=FALSE, message=F}
 #weighted mean of genes measured in tissue 1
 df <- data.frame(x_coord=c(x_bin[epi_spots],x_bin[stroma_spots]),
@@ -316,8 +314,8 @@ p1 <- ggplot(data=df, aes(x=x_coord, y=y_coord, colour=gene)) +
   theme_classic()
 
 #weighted mean of genes measured in tissue 2
-df <- data.frame(x_coord= c(x_bin[epi_spots],x_bin[stroma_spots]),
-                 y_coord= c(-(y_bin[epi_spots]), -(y_bin[stroma_spots])),
+df <- data.frame(x_coord=c(x_bin[epi_spots],x_bin[stroma_spots]),
+                 y_coord=c(-(y_bin[epi_spots]), -(y_bin[stroma_spots])),
                  compartment=c(rep("epi", length(epi_spots)),rep("stroma", length(stroma_spots))),
                  gene=c(wm[[2]][epi_spots], wm[[2]][stroma_spots]))
 
