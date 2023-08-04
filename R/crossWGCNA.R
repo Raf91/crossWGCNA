@@ -75,12 +75,14 @@ Adjacency <- function(
     genes_comp1_orig <- grep(comp1, rownames(A_orig))
     genes_comp2_orig <- grep(comp2, rownames(A_orig))
     avgpath <- matrix(ncol=nrow(A)/2, nrow=nrow(A)/2)
+    
     for (x in 1:(nrow(A)/2)) {
       avgpath[x, ] <- (A[genes_comp1[x], genes_comp1]+A[genes_comp2[x], genes_comp2])/2
     }
     if(verbose){
       cat("Removing average conserved interactions...\n")
     }
+    
     A[genes_comp1, genes_comp2] <- A[genes_comp1, genes_comp2] - avgpath
     A[genes_comp2, genes_comp1] <- A[genes_comp2, genes_comp1] - avgpath
     diff <- abs(A_orig[genes_comp1_orig, genes_comp2_orig])-abs(A[genes_comp1, genes_comp2])
@@ -97,13 +99,16 @@ Adjacency <- function(
       selgenes <- intersect(paste(selgenes, gsub("\\$", "", comp), sep = ""), rownames(A))
       sel_1 <- c(grep(comp1, rownames(A)), which(rownames(A) %in% selgenes))
       sel_2 <- c(which(rownames(A) %in% selgenes), grep(comp2, rownames(A)))
+      
       if(compartment_sel=="comp2"){
         A <- A[sel_1,sel_1]
       } else {
         A <- A[sel_2,sel_2]
       }
+      
       genes_comp1 <- grep(comp1, rownames(A))
       genes_comp2 <- grep(comp2, rownames(A))
+      
       if(compartment_sel=="comp2"){
         A[genes_comp2, genes_comp1] <- A[genes_comp2, genes_comp1]*(sign_list[rownames(A)[genes_comp2]])
         A[genes_comp1, genes_comp2] <- t(A[genes_comp2, genes_comp1]*(sign_list[rownames(A)[genes_comp2]])) 
