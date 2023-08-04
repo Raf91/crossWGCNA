@@ -37,6 +37,7 @@ Adjacency <- function(
   if(!(compartment_sel %in% c("none","comp1","comp2"))){
     stop("'compartment_sel' argument is different from all the admitted values.\n Please refer to manual for further details.")
   }
+  
   if(verbose){
     cat("Computing correlation matrix...\n")
   }
@@ -71,6 +72,7 @@ Adjacency <- function(
     if(verbose){
       cat("Computing average conserved interactions...\n")
     }
+
     A_orig <- A
     genes_comp1_orig <- grep(comp1, rownames(A_orig))
     genes_comp2_orig <- grep(comp2, rownames(A_orig))
@@ -99,7 +101,6 @@ Adjacency <- function(
       selgenes <- intersect(paste(selgenes, gsub("\\$", "", comp), sep = ""), rownames(A))
       sel_1 <- c(grep(comp1, rownames(A)), which(rownames(A) %in% selgenes))
       sel_2 <- c(which(rownames(A) %in% selgenes), grep(comp2, rownames(A)))
-      
       if(compartment_sel=="comp2"){
         A <- A[sel_1,sel_1]
       } else {
@@ -120,6 +121,7 @@ Adjacency <- function(
       stop("'compartment_sel' can't be 'none' when 'selgenes' is specified")
     }
   })
+
   if(verbose){
     cat("Computing adjacency matrix...")}
   if (Adj_type=="signed"){
