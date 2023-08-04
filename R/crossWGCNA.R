@@ -10,242 +10,123 @@ Adjacency <- function(
   beta=6, 
   sign_list=1, 
   compartment_sel="none",
-  selgenes=NA)
-  {
-    if(missing(method) | !(method %in% c("netdiff","selfloop"))){
-      stop("'method' argument is not specified.\nPlease provide which method to use (i.e., 'netdiff' or 'selfloop').")
-    }
-    if(!(Adj_type %in% c("signed", "unsigned", "keep sign"))){
-      stop("'Adj_type' argument is different from all the admitted values.\nPlease refer to manual for further details.")
-    }
-    if(!(cortype %in% c("pearson","spearman","bicor"))){
-      stop("'cortype' argument is different from all the admitted values.\nPlease refer to manual for further details.")
-    }
-    if(!(pval %in% c("none","threshold","weight"))){
-      stop("'pval' argument is different from all the admitted values.\nPlease refer to manual for further details.")
-    }
-    if(!is.numeric(thr)){
-      stop("'thr' argument should be numeric. Default is 0.05.")
-    }
-    if(!is.numeric(beta)){
-      stop("'beta' argument should be an integer. Default is 6.")
-    }
-    if(!is.numeric(sign_list)){
-      stop("'sign_list' argument should be a positive or negative integer (i.e., +1 or -1)")
-    }
-    if(!(compartment_sel %in% c("none","comp1","comp2"))){
-      stop("'compartment_sel' argument is different from all the admitted values.\n Please refer to manual for further details.")
-    }
-    if(!is.character(selgenes)){
-      stop("'selgenes' should be a vector containing HUGO symbols. Default is NA")
-    }
-    if (method=="selfloop"){
-      A <- Adjacency_sl(
-        data=data,
-        comp1=comp1,
-        comp2=comp2,
-        Adj_type=Adj_type,
-        cortype=cortype,
-        pval=pval,
-        thr=thr,
-        beta=beta,
-        sign_list=sign_list,
-        compartment_sel=compartment_sel,
-        selgenes=selgenes)
+  selgenes=NA,
+  verbose=FALSE)
+{
+  if(!(method %in% c("netdiff","selfloop"))){
+    stop("Please select a valid method. Should be 'netdiff' or 'selfloop'.")
+  }
+  if(!(Adj_type %in% c("signed","unsigned","keep sign"))){
+    stop("\n'Adj_type' argument is different from all the admitted values.\nPlease refer to manual for further details.")
+  }
+  if(!(cortype %in% c("pearson","spearman","bicor"))){
+    stop("'cortype' argument is different from all the admitted values.\nPlease refer to manual for further details.")
+  }
+  if(!(pval %in% c("none","threshold","weight"))){
+    stop("'pval' argument is different from all the admitted values.\nPlease refer to manual for further details.")
+  }
+  if(!is.numeric(thr)){
+    stop("'thr' argument should be numeric. Default is 0.05.")
+  }
+  if(!is.numeric(beta)){
+    stop("'beta' argument should be an integer. Default is 6.")
+  }
+  if(!is.numeric(sign_list)){
+    stop("'sign_list' argument should be a positive or negative integer (i.e., +1 or -1)")
+  }
+  if(!(compartment_sel %in% c("none","comp1","comp2"))){
+    stop("'compartment_sel' argument is different from all the admitted values.\n Please refer to manual for further details.")
+  }
+  if(verbose){
+    cat("Computing correlation matrix...\n")
+  }
+  if (pval=="none") {
+    if (cortype=="bicor") {
+      A <- bicor(t(data))
     } else {
-      A <- Adjacency_nd(
-        data=data,
-        comp1=comp1,
-        comp2=comp2,
-        Adj_type=Adj_type,
-        cortype=cortype,
-        pval=pval,
-        thr=thr,
-        beta=beta,
-        sign_list=sign_list,
-        compartment_sel=compartment_sel,
-        selgenes=selgenes)
+      A <- cor(t(data), method = cortype)
     }
+  } else {
+    if (cortype=="bicor") {
+      paste("Can't use pval with bicor")
+    } else {
+      mat <- rcorr(t(data), type=cortype)
+      A <- mat[[1]]
+      p.val <- mat[[3]]
+      rm(mat)
+      if (pval=="threhsold") {
+        A[which(p.val>thr)] <- NA
+      } else if (pval=="weight") {
+        A <- A * (1-p.val)
+      }
+    }
+  }
+  
+  comp1 <- paste(comp1, "$", sep="")
+  comp2 <- paste(comp2, "$", sep="")
+  genes_comp1 <- grep(comp1, rownames(A))
+  genes_comp2 <- grep(comp2, rownames(A))
+  
+  if(method=="netdiff"){
+    if(verbose){
+      cat("Computing average conserved interactions...\n")
+    }
+    A_orig <- A
+    genes_comp1_orig <- grep(comp1, rownames(A_orig))
+    genes_comp2_orig <- grep(comp2, rownames(A_orig))
+    avgpath <- matrix(ncol=nrow(A)/2, nrow=nrow(A)/2)
+    for (x in 1:(nrow(A)/2)) {
+      avgpath[x, ] <- (A[genes_comp1[x], genes_comp1]+A[genes_comp2[x], genes_comp2])/2
+    }
+    if(verbose){
+      cat("Removing average conserved interactions...\n")
+    }
+    A[genes_comp1, genes_comp2] <- A[genes_comp1, genes_comp2] - avgpath
+    A[genes_comp2, genes_comp1] <- A[genes_comp2, genes_comp1] - avgpath
+    diff <- abs(A_orig[genes_comp1_orig, genes_comp2_orig])-abs(A[genes_comp1, genes_comp2])
+    A[genes_comp1, genes_comp2][diff<0] <- A_orig[genes_comp1_orig, genes_comp2_orig][diff<0]
+    diff <- abs(A_orig[genes_comp2_orig, genes_comp1_orig])-abs(A[genes_comp2, genes_comp1])
+    A[genes_comp2, genes_comp1][diff<0] <- A_orig[genes_comp2_orig, genes_comp1_orig][diff<0]
+    A <- A/2
+  }
+  
+  suppressWarnings(if(!any(is.na(selgenes)) | length(na.omit(selgenes))!=0){
+    if(compartment_sel!="none"){
+      sign_list <- sign_list[which(!is.na(sign_list))]
+      comp <- ifelse(compartment_sel=="comp2",comp2,comp1)
+      selgenes <- intersect(paste(selgenes, gsub("\\$", "", comp), sep = ""), rownames(A))
+      sel_1 <- c(grep(comp1, rownames(A)), which(rownames(A) %in% selgenes))
+      sel_2 <- c(which(rownames(A) %in% selgenes), grep(comp2, rownames(A)))
+      if(compartment_sel=="comp2"){
+        A <- A[sel_1,sel_1]
+      } else {
+        A <- A[sel_2,sel_2]
+      }
+      genes_comp1 <- grep(comp1, rownames(A))
+      genes_comp2 <- grep(comp2, rownames(A))
+      if(compartment_sel=="comp2"){
+        A[genes_comp2, genes_comp1] <- A[genes_comp2, genes_comp1]*(sign_list[rownames(A)[genes_comp2]])
+        A[genes_comp1, genes_comp2] <- t(A[genes_comp2, genes_comp1]*(sign_list[rownames(A)[genes_comp2]])) 
+      } else {
+        A[genes_comp1, genes_comp2] <- A[genes_comp1, genes_comp2]*(sign_list[rownames(A)[genes_comp1]])
+        A[genes_comp2, genes_comp1] <- t(A[genes_comp1, genes_comp2]*(sign_list[rownames(A)[genes_comp1]]))
+      }
+    } else{
+      stop("'compartment_sel' can't be 'none' when 'selgenes' is specified")
+    }
+  })
+  if(verbose){
+    cat("Computing adjacency matrix...")}
+  if (Adj_type=="signed"){
+    A <- (0.5 * (1+A))^beta
+  } else if (Adj_type=="unsigned"){
+    A <- (abs(A))^beta
+  } else if (Adj_type=="keep sign"){
+    A <- ((abs(A))^beta)*sign(A)
+  }
   return(A)
 }
 
-Adjacency_sl <- function(
-  data, 
-  comp1="_1",
-  comp2="_2", 
-  Adj_type="signed",
-  cortype="spearman", 
-  pval="none", 
-  thr=0.05, 
-  beta=6,
-  sign_list=1, 
-  which.sign="none")
-  {
-    comp1 <- paste(comp1, "$", sep="")
-    comp2 <- paste(comp2, "$", sep="")
-    
-    if (pval=="none"){
-      if (cortype == "bicor"){
-        A <- bicor(t(data))
-        } else {
-          A <- cor(t(data), method=cortype)
-        }
-    } else {
-      if (cortype=="bicor"){
-        paste("Can't use pval with bicor")
-      } else {
-        mat <- rcorr(t(data), type=cortype)
-        A <- mat[[1]]
-        p.val <- mat[[3]]
-        rm(mat)
-        if(pval == "threshold"){
-          A[which(p.val > thr)] <- NA
-        } else if (pval == "weight"){
-          A <- A*(1-p.val)
-        }
-      }
-    }
-    
-    genes_comp1 <- grep(comp1, rownames(A))
-    genes_comp2 <- grep(comp2, rownames(A))
-  
-    if (compartment_sel == "comp2") {
-      if (is.null(selgenes) | length(na.omit(selgenes))==0) {
-        stop("No selected genes provided")}
-      
-      sign_list <- sign_list[which(!is.na(sign_list))]
-      names(sign_list) <- paste(names(sign_list), gsub("\\$", "", comp2), sep = "")
-      selgenes <- intersect(paste(selgenes, gsub("\\$", "", comp2), sep = ""), rownames(A))
-      genes_subset <- c(genes_comp1, which(rownames(A) %in% selgenes))
-      A <- A[genes_subset,genes_subset]
-      A[genes_comp2, genes_comp1] <- A[genes_comp2, genes_comp1]*(sign_list[rownames(A)[genes_comp2]])
-      A[genes_comp1, genes_comp2] <- t(A[genes_comp2, genes_comp1]*(sign_list[rownames(A)[genes_comp2]])) 
-  
-    } else {
-      if (is.null(selgenes) | length(na.omit(selgenes))==0) {
-        stop("No selected genes provided")}
-      
-      sign_list <- sign_list[which(!is.na(sign_list))]
-      names(sign_list) <- paste(names(sign_list), gsub("\\$", "", comp1), sep = "")
-      selgenes <- intersect(paste(selgenes, gsub("\\$", "", comp1), sep = ""), rownames(A))
-      genes_subset <- c(which(rownames(A) %in% selgenes), genes_comp2)
-      A <- A[genes_subset,genes_subset]
-      A[genes_comp1, genes_comp2] <- A[genes_comp1, genes_comp2]*(sign_list[rownames(A)[genes_comp1]])
-      A[genes_comp2, genes_comp1] <- t(A[genes_comp1, genes_comp2]*(sign_list[rownames(A)[genes_comp1]]))
-    }
-
-    if (Adj_type=="signed"){
-      A <- (0.5 * (1+A) )^beta
-    } else if (Adj_type=="unsigned"){
-      A <- (abs(A))^beta
-    } else if (Adj_type=="keep sign"){
-      A <- ((abs(A))^beta)*sign(A)
-    }
-    return(A)
-  }
-
-Adjacency_nd <- function(data,comp1="_1",comp2="_2",Adj_type="signed",cortype="spearman",
-                         pval="none",thr=0.05,beta=6,sign_list=1,compartment_sel="none" ,selgenes=NA) {
-
-    comp1 <- paste(comp1, "$", sep = "")
-    comp2 <- paste(comp2, "$", sep = "")
-
-    ###Creates the correlation matrix A
-    if (pval == "none") {
-      if (cortype == "bicor") {
-        A <- bicor(t(data))
-      } else {
-        A <- cor(t(data), method = cortype)
-      }
-    } else {
-      if (cortype == "bicor") {
-        paste("Can't use pval with bicor")
-      } else {
-        mat <- rcorr(t(data), type = cortype)
-        A <- mat[[1]]
-        p.val <- mat[[3]]
-        rm(mat)
-        if (pval == "threhsold") {
-          A[which(p.val > thr)] <- NA
-        } else if (pval == "weight") {
-          A <- A * (1 - p.val)
-        }
-      }
-    }
-    A_orig<-A
-    #computes average conserved interactions
-    #assumes that genes are in the same order in the two compartments
-    avgpath <- matrix(ncol = nrow(A)/2, nrow = nrow(A)/2)
-    for (x in 1:(nrow(A)/2)) {
-      avgpath[x, ] <-
-        (A[genes_comp1[x], genes_comp1] + A[genes_comp2[x], genes_comp2]) /
-        2
-    }
-
-    #removes average conserved interactions
-    A[genes_comp1, genes_comp2] <- A[genes_comp1, genes_comp2] - avgpath
-    A[genes_comp2, genes_comp1] <- A[genes_comp2, genes_comp1] - avgpath
-
-    ##take the lowest absolute value
-    diff<-abs(A_orig[grep(comp1, rownames(A_orig)), grep(comp2, rownames(A_orig))])-abs(A[genes_comp1, genes_comp2])
-    A[genes_comp1, genes_comp2][diff<0] <- A_orig[grep(comp1, rownames(A_orig)), grep(comp2, rownames(A_orig))][diff<0]
-
-    diff<-abs(A_orig[grep(comp2, rownames(A_orig)), grep(comp1, rownames(A_orig))])-abs(A[genes_comp2, genes_comp1])
-    A[genes_comp2, genes_comp1][diff<0] <- A_orig[grep(comp2, rownames(A_orig)), grep(comp1, rownames(A_orig))][diff<0]
-
-
-    ###make A ranges between -1 and 1
-    A <- A / 2
-
-    ####when there is a network with sign in the input
-    if (compartment_sel == "comp2") {
-      if (is.null(selgenes) | length(na.omit(selgenes))==0) {
-        stop("No selected genes provided")
-      }
-
-      sign_list <- sign_list[which(!is.na(sign_list))]
-      names(sign_list) <- paste(names(sign_list), gsub("\\$", "", comp2), sep = "")
-      selgenes <- intersect(paste(selgenes, gsub("\\$", "", comp2), sep = ""), rownames(A))
-
-      A <- A[c(genes_comp1, which(rownames(A) %in% selgenes)),
-             c(genes_comp1, which(rownames(A) %in% selgenes))]
-
-      A[genes_comp2, genes_comp1] <-
-        A[genes_comp2, genes_comp1]*(sign_list[rownames(A)[genes_comp2]])
-
-      A[genes_comp1, genes_comp2] <-
-        t(A[genes_comp2, genes_comp1]*(sign_list[rownames(A)[genes_comp2]]))
-
-    } else if (compartment_sel == "comp1") {
-      if (is.null(selgenes) | length(na.omit(selgenes))==0) {
-        stop("No selected genes provided")
-      }
-
-      sign_list <- sign_list[which(!is.na(sign_list))]
-      names(sign_list) <- paste(names(sign_list), gsub("\\$", "", comp1), sep = "")
-      selgenes <- intersect(paste(selgenes, gsub("\\$", "", comp1), sep = ""), rownames(A))
-
-      A <- A[c(which(rownames(A) %in% selgenes), genes_comp2),
-             c(which(rownames(A) %in% selgenes), genes_comp2)]
-
-      A[genes_comp1, genes_comp2] <-
-        A[genes_comp1, genes_comp2]*(sign_list[rownames(A)[genes_comp1]])
-
-      A[genes_comp2, genes_comp1] <-
-        t(A[genes_comp1, genes_comp2]*(sign_list[rownames(A)[genes_comp1]]))
-    }
-
-    ####
-
-    if (Adj_type == "signed") {
-      A <- (0.5 * (1 + A)) ^ beta
-    } else if (Adj_type == "unsigned") {
-      A <- (abs(A)) ^ beta
-    } else if (Adj_type == "keep sign") {
-      A <- ((abs(A)) ^ beta) * sign(A)
-    }
-    return(A)
-  }
 
 ##clustering with WGCNA functions on pre-computed Adjacency
 clusteringWGCNA <-
