@@ -21,16 +21,20 @@ adj_netdiff <- function(A,comp1=comp1,comp2=comp2,verbose=TRUE)
   genes_comp1_orig <- grep(comp1, rownames(A_orig))
   genes_comp2_orig <- grep(comp2, rownames(A_orig))
   avgpath <- matrix(ncol=nrow(A)/2, nrow=nrow(A)/2)
+  
   if(verbose) cat("Computing average conserved interactions...\n")
+  
   for(x in 1:(nrow(A)/2)){
     avgpath[x, ] <- (
       A[genes_comp1[x], genes_comp1]+
       A[genes_comp2[x], genes_comp2])/2
   }
+  
   if(verbose){
     cat("..Done!\n")
     cat("Removing average conserved interactions...\n")
   }
+
   A[genes_comp1, genes_comp2] <- A[genes_comp1, genes_comp2]-avgpath
   A[genes_comp2, genes_comp1] <- A[genes_comp2, genes_comp1]-avgpath
   diff <- abs(A_orig[genes_comp1_orig, genes_comp2_orig])-abs(A[genes_comp1, genes_comp2])
