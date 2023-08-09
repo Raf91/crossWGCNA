@@ -144,7 +144,7 @@ Adjacency <- function(
   )
 
   if(verbose){
-    cat("Computing adjacency matrix...")
+    cat("Computing adjacency matrix...\n")
   }
   if (Adj_type=="signed"){
     A <- (0.5 * (1+A))^beta
