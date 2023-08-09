@@ -124,11 +124,11 @@ Adjacency <- function(
     comp2 <- paste(comp2, "$", sep="")
 
     if(method=="selfloop"){
-      A <- adj_selfloop(A,comp1=comp1,comp2=comp2)
+      A <- rm_selfloop(A,comp1=comp1,comp2=comp2)
     }
     
     if(method=="netdiff"){
-      A <- adj_netdiff(A,comp1=comp1,comp2=comp2)
+      A <- rm_netdiff(A,comp1=comp1,comp2=comp2)
     }
 
     suppressWarnings(if(!all(is.na(selgenes)) & is.character(na.omit(selgenes)))
