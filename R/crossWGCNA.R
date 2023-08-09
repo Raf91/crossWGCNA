@@ -179,19 +179,10 @@ clusteringWGCNA <- function(
     genes_comp1 <- grep(comp1, rownames(A))
     genes_comp2 <- grep(comp2, rownames(A))
 
-    ##crossOnly == T sets intra-connectivities to 0
     if (crossOnly) {
       A[genes_comp1, genes_comp1] <- 0
       A[genes_comp2, genes_comp2] <- 0
     }
-
-    #remove self loops
-    genes1 <- gsub(comp1, "", rownames(A)[genes_comp1])
-    genes2 <- gsub(comp2, "", rownames(A)[genes_comp2])
-    Idx1 <- cbind(genes_comp1, genes_comp2[match(genes1, genes2)])
-    Idx2 <- cbind(genes_comp2, genes_comp1[match(genes2, genes1)])
-    A[Idx1] <- 0
-    A[Idx2] <- 0
 
     if(TOM){
       similarity <- TOMsimilarity(A, TOMType = "signed")
@@ -201,53 +192,34 @@ clusteringWGCNA <- function(
       rm(similarity)
     }
 
-    ##crossOnly == T sets intra-connectivities to 0
-    if (crossOnly) {
-      A[genes_comp1, genes_comp1] <- 0
-      A[genes_comp2, genes_comp2] <- 0
-    }
-
     conTree <- hclust(as.dist(1-A), method="average")
     unmergedLabels <- cutreeDynamic(dendro=conTree,dist=1-A,deepSplit=ds)
     names(unmergedLabels) <- rownames(A)
-    merged <- mergeCloseModules(t(data),unmergedLabels,cutHeight = 0.25,verbose = 3)
+    merged <- mergeCloseModules(t(data),unmergedLabels,cutHeight=0.25,verbose=3)
     names(merged$colors) <- rownames(A)
     return(merged)
   }
 
-###computes intra- and inter-tissue connectivities
+### computes intra- and inter-tissue connectivities
 degrees <- function(A, comp1="_1", comp2="_2")
 {
   comp1 <- paste(comp1, "$", sep="")
   comp2 <- paste(comp2, "$", sep="")
-
   genes_comp1 <- grep(comp1, rownames(A))
   genes_comp2 <- grep(comp2, rownames(A))
-
-  # remove self loops 
-  genes1 <- gsub(comp1, "", rownames(A)[genes_comp1])
-  genes2 <- gsub(comp2, "", rownames(A)[genes_comp2])
-  Idx1 <- cbind(genes_comp1, genes_comp2[match(genes1, genes2)])
-  Idx2 <- cbind(genes_comp2, genes_comp1[match(genes2, genes1)])
-  A[Idx1] <- 0
-  A[Idx2] <- 0
-
   kTot <- rowSums(A)
   kInt_1 <- rowSums(A[genes_comp1, grep(comp1, colnames(A))])
   kInt_2 <- rowSums(A[genes_comp2, grep(comp2, colnames(A))])
   kExt_1 <- rowSums(A[genes_comp1, grep(comp2, colnames(A))])
   kExt_2 <- rowSums(A[genes_comp2, grep(comp1, colnames(A))])
-
-  k <-
-    list(
-      kInt1=kInt_1,
-      kInt2=kInt_2,
-      kExt1=kExt_1,
-      kExt2=kExt_2,
-      kTot1=kTot[grep(comp1, colnames(A))],
-      kTot2=kTot[grep(comp2, colnames(A))]
-    )
-
+  k <- list(
+    kInt1=kInt_1,
+    kInt2=kInt_2,
+    kExt1=kExt_1,
+    kExt2=kExt_2,
+    kTot1=kTot[grep(comp1, colnames(A))],
+    kTot2=kTot[grep(comp2, colnames(A))]
+  )
   return(k)
 }
 
@@ -361,7 +333,7 @@ degrees_mod <- function(
       genes_comp1 <- paste(genes, comp1, sep="")
       genes_comp2 <- paste(genes, comp2, sep="")
       data <- data[c(genes_comp1, genes_comp2),]
-      
+
       Adj <- Adjacency(
         data=data,
         method=method,
@@ -377,7 +349,7 @@ degrees_mod <- function(
       Adj <- Adj[mod, mod]
       k[[i]] <- degrees(A=Adj, comp1=comp1, comp2=comp2)
     }
-   
+
    return(k)
   }
 
@@ -767,7 +739,6 @@ ST_plot_comm <- function(
         averaged_expr_all[gene2,included_spots])
     )
 
-
     df$gene1.scale <- with(df, (gene1-min(gene1, na.rm=T))/diff(range(gene1, na.rm=T)))
     df$gene2.scale <- with(df, (gene2-min(gene2, na.rm=T))/diff(range(gene2, na.rm=T)))
     df <- df[!is.na(df$gene1.scale) & !is.na(df$gene2.scale),]
@@ -799,7 +770,8 @@ ST_weighted_mod <- function(
   {
     mod <- names(modules)[which(modules==mod_sel)]
     weights <- kw[[which(unique(modules)==mod_sel)]]$kExt1[mod[grep(comp1, mod)]]
-    wm1 <- apply((averaged_expr_all[gsub(comp1, "", mod[grep(comp1, mod)]),]), 2, function(x){weighted.mean(x, weights)})
+    wm1 <- apply(
+      (averaged_expr_all[gsub(comp1, "", mod[grep(comp1, mod)]),]), 2, function(x){weighted.mean(x, weights)})
     weights <- kw[[which(unique(modules)==mod_sel)]]$kExt2[mod[grep(comp2, mod)]]
     wm2 <- apply((averaged_expr_all[gsub(comp2, "", mod[grep(comp2, mod)]),]), 2, function(x){weighted.mean(x, weights)})
     return(list(wm1, wm2))
