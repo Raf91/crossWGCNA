@@ -3,8 +3,8 @@ rm_selfloop <- function(A,comp1=comp1,comp2=comp2,verbose=TRUE)
   if(verbose) cat("Removing self-loops only...\n")
   genes_comp1 <- grep(comp1, rownames(A))
   genes_comp2 <- grep(comp2, rownames(A))
-  genes1 <- gsub(comp1, "",rownames(A)[genes_comp1])
-  genes2 <- gsub(comp2, "",rownames(A)[genes_comp2])
+  genes1 <- gsub(comp1,"",rownames(A)[genes_comp1])
+  genes2 <- gsub(comp2,"",rownames(A)[genes_comp2])
   Idx1 <- cbind(genes_comp1,genes_comp2)[match(genes1,genes2)]
   Idx2 <- cbind(genes_comp2,genes_comp1)[match(genes2,genes1)]
   A[Idx1] <- 0
@@ -42,6 +42,7 @@ rm_netdiff <- function(A,comp1=comp1,comp2=comp2,verbose=TRUE)
   diff <- abs(A_orig[genes_comp2_orig, genes_comp1_orig])-abs(A[genes_comp2, genes_comp1])
   A[genes_comp2, genes_comp1][diff<0] <- A_orig[genes_comp2_orig, genes_comp1_orig][diff<0]
   A <- A/2
+  
   # remove self-loops
   genes1 <- gsub(comp1, "",rownames(A)[genes_comp1])
   genes2 <- gsub(comp2, "",rownames(A)[genes_comp2])
@@ -103,7 +104,7 @@ Adjacency <- function(
       }
     } else {
       if (cortype=="bicor") {
-        paste("Can't use pval with bicor")
+        cat("Can't use pval with bicor\n")
       } else {
         mat <- rcorr(t(data), type=cortype)
         A <- mat[[1]]
