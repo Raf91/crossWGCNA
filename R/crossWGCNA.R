@@ -118,7 +118,7 @@ Adjacency <- function(
       selgenes <- intersect(paste(selgenes, gsub("\\$", "", comp), sep = ""), rownames(A))
       sel_1 <- c(grep(comp1, rownames(A)), which(rownames(A) %in% selgenes))
       sel_2 <- c(which(rownames(A) %in% selgenes), grep(comp2, rownames(A)))
-
+      
       if(compartment_sel=="comp2"){
         A <- A[sel_1,sel_1]
       } else {
@@ -146,6 +146,7 @@ Adjacency <- function(
   if(verbose){
     cat("Computing adjacency matrix...\n")
   }
+
   if (Adj_type=="signed"){
     A <- (0.5 * (1+A))^beta
   } else if (Adj_type=="unsigned"){
@@ -153,6 +154,7 @@ Adjacency <- function(
   } else if (Adj_type=="keep sign"){
     A <- ((abs(A))^beta)*sign(A)
   }
+
   if(verbose){
     cat("..Done!")
   }
