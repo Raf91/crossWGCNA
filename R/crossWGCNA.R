@@ -1,4 +1,4 @@
-adj_selfloop <- function(A,comp1=comp1,comp2=comp2,verbose=TRUE)
+rm_selfloop <- function(A,comp1=comp1,comp2=comp2,verbose=TRUE)
 {
   if(verbose) cat("Removing self-loops only...\n")
   genes_comp1 <- grep(comp1, rownames(A))
@@ -13,7 +13,7 @@ adj_selfloop <- function(A,comp1=comp1,comp2=comp2,verbose=TRUE)
   return(A)
 }
 
-adj_netdiff <- function(A,comp1=comp1,comp2=comp2,verbose=TRUE)
+rm_netdiff <- function(A,comp1=comp1,comp2=comp2,verbose=TRUE)
 {
   genes_comp1 <- grep(comp1, rownames(A))
   genes_comp2 <- grep(comp2, rownames(A))
