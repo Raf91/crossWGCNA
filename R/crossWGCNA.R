@@ -161,7 +161,7 @@ Adjacency <- function(
         stop("'compartment_sel' can't be 'none' when 'selgenes' is specified")
       }
     } else {
-      warning("No subsets of genes  selected.. using all the genome\n")
+      warning("No subsets of genes selected.. using all the genome\n")
     }
     )
 
@@ -181,7 +181,7 @@ Adjacency <- function(
     return(A)
   }
 
- 
+#### manca questa
 clusteringWGCNA <- function(
   A,
   data,
@@ -223,7 +223,7 @@ clusteringWGCNA <- function(
     return(merged)
   }
 
-### computes intra- and inter-tissue connectivities
+
 degrees <- function(A, comp1="_1", comp2="_2")
 {
   comp1 <- paste(comp1, "$", sep="")
@@ -447,6 +447,7 @@ cor_inspect <- function(data,gene1,gene2,comp1="_tis1",comp2="_tis2")
 
 ###define spots coordinates
 #data is the Seurat object
+
 ST_spots_coords <- function(data, br=1000)
 {
   y <- GetTissueCoordinates(data)[,1]
@@ -619,7 +620,6 @@ ST_merged_dataset <- function(sel_spots, coords, averaged_expr_all, var_thr=0.75
   data_merged <- rbind(tis2, tis1)
   return(list(data_merged, included_spots))
 }
-
 
 ##finds spots included in the boundaries
 #included_spots output of merged_dataset [[2]]
