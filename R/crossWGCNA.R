@@ -12,9 +12,7 @@ Adjacency <- function(
   compartment_sel="none",
   selgenes=NA,
   verbose=FALSE)
-  
   {
-
     if(!(method %in% c("netdiff","selfloop"))){
       stop("Please select a valid method. Should be 'netdiff' or 'selfloop'.")
     }
@@ -163,7 +161,6 @@ Adjacency <- function(
       cat("..Done!")
     }
     return(A)
-
   }
 
 ##clustering with WGCNA functions on pre-computed Adjacency
@@ -175,9 +172,7 @@ clusteringWGCNA <- function(
   TOM=TRUE,
   ds=1,
   crossOnly=TRUE)
-
   {
-
     comp1 <- paste(comp1, "$", sep = "")
     comp2 <- paste(comp2, "$", sep = "")
 
@@ -218,7 +213,6 @@ clusteringWGCNA <- function(
     merged <- mergeCloseModules(t(data),unmergedLabels,cutHeight = 0.25,verbose = 3)
     names(merged$colors) <- rownames(A)
     return(merged)
-  
   }
 
 ###computes intra- and inter-tissue connectivities
@@ -275,15 +269,9 @@ crossWGCNA <- function(
   compartment_sel="none",
   selgenes=NA,
   verbose=TRUE)
-  
   {
-
     comp1 <- paste(comp1, "$", sep = "")
     comp2 <- paste(comp2, "$", sep = "")
-    
-    if(verbose){
-      cat("Computing adjacency...\n")
-    }
     
     Adj <- Adjacency(
       data=data,
@@ -297,7 +285,8 @@ crossWGCNA <- function(
       comp2=comp2,
       sign_list=sign_list,
       compartment_sel=compartment_sel,
-      selgenes=selgenes
+      selgenes=selgenes,
+      verbose=TRUE
     )
 
     if(verbose){
@@ -326,7 +315,6 @@ crossWGCNA <- function(
 
     net_out <- list(k, clusters)
     return(net_out)
-
   }
 
 changenames <- function(data, anno)
@@ -352,7 +340,6 @@ changenames <- function(data, anno)
   }
   rownames(data)-annotation_sel
   return(data)
-
 }
 
 degrees_mod <- function(
@@ -366,25 +353,14 @@ degrees_mod <- function(
   beta=6,
   comp1="_1",
   comp2="_2") 
-  
   {
-  
-    if(){
-
-    }
-
     k <- list()
-    
     for (i in 1:length(unique(modules))){
       mod <- names(modules)[which(modules==unique(modules)[i])]
       genes <- unique(gsub(comp2, "", gsub(comp1, "", mod)))
       genes_comp1 <- paste(genes, comp1, sep="")
       genes_comp2 <- paste(genes, comp2, sep="")
       data <- data[c(genes_comp1, genes_comp2),]
-      
-      if(verbose){
-        cat("Computing adjacency...\n")
-      }
       
       Adj <- Adjacency(
         data=data,
@@ -395,19 +371,14 @@ degrees_mod <- function(
         thr=thr,
         beta=beta,
         comp1=comp1,
-        comp2=comp2
+        comp2=comp2,
       )
 
-      if(verbose){
-        cat("..Done!\n")
-      }
-      
       Adj <- Adj[mod, mod]
       k[[i]] <- degrees(A=Adj, comp1=comp1, comp2=comp2)
     }
    
    return(k)
-
   }
 
 cytoscape_net <- function(A, data, gene, comp1, comp2, num, corr="spearman")
@@ -658,8 +629,8 @@ ST_merged_dataset <- function(sel_spots, coords, averaged_expr_all, var_thr=0.75
 ##finds spots included in the boundaries
 #included_spots output of merged_dataset [[2]]
 
-ST_boundary_spots <- function(included_spots, coords, tis2_spots){
-  
+ST_boundary_spots <- function(included_spots, coords, tis2_spots)
+{  
   x_bin <- coords[,1]
   y_bin <- coords[,2]
   
@@ -674,7 +645,6 @@ ST_boundary_spots <- function(included_spots, coords, tis2_spots){
     included_spots_tis2 <- c(included_spots_tis2, sel_spots_tis2)
     included_spots_tis1 <- c(included_spots_tis1, rep(es, length(sel_spots_tis2)))
   }
-
   return(list(included_spots_tis1, included_spots_tis2))
 }
 
@@ -715,9 +685,7 @@ ST_plot_expr <- function(
   tis1_spots, 
   tis2_spots, 
   midpoints)
-  
   {
-
     midpoints_x <- midpoints[[1]]
     midpoints_y <- midpoints[[2]]
 
@@ -748,7 +716,6 @@ ST_plot_expr <- function(
     theme_classic()
 
   return(p)
-  
   }
 
 ##visualize gene communication in space
@@ -767,9 +734,7 @@ ST_plot_comm <- function(
   tis1_spots, 
   tis2_spots, 
   midpoints)
-  
   {
-
     midpoints_x <- midpoints[[1]]
     midpoints_y <- midpoints[[2]]
 
@@ -820,7 +785,6 @@ ST_plot_comm <- function(
       theme_classic()
       
     return(p)
-
   }
 
 ##compute weighted average of a module
@@ -833,12 +797,10 @@ ST_weighted_mod <- function(
   comp1="_tis1", 
   comp2="_tis2")
   {
-
     mod <- names(modules)[which(modules==mod_sel)]
     weights <- kw[[which(unique(modules)==mod_sel)]]$kExt1[mod[grep(comp1, mod)]]
     wm1 <- apply((averaged_expr_all[gsub(comp1, "", mod[grep(comp1, mod)]),]), 2, function(x){weighted.mean(x, weights)})
     weights <- kw[[which(unique(modules)==mod_sel)]]$kExt2[mod[grep(comp2, mod)]]
     wm2 <- apply((averaged_expr_all[gsub(comp2, "", mod[grep(comp2, mod)]),]), 2, function(x){weighted.mean(x, weights)})
     return(list(wm1, wm2))
-
   }
