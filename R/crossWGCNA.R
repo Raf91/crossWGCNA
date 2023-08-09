@@ -1,14 +1,14 @@
 Adjacency <- function(
-  data, 
-  method="selfloop", 
+  data,
+  method="selfloop",
   comp1="_1",
   comp2="_2",
-  Adj_type="signed", 
-  cortype="spearman", 
-  pval="none", 
+  Adj_type="signed",
+  cortype="spearman",
+  pval="none",
   thr=0.05,
-  beta=6, 
-  sign_list=1, 
+  beta=6,
+  sign_list=1,
   compartment_sel="none",
   selgenes=NA,
   verbose=FALSE)
@@ -37,10 +37,11 @@ Adjacency <- function(
   if(!(compartment_sel %in% c("none","comp1","comp2"))){
     stop("'compartment_sel' argument is different from all the admitted values.\n Please refer to manual for further details.")
   }
-  
+
   if(verbose){
     cat("Computing correlation matrix...\n")
   }
+
   if (pval=="none") {
     if (cortype=="bicor") {
       A <- bicor(t(data))
@@ -62,12 +63,17 @@ Adjacency <- function(
       }
     }
   }
-  
+
+  if(verbose){
+    cat("..Done!\n")
+  }
+
   comp1 <- paste(comp1, "$", sep="")
   comp2 <- paste(comp2, "$", sep="")
+
   genes_comp1 <- grep(comp1, rownames(A))
   genes_comp2 <- grep(comp2, rownames(A))
-  
+
   if(method=="netdiff"){
     if(verbose){
       cat("Computing average conserved interactions...\n")
@@ -77,42 +83,54 @@ Adjacency <- function(
     genes_comp1_orig <- grep(comp1, rownames(A_orig))
     genes_comp2_orig <- grep(comp2, rownames(A_orig))
     avgpath <- matrix(ncol=nrow(A)/2, nrow=nrow(A)/2)
-    
+
     for (x in 1:(nrow(A)/2)) {
-      avgpath[x, ] <- (A[genes_comp1[x], genes_comp1]+A[genes_comp2[x], genes_comp2])/2
+      avgpath[x, ] <- (
+        A[genes_comp1[x], genes_comp1]+
+        A[genes_comp2[x], genes_comp2])/2
     }
+
     if(verbose){
+      cat("..Done!\n")
       cat("Removing average conserved interactions...\n")
     }
-    
-    A[genes_comp1, genes_comp2] <- A[genes_comp1, genes_comp2] - avgpath
-    A[genes_comp2, genes_comp1] <- A[genes_comp2, genes_comp1] - avgpath
+
+    A[genes_comp1, genes_comp2] <- A[genes_comp1, genes_comp2]-avgpath
+    A[genes_comp2, genes_comp1] <- A[genes_comp2, genes_comp1]-avgpath
     diff <- abs(A_orig[genes_comp1_orig, genes_comp2_orig])-abs(A[genes_comp1, genes_comp2])
     A[genes_comp1, genes_comp2][diff<0] <- A_orig[genes_comp1_orig, genes_comp2_orig][diff<0]
     diff <- abs(A_orig[genes_comp2_orig, genes_comp1_orig])-abs(A[genes_comp2, genes_comp1])
     A[genes_comp2, genes_comp1][diff<0] <- A_orig[genes_comp2_orig, genes_comp1_orig][diff<0]
     A <- A/2
+
+    if(verbose){
+      cat("..Done!\n")
+    }
   }
-  
-  suppressWarnings(if(!any(is.na(selgenes)) | length(na.omit(selgenes))!=0){
+
+  # all(is.na(selgenes)) >> sono tutti NA
+  # !all(is.na(selgenes)) >> NON sono tutti NA
+
+  suppressWarnings(if(!all(is.na(selgenes)) & is.character(na.omit(selgenes))){
     if(compartment_sel!="none"){
       sign_list <- sign_list[which(!is.na(sign_list))]
       comp <- ifelse(compartment_sel=="comp2",comp2,comp1)
       selgenes <- intersect(paste(selgenes, gsub("\\$", "", comp), sep = ""), rownames(A))
       sel_1 <- c(grep(comp1, rownames(A)), which(rownames(A) %in% selgenes))
       sel_2 <- c(which(rownames(A) %in% selgenes), grep(comp2, rownames(A)))
+
       if(compartment_sel=="comp2"){
         A <- A[sel_1,sel_1]
       } else {
         A <- A[sel_2,sel_2]
       }
-      
+
       genes_comp1 <- grep(comp1, rownames(A))
       genes_comp2 <- grep(comp2, rownames(A))
-      
+
       if(compartment_sel=="comp2"){
         A[genes_comp2, genes_comp1] <- A[genes_comp2, genes_comp1]*(sign_list[rownames(A)[genes_comp2]])
-        A[genes_comp1, genes_comp2] <- t(A[genes_comp2, genes_comp1]*(sign_list[rownames(A)[genes_comp2]])) 
+        A[genes_comp1, genes_comp2] <- t(A[genes_comp2, genes_comp1]*(sign_list[rownames(A)[genes_comp2]]))
       } else {
         A[genes_comp1, genes_comp2] <- A[genes_comp1, genes_comp2]*(sign_list[rownames(A)[genes_comp1]])
         A[genes_comp2, genes_comp1] <- t(A[genes_comp1, genes_comp2]*(sign_list[rownames(A)[genes_comp1]]))
@@ -120,10 +138,14 @@ Adjacency <- function(
     } else{
       stop("'compartment_sel' can't be 'none' when 'selgenes' is specified")
     }
-  })
+  } else {
+    warning("No subsets of genes  selected.. using all the genome\n")
+  }
+  )
 
   if(verbose){
-    cat("Computing adjacency matrix...")}
+    cat("Computing adjacency matrix...")
+  }
   if (Adj_type=="signed"){
     A <- (0.5 * (1+A))^beta
   } else if (Adj_type=="unsigned"){
@@ -131,9 +153,11 @@ Adjacency <- function(
   } else if (Adj_type=="keep sign"){
     A <- ((abs(A))^beta)*sign(A)
   }
+  if(verbose){
+    cat("..Done!")
+  }
   return(A)
 }
-
 
 ##clustering with WGCNA functions on pre-computed Adjacency
 clusteringWGCNA <-
