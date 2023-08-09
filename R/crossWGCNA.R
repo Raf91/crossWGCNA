@@ -1,3 +1,54 @@
+adj_selfloop <- function(A,comp1=comp1,comp2=comp2,verbose=TRUE)
+{
+  if(verbose) cat("Removing self-loops only...\n")
+  genes_comp1 <- grep(comp1, rownames(A))
+  genes_comp2 <- grep(comp2, rownames(A))
+  genes1 <- gsub(comp1, "",rownames(A)[genes_comp1])
+  genes2 <- gsub(comp2, "",rownames(A)[genes_comp2])
+  Idx1 <- cbind(genes_comp1,genes_comp2)[match(genes1,genes2)]
+  Idx2 <- cbind(genes_comp2,genes_comp1)[match(genes2,genes1)]
+  A[Idx1] <- 0
+  A[Idx2] <- 0
+  if(verbose) cat("..Done!\n")
+  return(A)
+}
+
+adj_netdiff <- function(A,comp1=comp1,comp2=comp2,verbose=TRUE)
+{
+  genes_comp1 <- grep(comp1, rownames(A))
+  genes_comp2 <- grep(comp2, rownames(A))
+  A_orig <- A
+  genes_comp1_orig <- grep(comp1, rownames(A_orig))
+  genes_comp2_orig <- grep(comp2, rownames(A_orig))
+  avgpath <- matrix(ncol=nrow(A)/2, nrow=nrow(A)/2)
+  if(verbose) cat("Computing average conserved interactions...\n")
+  for(x in 1:(nrow(A)/2)){
+    avgpath[x, ] <- (
+      A[genes_comp1[x], genes_comp1]+
+      A[genes_comp2[x], genes_comp2])/2
+  }
+  if(verbose){
+    cat("..Done!\n")
+    cat("Removing average conserved interactions...\n")
+  }
+  A[genes_comp1, genes_comp2] <- A[genes_comp1, genes_comp2]-avgpath
+  A[genes_comp2, genes_comp1] <- A[genes_comp2, genes_comp1]-avgpath
+  diff <- abs(A_orig[genes_comp1_orig, genes_comp2_orig])-abs(A[genes_comp1, genes_comp2])
+  A[genes_comp1, genes_comp2][diff<0] <- A_orig[genes_comp1_orig, genes_comp2_orig][diff<0]
+  diff <- abs(A_orig[genes_comp2_orig, genes_comp1_orig])-abs(A[genes_comp2, genes_comp1])
+  A[genes_comp2, genes_comp1][diff<0] <- A_orig[genes_comp2_orig, genes_comp1_orig][diff<0]
+  A <- A/2
+  # remove self-loops
+  genes1 <- gsub(comp1, "",rownames(A)[genes_comp1])
+  genes2 <- gsub(comp2, "",rownames(A)[genes_comp2])
+  Idx1 <- cbind(genes_comp1,genes_comp2)[match(genes1,genes2)]
+  Idx2 <- cbind(genes_comp2,genes_comp1)[match(genes2,genes1)]
+  A[Idx1] <- 0
+  A[Idx2] <- 0
+  if(verbose) cat("..Done!\n")
+  return(A)
+}
+
 Adjacency <- function(
   data,
   method="selfloop",
@@ -37,11 +88,9 @@ Adjacency <- function(
     if(!(compartment_sel %in% c("none","comp1","comp2"))){
       stop("'compartment_sel' argument is different from all the admitted values.\n Please refer to manual for further details.")
     }
-
     if(verbose){
       cat("Computing correlation matrix...\n")
     }
-
     if (pval=="none") {
       if (cortype=="bicor") {
         A <- bicor(t(data))
@@ -63,53 +112,20 @@ Adjacency <- function(
         }
       }
     }
-
     if(verbose){
       cat("..Done!\n")
     }
-
+    
     comp1 <- paste(comp1, "$", sep="")
     comp2 <- paste(comp2, "$", sep="")
 
-    genes_comp1 <- grep(comp1, rownames(A))
-    genes_comp2 <- grep(comp2, rownames(A))
-
-    if(method=="netdiff"){
-      if(verbose){
-        cat("Computing average conserved interactions...\n")
-      }
-
-      A_orig <- A
-      genes_comp1_orig <- grep(comp1, rownames(A_orig))
-      genes_comp2_orig <- grep(comp2, rownames(A_orig))
-      avgpath <- matrix(ncol=nrow(A)/2, nrow=nrow(A)/2)
-
-      for (x in 1:(nrow(A)/2)) {
-        avgpath[x, ] <- (
-          A[genes_comp1[x], genes_comp1]+
-          A[genes_comp2[x], genes_comp2])/2
-      }
-
-      if(verbose){
-        cat("..Done!\n")
-        cat("Removing average conserved interactions...\n")
-      }
-
-      A[genes_comp1, genes_comp2] <- A[genes_comp1, genes_comp2]-avgpath
-      A[genes_comp2, genes_comp1] <- A[genes_comp2, genes_comp1]-avgpath
-      diff <- abs(A_orig[genes_comp1_orig, genes_comp2_orig])-abs(A[genes_comp1, genes_comp2])
-      A[genes_comp1, genes_comp2][diff<0] <- A_orig[genes_comp1_orig, genes_comp2_orig][diff<0]
-      diff <- abs(A_orig[genes_comp2_orig, genes_comp1_orig])-abs(A[genes_comp2, genes_comp1])
-      A[genes_comp2, genes_comp1][diff<0] <- A_orig[genes_comp2_orig, genes_comp1_orig][diff<0]
-      A <- A/2
-
-      if(verbose){
-        cat("..Done!\n")
-      }
+    if(method=="selfloop"){
+      A <- adj_selfloop(A,comp1=comp1,comp2=comp2)
     }
-
-    # all(is.na(selgenes)) >> sono tutti NA
-    # !all(is.na(selgenes)) >> NON sono tutti NA
+    
+    if(method=="netdiff"){
+      A <- adj_netdiff(A,comp1=comp1,comp2=comp2)
+    }
 
     suppressWarnings(if(!all(is.na(selgenes)) & is.character(na.omit(selgenes)))
     {
@@ -118,13 +134,13 @@ Adjacency <- function(
         sign_list <- sign_list[which(!is.na(sign_list))]
         comp <- ifelse(compartment_sel=="comp2",comp2,comp1)
         selgenes <- intersect(paste(selgenes, gsub("\\$", "", comp), sep = ""), rownames(A))
-        sel_1 <- c(grep(comp1, rownames(A)), which(rownames(A) %in% selgenes))
-        sel_2 <- c(which(rownames(A) %in% selgenes), grep(comp2, rownames(A)))
+        sel1 <- c(grep(comp1, rownames(A)), which(rownames(A) %in% selgenes))
+        sel2 <- c(which(rownames(A) %in% selgenes), grep(comp2, rownames(A)))
       
         if(compartment_sel=="comp2"){
-          A <- A[sel_1,sel_1]
+          A <- A[sel1,sel1]
         } else {
-          A <- A[sel_2,sel_2]
+          A <- A[sel2,sel2]
         }
 
         genes_comp1 <- grep(comp1, rownames(A))
@@ -148,7 +164,6 @@ Adjacency <- function(
     if(verbose){
       cat("Computing adjacency matrix...\n")
     }
-
     if (Adj_type=="signed"){
       A <- (0.5 * (1+A))^beta
     } else if (Adj_type=="unsigned"){
@@ -156,14 +171,13 @@ Adjacency <- function(
     } else if (Adj_type=="keep sign"){
       A <- ((abs(A))^beta)*sign(A)
     }
-
     if(verbose){
-      cat("..Done!")
+      cat("..Done!\n")
     }
     return(A)
   }
 
-##clustering with WGCNA functions on pre-computed Adjacency
+ 
 clusteringWGCNA <- function(
   A,
   data,
@@ -173,13 +187,13 @@ clusteringWGCNA <- function(
   ds=1,
   crossOnly=TRUE)
   {
-    comp1 <- paste(comp1, "$", sep = "")
-    comp2 <- paste(comp2, "$", sep = "")
+    comp1 <- paste(comp1, "$", sep="")
+    comp2 <- paste(comp2, "$", sep="")
 
     genes_comp1 <- grep(comp1, rownames(A))
     genes_comp2 <- grep(comp2, rownames(A))
 
-    if (crossOnly) {
+    if (crossOnly){
       A[genes_comp1, genes_comp1] <- 0
       A[genes_comp2, genes_comp2] <- 0
     }
@@ -190,6 +204,11 @@ clusteringWGCNA <- function(
       colnames(similarity) <- colnames(A)
       A <- similarity
       rm(similarity)
+    }
+
+    if (crossOnly){
+      A[genes_comp1, genes_comp1] <- 0
+      A[genes_comp2, genes_comp2] <- 0
     }
 
     conTree <- hclust(as.dist(1-A), method="average")
@@ -262,7 +281,7 @@ crossWGCNA <- function(
     )
 
     if(verbose){
-      cat("Computing degrees...\n")
+      cat("Computing intra- and inter-tissue connectivities...\n")
     }
 
     k <- degrees(A=Adj,comp1=comp1,comp2=comp2)
