@@ -779,21 +779,14 @@ ST_plot_comm <- function(
     return(p)
   }
 
-##compute weighted average of a module
-#modules vector with module labels assignments
-ST_weighted_mod <- function(
-  modules, 
-  kw, 
-  mod_sel,
-  averaged_expr_all, 
-  comp1="_tis1", 
-  comp2="_tis2")
-  {
-    mod <- names(modules)[which(modules==mod_sel)]
-    weights <- kw[[which(unique(modules)==mod_sel)]]$kExt1[mod[grep(comp1, mod)]]
-    wm1 <- apply(
-      (averaged_expr_all[gsub(comp1, "", mod[grep(comp1, mod)]),]), 2, function(x){weighted.mean(x, weights)})
-    weights <- kw[[which(unique(modules)==mod_sel)]]$kExt2[mod[grep(comp2, mod)]]
-    wm2 <- apply((averaged_expr_all[gsub(comp2, "", mod[grep(comp2, mod)]),]), 2, function(x){weighted.mean(x, weights)})
-    return(list(wm1, wm2))
-  }
+## compute weighted average of a module
+# modules vector with module labels assignments
+ST_weighted_mod <- function(modules,kw,mod_sel,averaged_expr_all,comp1="_tis1",comp2="_tis2")
+{
+  mod <- names(modules)[which(modules==mod_sel)]
+  weights <- kw[[which(unique(modules)==mod_sel)]]$kExt1[mod[grep(comp1, mod)]]
+  wm1 <- apply((averaged_expr_all[gsub(comp1, "", mod[grep(comp1, mod)]),]), 2, function(x){weighted.mean(x, weights)})
+  weights <- kw[[which(unique(modules)==mod_sel)]]$kExt2[mod[grep(comp2, mod)]]
+  wm2 <- apply((averaged_expr_all[gsub(comp2, "", mod[grep(comp2, mod)]),]), 2, function(x){weighted.mean(x, weights)})
+  return(list(wm1, wm2))
+}
