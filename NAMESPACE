@@ -9,9 +9,9 @@ import(ggnewscale)
 import(Hmisc)
 
 # package functions
+export(rm_selfloop)
+export(rm_netdiff)
 export(Adjacency)
-export(Adjacency_sl)
-export(Adjacency_nd)
 export(changenames)
 export(clusteringWGCNA)
 export(cor_inspect)
@@ -19,7 +19,6 @@ export(crossWGCNA)
 export(cytoscape_net)
 export(degrees)
 export(degrees_mod)
-export(network)
 
 # Spatial transcriptomics utils
 export(ST_spots_coords)
