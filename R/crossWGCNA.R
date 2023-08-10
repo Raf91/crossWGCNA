@@ -201,7 +201,7 @@ clusteringWGCNA <- function(
       A[genes_comp2, genes_comp2] <- 0
     }
 
-    A <- rm_selfloop(data=A,comp1=comp1,comp2=comp2,verbose=F)
+    A <- rm_selfloop(A,comp1=comp1,comp2=comp2,verbose=F)
     
     if(TOM){
       similarity <- TOMsimilarity(A, TOMType="signed")
