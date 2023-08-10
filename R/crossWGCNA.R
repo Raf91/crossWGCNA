@@ -44,12 +44,7 @@ rm_netdiff <- function(A,comp1=comp1,comp2=comp2,verbose=TRUE)
   A <- A/2
   
   if(verbose) cat("Removing self-loops...\n")
-  genes1 <- gsub(comp1, "",rownames(A)[genes_comp1])
-  genes2 <- gsub(comp2, "",rownames(A)[genes_comp2])
-  Idx1 <- cbind(genes_comp1,genes_comp2)[match(genes1,genes2)]
-  Idx2 <- cbind(genes_comp2,genes_comp1)[match(genes2,genes1)]
-  A[Idx1] <- 0
-  A[Idx2] <- 0
+  A <- rm_selfloop(A,comp1=comp1,comp2=comp2,verbose=FALSE)
   if(verbose) cat("..Done!\n")
   return(A)
 }
