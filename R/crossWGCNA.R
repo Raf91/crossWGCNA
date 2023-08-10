@@ -43,7 +43,7 @@ rm_netdiff <- function(A,comp1=comp1,comp2=comp2,verbose=TRUE)
   A[genes_comp2, genes_comp1][diff<0] <- A_orig[genes_comp2_orig, genes_comp1_orig][diff<0]
   A <- A/2
   
-  # remove self-loops
+  if(verbose) cat("Removing self-loops...\n")
   genes1 <- gsub(comp1, "",rownames(A)[genes_comp1])
   genes2 <- gsub(comp2, "",rownames(A)[genes_comp2])
   Idx1 <- cbind(genes_comp1,genes_comp2)[match(genes1,genes2)]
@@ -121,8 +121,8 @@ Adjacency <- function(
       cat("..Done!\n")
     }
     
-    comp1 <- paste(comp1, "$", sep="")
-    comp2 <- paste(comp2, "$", sep="")
+    comp1 <- paste(comp1,"$",sep="")
+    comp2 <- paste(comp2,"$",sep="")
 
     if(method=="selfloop"){
       A <- rm_selfloop(A,comp1=comp1,comp2=comp2)
@@ -169,6 +169,7 @@ Adjacency <- function(
     if(verbose){
       cat("Computing adjacency matrix...\n")
     }
+
     if (Adj_type=="signed"){
       A <- (0.5 * (1+A))^beta
     } else if (Adj_type=="unsigned"){
@@ -176,9 +177,11 @@ Adjacency <- function(
     } else if (Adj_type=="keep sign"){
       A <- ((abs(A))^beta)*sign(A)
     }
+
     if(verbose){
       cat("..Done!\n")
     }
+
     return(A)
   }
 
@@ -204,16 +207,15 @@ clusteringWGCNA <- function(
     }
 
     if(TOM){
-      similarity <- TOMsimilarity(A, TOMType = "signed")
+      similarity <- TOMsimilarity(A, TOMType="signed")
       rownames(similarity) <- rownames(A)
       colnames(similarity) <- colnames(A)
       A <- similarity
       rm(similarity)
-    }
-
-    if (crossOnly){
-      A[genes_comp1, genes_comp1] <- 0
-      A[genes_comp2, genes_comp2] <- 0
+      if(crossOnly){
+        A[genes_comp1, genes_comp1] <- 0
+        A[genes_comp2, genes_comp2] <- 0
+      }
     }
 
     conTree <- hclust(as.dist(1-A), method="average")
@@ -258,6 +260,7 @@ crossWGCNA <- function(
   beta=6,
   comp1="_1",
   comp2="_2",
+  doClusters=TRUE,
   doTOM=TRUE,
   ds=1,
   crossOnly=TRUE,
@@ -285,32 +288,26 @@ crossWGCNA <- function(
       verbose=TRUE
     )
 
-    if(verbose){
-      cat("Computing intra- and inter-tissue connectivities...\n")
-    }
-
+    if(verbose) cat("Computing intra- and inter-tissue connectivities...\n")
     k <- degrees(A=Adj,comp1=comp1,comp2=comp2)
 
-    if(verbose){
-      cat("Computing clusters...\n")
-    }
-    
-    clusters <- clusteringWGCNA(
-      A=Adj,
-      data=data,
-      comp1=comp1,
-      comp2=comp2,
-      TOM=doTOM,
-      ds=ds,
-      crossOnly=crossOnly
-    )
-
-    if(verbose){
-      cat("..Done!\n")
+    if(doClusters){
+      if(verbose) cat("Computing clusters...\n")
+      clusters <- clusteringWGCNA(
+        A=Adj,
+        data=data,
+        comp1=comp1,
+        comp2=comp2,
+        TOM=doTOM,
+        ds=ds,
+        crossOnly=crossOnly
+      )
+      out <- list(k, clusters)
     }
 
-    net_out <- list(k, clusters)
-    return(net_out)
+    if(verbose) cat("..Done!\n")
+    out <- ifelse(doClusters,out,k)
+    return(out)
   }
 
 changenames <- function(data, anno)
