@@ -190,43 +190,35 @@ clusteringWGCNA <- function(
   ds=1,
   crossOnly=TRUE)
   {
-    comp1 <- paste(comp1, "$", sep = "")
-    comp2 <- paste(comp2, "$", sep = "")
+    comp1 <- paste(comp1, "$", sep="")
+    comp2 <- paste(comp2, "$", sep="")
 
-    ##crossOnly == T sets intra-connectivities to 0
-    if (crossOnly == T) {
-      A[grep(comp1, rownames(A)), grep(comp1, rownames(A))] <- 0
-      A[grep(comp2, rownames(A)), grep(comp2, rownames(A))] <- 0
+    genes_comp1 <- grep(comp1, rownames(A))
+    genes_comp2 <- grep(comp2, rownames(A))
+
+    if (crossOnly){
+      A[genes_comp1, genes_comp1] <- 0
+      A[genes_comp2, genes_comp2] <- 0
     }
 
-    #remove self loops
-    genes1 <- gsub(comp1, "", rownames(A)[grep(comp1, rownames(A))])
-    genes2 <- gsub(comp2, "", rownames(A)[grep(comp2, rownames(A))])
-
-    Idx1 <- cbind(grep(comp1, rownames(A)), grep(comp2, rownames(A))[match(genes1, genes2)])
-    A[Idx1] <- 0
-
-    Idx2 <- cbind(grep(comp2, rownames(A)), grep(comp1, rownames(A))[match(genes2, genes1)])
-    A[Idx2] <- 0
-
-    if (TOM == T) {
-      similarity <- TOMsimilarity(A, TOMType = "signed")
+    A <- rm_selfloop(data=A,comp1=comp1,comp2=comp2,verbose=F)
+    
+    if(TOM){
+      similarity <- TOMsimilarity(A, TOMType="signed")
       rownames(similarity) <- rownames(A)
       colnames(similarity) <- colnames(A)
       A <- similarity
       rm(similarity)
-    }
-
-    ##crossOnly == T sets intra-connectivities to 0
-    if (crossOnly == T) {
-      A[grep(comp1, rownames(A)), grep(comp1, rownames(A))] <- 0
-      A[grep(comp2, rownames(A)), grep(comp2, rownames(A))] <- 0
+      if(crossOnly){
+        A[genes_comp1, genes_comp1] <- 0
+        A[genes_comp2, genes_comp2] <- 0
+      }
     }
 
     conTree <- hclust(as.dist(1-A), method="average")
     unmergedLabels <- cutreeDynamic(dendro=conTree,dist=1-A,deepSplit=ds)
     names(unmergedLabels) <- rownames(A)
-    merged <- mergeCloseModules(t(data),unmergedLabels,cutHeight = 0.25,verbose = 3)
+    merged <- mergeCloseModules(t(data),unmergedLabels,cutHeight=0.25,verbose=3)
     names(merged$colors) <- rownames(A)
     return(merged)
   }
