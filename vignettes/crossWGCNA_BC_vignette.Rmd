@@ -34,9 +34,6 @@ Including a large number of genes allows unbiased analyses, but increases noise 
 A single gene expression matrix comprising gene expression from both tissues need to be created, merging original data matrices by row. To distinguish genes measured in each tissue/organ, a suffix is added to gene names ("_S" and "_E", in this case).
 
 ```{r, include=T, warning=FALSE, message=F}
-load("~/Project_crossWGCNA/data/stroma_GSE5847.RData")
-load("~/Project_crossWGCNA/data/epi_GSE5847.RData")
-
 inboth <- intersect(rownames(stroma), rownames(epi))
 stroma <- stroma[inboth,]
 epi <- epi[inboth,]
@@ -56,7 +53,7 @@ BC_merged <- rbind(stroma, epi)
 The function crossWGCNA runs the inter-tissue co-expression network analysis, calling the functions Adjacency, degree and clusteringWGCNA, producing a list with intra- and inter-tissue degrees, and gene clustering assignments.
 
 ```{r, include=T, warning=FALSE}
-net <- crossWGCNA(data = BC_merged, 
+net <- crossWGCNA(data=BC_merged, 
                   method="netdiff", 
                   Adj_type="signed", 
                   ds=2, 

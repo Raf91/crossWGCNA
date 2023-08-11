@@ -181,60 +181,50 @@ Adjacency <- function(
   }
 
 #### manca questa
-clusteringWGCNA <- function(
-  A,
-  data,
-  comp1="_1",
-  comp2="_2",
-  TOM=TRUE,
-  ds=1,
-  crossOnly=TRUE)
-  {
-    comp1 <- paste(comp1, "$", sep="")
-    comp2 <- paste(comp2, "$", sep="")
+clusteringWGCNA <- function(A,data,comp1="_1",comp2="_2",TOM=TRUE,ds=1,crossOnly=TRUE)
+{
+  comp1 <- paste(comp1, "$", sep="")
+  comp2 <- paste(comp2, "$", sep="")
+  genes_comp1 <- grep(comp1, rownames(A))
+  genes_comp2 <- grep(comp2, rownames(A))
+  
+  if (crossOnly){
+    A[genes_comp1, genes_comp1] <- 0
+    A[genes_comp2, genes_comp2] <- 0
+  }
 
-    genes_comp1 <- grep(comp1, rownames(A))
-    genes_comp2 <- grep(comp2, rownames(A))
-
-    if (crossOnly){
+  A <- rm_selfloop(A,comp1=comp1,comp2=comp2,verbose=F)
+    
+  if(TOM){
+    similarity <- TOMsimilarity(A, TOMType="signed")
+    rownames(similarity) <- rownames(A)
+    colnames(similarity) <- colnames(A)
+    A <- similarity
+    rm(similarity)
+    if(crossOnly){
       A[genes_comp1, genes_comp1] <- 0
       A[genes_comp2, genes_comp2] <- 0
     }
-
-    A <- rm_selfloop(A,comp1=comp1,comp2=comp2,verbose=F)
-    
-    if(TOM){
-      similarity <- TOMsimilarity(A, TOMType="signed")
-      rownames(similarity) <- rownames(A)
-      colnames(similarity) <- colnames(A)
-      A <- similarity
-      rm(similarity)
-      if(crossOnly){
-        A[genes_comp1, genes_comp1] <- 0
-        A[genes_comp2, genes_comp2] <- 0
-      }
-    }
-
-    conTree <- hclust(as.dist(1-A), method="average")
-    unmergedLabels <- cutreeDynamic(dendro=conTree,dist=1-A,deepSplit=ds)
-    names(unmergedLabels) <- rownames(A)
-    merged <- mergeCloseModules(t(data),unmergedLabels,cutHeight=0.25,verbose=3)
-    names(merged$colors) <- rownames(A)
-    return(merged)
   }
+
+  conTree <- hclust(as.dist(1-A), method="average")
+  unmergedLabels <- cutreeDynamic(dendro=conTree,dist=1-A,deepSplit=ds)
+  names(unmergedLabels) <- rownames(A)
+  merged <- mergeCloseModules(t(data),unmergedLabels,cutHeight=0.25,verbose=3)
+  names(merged$colors) <- rownames(A)
+  return(merged)
+}
 
 
 degrees <- function(A, comp1="_1", comp2="_2")
 {
   comp1 <- paste(comp1, "$", sep="")
   comp2 <- paste(comp2, "$", sep="")
-  genes_comp1 <- grep(comp1, rownames(A))
-  genes_comp2 <- grep(comp2, rownames(A))
   kTot <- rowSums(A)
-  kInt_1 <- rowSums(A[genes_comp1, grep(comp1, colnames(A))])
-  kInt_2 <- rowSums(A[genes_comp2, grep(comp2, colnames(A))])
-  kExt_1 <- rowSums(A[genes_comp1, grep(comp2, colnames(A))])
-  kExt_2 <- rowSums(A[genes_comp2, grep(comp1, colnames(A))])
+  kInt_1 <- rowSums(A[grep(comp1, rownames(A)), grep(comp1, colnames(A))])
+  kInt_2 <- rowSums(A[grep(comp2, rownames(A)), grep(comp2, colnames(A))])
+  kExt_1 <- rowSums(A[grep(comp1, rownames(A)), grep(comp2, colnames(A))])
+  kExt_2 <- rowSums(A[grep(comp2, rownames(A)), grep(comp1, colnames(A))])
   k <- list(
     kInt1=kInt_1,
     kInt2=kInt_2,
