@@ -176,7 +176,7 @@ Adjacency <- function(
     return(A)
   }
 
-#### manca questa
+
 clusteringWGCNA <- function(A,data,comp1="_1",comp2="_2",TOM=TRUE,ds=1,crossOnly=TRUE)
 {
   comp1 <- paste(comp1, "$", sep="")
