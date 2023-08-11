@@ -23,7 +23,7 @@ rm_netdiff <- function(A,comp1=comp1,comp2=comp2,verbose=TRUE)
   avgpath <- matrix(ncol=nrow(A)/2, nrow=nrow(A)/2)
   
   if(verbose) cat("Computing average conserved interactions...\n")
-  
+
   for(x in 1:(nrow(A)/2)){
     avgpath[x, ] <- (
       A[genes_comp1[x], genes_comp1]+
@@ -128,6 +128,7 @@ Adjacency <- function(
       {
         sign_list <- sign_list[which(!is.na(sign_list))]
         comp <- ifelse(compartment_sel=="comp2",comp2,comp1)
+        names(sign_list) <- paste(names(sign_list), gsub("\\$", "", comp), sep = "")
         selgenes <- intersect(paste(selgenes, gsub("\\$", "", comp), sep = ""), rownames(A))
         sel1 <- c(grep(comp1, rownames(A)), which(rownames(A) %in% selgenes))
         sel2 <- c(which(rownames(A) %in% selgenes), grep(comp2, rownames(A)))
