@@ -29,12 +29,8 @@ rm_netdiff <- function(A,comp1=comp1,comp2=comp2,verbose=TRUE)
       A[genes_comp1[x], genes_comp1]+
       A[genes_comp2[x], genes_comp2])/2
   }
-  
-  if(verbose){
-    cat("..Done!\n")
-    cat("Removing average conserved interactions...\n")
-  }
 
+  if(verbose) cat("Removing average conserved interactions...\n")
   A[genes_comp1, genes_comp2] <- A[genes_comp1, genes_comp2]-avgpath
   A[genes_comp2, genes_comp1] <- A[genes_comp2, genes_comp1]-avgpath
   diff <- abs(A_orig[genes_comp1_orig, genes_comp2_orig])-abs(A[genes_comp1, genes_comp2])
@@ -42,7 +38,6 @@ rm_netdiff <- function(A,comp1=comp1,comp2=comp2,verbose=TRUE)
   diff <- abs(A_orig[genes_comp2_orig, genes_comp1_orig])-abs(A[genes_comp2, genes_comp1])
   A[genes_comp2, genes_comp1][diff<0] <- A_orig[genes_comp2_orig, genes_comp1_orig][diff<0]
   A <- A/2
-  
   if(verbose) cat("Removing self-loops...\n")
   A <- rm_selfloop(A,comp1=comp1,comp2=comp2,verbose=FALSE)
   if(verbose) cat("..Done!\n")
