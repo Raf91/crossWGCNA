@@ -19,7 +19,7 @@ library(ggnewscale)
 
 # Input data
 
-* Load Spatial Transcriptomics data (automatically loaded)
+* Load Spatial Transcriptomics data
 * Define clusters
 * Identify cluster identities based on marker genes' expression
 
