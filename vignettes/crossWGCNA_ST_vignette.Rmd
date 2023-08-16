@@ -25,8 +25,8 @@ library(ggnewscale)
 
 ```{r, include=T, warning=FALSE, message=F}
 
-# pathTo10Xdata <- "~/Project_crossWGCNA/stable_version/dev_crossWGCNA/data/10x/"
-# BC <- Load10X_Spatial(data.dir=pathTo10Xdata,filename="Visium_Human_Breast_Cancer_filtered_feature_bc_matrix.h5")
+pathTo10Xdata <- "~/Project_crossWGCNA/stable_version/dev_crossWGCNA/data/10x/"
+BC <- Load10X_Spatial(data.dir=pathTo10Xdata,filename="Visium_Human_Breast_Cancer_filtered_feature_bc_matrix.h5")
 
 BC <- SCTransform(BC, assay = "Spatial", verbose = FALSE)
 BC <- RunPCA(BC, assay = "SCT", verbose = FALSE)
@@ -85,12 +85,12 @@ y_bin <- coords[,2]
 * Compute smoothed gene expression using the weighted mean (weight = 1/(dist+1)) of neighbouring spots in the same compartment (epithelial or stromal) with a maximum distance of 5 (set through the max_dist parameter). Remove the hashtag to run the computation.
 
 ```{r, include=T, warning=FALSE, message=F}
-averaged_expr_all_fun <- ST_expr_smooth(expr_data=expr_data, 
-                                        coords=coords, 
-                                        max_dist=5, 
-                                        spots_class=class, 
-                                        sel_class=c("Epi", "Stroma"))
-#load("averaged_expr_all_fun.RData")
+#averaged_expr_all_fun <- ST_expr_smooth(expr_data=expr_data, 
+#                                        coords=coords, 
+#                                        max_dist=5, 
+#                                        spots_class=class, 
+#                                        sel_class=c("Epi", "Stroma"))
+load("~/Project_crossWGCNA/data/averaged_expr_all_fun.RData")
 ```
 
 * Refine cluster selection for running crossWGCNA and filter non-isolated spots
@@ -126,7 +126,6 @@ adj <- Adjacency(data=md[[1]],
                  beta=6, 
                  comp1="_tis1", 
                  comp2="_tis2")
-#load("ST_adj_pipeline.RData")
 ```
 
 * Find the most highly interacting gene pair
@@ -250,11 +249,12 @@ coef_gsea1 <- net$kExt1 / net$kInt1
 names(coef_gsea1) <- gsub("_tis1", "", names(coef_gsea1))
 
 fgseaRes1 <- fgseaMultilevel(m_list, coef_gsea1)
-
+fgseaRes1
 coef_gsea2 <- net$kExt2 / net$kInt2
 names(coef_gsea2) <- gsub("_tis2", "", names(coef_gsea2))
 
 fgseaRes2 <- fgseaMultilevel(m_list, coef_gsea2)
+fgseaRes2
 ```
 
 # Co-expression modules
@@ -277,13 +277,13 @@ mods <- crossWGCNA(data=md[[1]],
 ```{r, include=T, warning=FALSE, message=F}
 kwithin <- degrees_mod(data=md[[1]], 
                        modules=mods[[2]]$colors, 
-                       Adj_type = "signed",
-                       cortype = "spearman",
-                       pval = "none",
-                       thr = 0.05,
-                       beta = 6,
-                       comp1 = "_tis1",
-                       comp2 = "_tis2")
+                       Adj_type="signed",
+                       cortype="spearman",
+                       pval="none",
+                       thr=0.05,
+                       beta=6,
+                       comp1="_tis1",
+                       comp2="_tis2")
 ```
 
 * Weighted module expression, selecting a specific module
