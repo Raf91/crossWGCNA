@@ -206,8 +206,8 @@ cor_inspect(md[[1]], gene1, gene2)
 * Find the most strongly inter-tissue connected genes with a specified gene. The parmeter comp1 should be set as the component where the chosen gene was measured.
 
 ```{r, include=T, warning=FALSE, message=F}
-df <- cytoscape_net(adjacency = adj, 
-                    dataset=as.matrix(md[[1]]), 
+df <- cytoscape_net(A = adj, 
+                    data=as.matrix(md[[1]]), 
                     gene="COL6A2", 
                     comp1="tis2", 
                     comp2="tis1", 
@@ -228,14 +228,15 @@ ggplot(df, aes(x=Target, y=Weight)) +
 * Generate the network, obtaining intra- ad inter-tissue degrees. Remove the hashtag to run the code.
 
 ```{r, include=T, warning=FALSE, message=F}
-net <- network(data=md[[1]], 
+net <- crossWGCNA(data=md[[1]], 
                Adj_type="signed", 
                cortype="spearman", 
                pval="none", 
                thr=0.05, 
                beta=6, 
                comp1="_tis1", 
-               comp2="_tis2")
+               comp2="_tis2",
+               doClusters=FALSE)
 
 ```
 

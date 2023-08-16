@@ -286,8 +286,8 @@ crossWGCNA <- function(
     }
 
     if(verbose) cat("..Done!\n")
-    out <- ifelse(doClusters,out,k)
-    return(out)
+    res <- ifelse(doClusters,out,k)
+    return(res)
   }
 
 changenames <- function(data, anno)
