@@ -332,7 +332,7 @@ degrees_mod <- function(
   {
     k <- list()
     for (i in 1:length(unique(modules))){
-      sprintf("Computing node degrees and ratio for module %i",i)
+      cat(sprintf("Computing node degrees and k-ratio for module %i\n",i))
       mod <- names(modules)[which(modules==unique(modules)[i])]
       genes <- unique(gsub(comp2, "", gsub(comp1, "", mod)))
       Adj <- Adjacency(
