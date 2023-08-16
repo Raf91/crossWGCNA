@@ -334,12 +334,8 @@ degrees_mod <- function(
     for (i in 1:length(unique(modules))){
       mod <- names(modules)[which(modules==unique(modules)[i])]
       genes <- unique(gsub(comp2, "", gsub(comp1, "", mod)))
-      genes_comp1 <- paste(genes, comp1, sep="")
-      genes_comp2 <- paste(genes, comp2, sep="")
-      data <- data[c(genes_comp1, genes_comp2),]
-
       Adj <- Adjacency(
-        data=data,
+        data=data[c(paste(genes, comp1, sep=""), paste(genes, comp2, sep="")),],
         method=method,
         Adj_type=Adj_type,
         cortype=cortype,
@@ -349,7 +345,6 @@ degrees_mod <- function(
         comp1=comp1,
         comp2=comp2,
       )
-
       Adj <- Adj[mod, mod]
       k[[i]] <- degrees(A=Adj, comp1=comp1, comp2=comp2)
     }
