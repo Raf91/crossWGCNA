@@ -24,10 +24,8 @@ library(ggnewscale)
 * Identify cluster identities based on marker genes' expression
 
 ```{r, include=T, warning=FALSE, message=F}
-
-pathTo10Xdata <- "~/Project_crossWGCNA/stable_version/dev_crossWGCNA/data/10x/"
+pathTo10Xdata <- paste0(system.file("data",package="crossWGCNA"),"/10x/")
 BC <- Load10X_Spatial(data.dir=pathTo10Xdata,filename="Visium_Human_Breast_Cancer_filtered_feature_bc_matrix.h5")
-
 BC <- SCTransform(BC, assay = "Spatial", verbose = FALSE)
 BC <- RunPCA(BC, assay = "SCT", verbose = FALSE)
 BC <- FindNeighbors(BC, reduction = "pca", dims = 1:30)
@@ -85,12 +83,12 @@ y_bin <- coords[,2]
 * Compute smoothed gene expression using the weighted mean (weight = 1/(dist+1)) of neighbouring spots in the same compartment (epithelial or stromal) with a maximum distance of 5 (set through the max_dist parameter). Remove the hashtag to run the computation.
 
 ```{r, include=T, warning=FALSE, message=F}
-#averaged_expr_all_fun <- ST_expr_smooth(expr_data=expr_data, 
-#                                        coords=coords, 
-#                                        max_dist=5, 
-#                                        spots_class=class, 
-#                                        sel_class=c("Epi", "Stroma"))
-load("~/Project_crossWGCNA/data/averaged_expr_all_fun.RData")
+averaged_expr_all_fun <- ST_expr_smooth(expr_data=expr_data, 
+                                        coords=coords, 
+                                        max_dist=5, 
+                                        spots_class=class, 
+                                        sel_class=c("Epi", "Stroma"))
+
 ```
 
 * Refine cluster selection for running crossWGCNA and filter non-isolated spots
