@@ -359,7 +359,7 @@ cytoscape_net <- function(A, data, gene, comp1, comp2, num, corr="spearman")
   interactors <- c(names(sort(A[paste(gene, comp1, sep="_"),grep(comp2, colnames(A))], decreasing=T))[1:num])
   inter_edges <- cor(data[paste(gene, comp1, sep="_"),],t(data[intersect(interactors, rownames(data)),]), method=corr)
   intra_1 <- cor(data[paste(gene, comp1, sep="_"),],t(data[gsub(comp2, comp1, intersect(interactors, rownames(data))),]),method=corr)
-  intra_2 <- cor(data[paste(gene, comp2, sep="_"),],t(data[intersect(interactors, rownames(dataset)),]), method=corr)
+  intra_2 <- cor(data[paste(gene, comp2, sep="_"),],t(data[intersect(interactors, rownames(data)),]), method=corr)
 
   df <- data.frame(
     Source=c(

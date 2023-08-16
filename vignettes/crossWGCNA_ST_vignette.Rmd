@@ -19,15 +19,15 @@ library(ggnewscale)
 
 # Input data
 
-* Load Spatial Transcriptomics data
+* Load Spatial Transcriptomics data (automatically loaded)
 * Define clusters
 * Identify cluster identities based on marker genes' expression
 
 ```{r, include=T, warning=FALSE, message=F}
 
-pathTo10Xdata <- "~/Project_crossWGCNA/stable_version/dev_crossWGCNA/data/10x/"
+# pathTo10Xdata <- "~/Project_crossWGCNA/stable_version/dev_crossWGCNA/data/10x/"
+# BC <- Load10X_Spatial(data.dir=pathTo10Xdata,filename="Visium_Human_Breast_Cancer_filtered_feature_bc_matrix.h5")
 
-BC <- Load10X_Spatial(data.dir=pathTo10Xdata,filename="Visium_Human_Breast_Cancer_filtered_feature_bc_matrix.h5")
 BC <- SCTransform(BC, assay = "Spatial", verbose = FALSE)
 BC <- RunPCA(BC, assay = "SCT", verbose = FALSE)
 BC <- FindNeighbors(BC, reduction = "pca", dims = 1:30)
@@ -36,15 +36,18 @@ BC <- RunUMAP(BC, reduction = "pca", dims = 1:30)
 p1 <- DimPlot(BC, reduction = "umap", label = TRUE)
 p1
 ```
+
 ```{r, include=T, warning=FALSE, message=F}
 p2 <- SpatialDimPlot(BC, label = TRUE, label.size = 3)
 p2
 ```
+
 * Plot markers to define epithelial and stromal clusters
 
 ```{r, include=T, warning=FALSE, message=F}
 VlnPlot(BC, features = c("FAP", "COL1A1"), pt.size = 0.1, group.by="seurat_clusters")
 ```
+
 
 ```{r, include=T, warning=FALSE, message=F}
 VlnPlot(BC, features = c("EPCAM", "KRT14"), pt.size = 0.1, group.by="seurat_clusters")

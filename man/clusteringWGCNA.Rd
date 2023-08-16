@@ -5,27 +5,28 @@
   clusteringWGCNA
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+
 }
 \usage{
-clusteringWGCNA(A, data, comp1 = "_1", comp2 = "_2", TOM = T, ds = 1, crossOnly = T)
+clusteringWGCNA(A, data)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{A}{
-%%     ~~Describe \code{A} here~~
+    Adjacency matrix. Must be a symmetric matrix. 
 }
   \item{data}{
-%%     ~~Describe \code{data} here~~
+    Input data matrix, where rows are genes and columns are samples. Gene expression measures in the two tissues are combined by row.
 }
   \item{comp1}{
-%%     ~~Describe \code{comp1} here~~
+    Suffix (string character) to identify genes of tissue 1. Default="_1".
 }
   \item{comp2}{
-%%     ~~Describe \code{comp2} here~~
+    Suffix (string character) to identify genes of tissue 2. Default="_2".
 }
   \item{TOM}{
-%%     ~~Describe \code{TOM} here~~
+    Boolean value. If TRUE, it computes the TOM similarity matrix. 
+    See WGCNA for details
 }
   \item{ds}{
 %%     ~~Describe \code{ds} here~~
@@ -48,7 +49,7 @@ clusteringWGCNA(A, data, comp1 = "_1", comp2 = "_2", TOM = T, ds = 1, crossOnly 
 %% ~put references to the literature/web site here ~
 }
 \author{
-%%  ~~who you are~~
+Aurora Savina, Raffaele M. Iannuzzi
 }
 \note{
 %%  ~~further notes~~
@@ -60,49 +61,20 @@ clusteringWGCNA(A, data, comp1 = "_1", comp2 = "_2", TOM = T, ds = 1, crossOnly 
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (A, data, comp1 = "_1", comp2 = "_2", TOM = T, ds = 1, 
-    crossOnly = T) 
-{
-    comp1 <- paste(comp1, "$", sep = "")
-    comp2 <- paste(comp2, "$", sep = "")
-    if (crossOnly == T) {
-        A[grep(comp1, rownames(A)), grep(comp1, rownames(A))] <- 0
-        A[grep(comp2, rownames(A)), grep(comp2, rownames(A))] <- 0
-    }
-    genes1 <- gsub(comp1, "", rownames(A)[grep(comp1, rownames(A))])
-    genes2 <- gsub(comp2, "", rownames(A)[grep(comp2, rownames(A))])
-    Idx1 <- cbind(grep(comp1, rownames(A)), grep(comp2, rownames(A))[match(genes1, 
-        genes2)])
-    A[Idx1] <- 0
-    Idx2 <- cbind(grep(comp2, rownames(A)), grep(comp1, rownames(A))[match(genes2, 
-        genes1)])
-    A[Idx2] <- 0
-    if (TOM == T) {
-        similarity <- TOMsimilarity(A, TOMType = "signed")
-        rownames(similarity) <- rownames(A)
-        colnames(similarity) <- colnames(A)
-        A <- similarity
-        rm(similarity)
-    }
-    if (crossOnly == T) {
-        A[grep(comp1, rownames(A)), grep(comp1, rownames(A))] <- 0
-        A[grep(comp2, rownames(A)), grep(comp2, rownames(A))] <- 0
-    }
-    conTree = hclust(as.dist(1 - A), method = "average")
-    unmergedLabels = cutreeDynamic(dendro = conTree, dist = 1 - 
-        A, deepSplit = ds)
-    names(unmergedLabels) <- rownames(A)
-    merged = mergeCloseModules(t(data), unmergedLabels, cutHeight = 0.25, 
-        verbose = 3)
-    names(merged$colors) <- rownames(A)
-    return(merged)
-  }
+library(crossWGCNA)
+library(WGCNA)
+inboth <- intersect(rownames(stroma), rownames(epi))
+stroma <- stroma[inboth,]
+epi <- epi[inboth,]
+rownames(stroma) <- paste(rownames(stroma), "S", sep="_")
+colnames(stroma) <- paste("Sample", c(1:34), sep="_")
+rownames(epi) <- paste(rownames(epi), "E", sep="_")
+colnames(epi) <- paste("Sample", c(1:34), sep="_")
+BC_merged <- rbind(stroma, epi)
+Adj <- Adjacency(data=BC_merged, method="netdiff", Adj_type="signed", comp1="_S", comp2="_E")
+cl <- clusteringWGCNA(A=Adj,data=BC_merged,ds=2,comp1="_S",comp2="_E")
 }
+
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):
 % \keyword{ ~kwd1 }
