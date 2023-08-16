@@ -1,6 +1,6 @@
 ---
 title: "crossWGCNA ST vignette"
-author: "Aurora Savino"
+author: "Aurora Savino, Raffaele M. Iannuzzi"
 date: "`r Sys.Date()`"
 output:
   html_document:
