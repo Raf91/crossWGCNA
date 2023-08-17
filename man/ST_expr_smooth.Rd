@@ -16,16 +16,16 @@
     Input data matrix, where rows are genes and columns are spots.
 }
   \item{coords}{
-    Dataframe with columns specyfing x and y coordinates for each spot, obtained from the \code{ST_spots_coords} function.
+    Dataframe with columns specyfing x and y coordinates for each spot, obtained from the \code{\link{ST_spots_coords}} function.
 }
   \item{max_dist}{
-    Integer specifying maximum spots distance to be included in the weighed mean. Default=5.
+    Integer specifying maximum spots distance to be included in the weighed mean. Default=\code{5}.
 }
   \item{spots_class}{
     Charater vector with labels indicating the compartment to which each spot belongs.
 }
   \item{sel_class}{
-    Character vector with the labels of the two compartments to analyze. Can be "Epi" and "Stroma".
+    Character vector with the labels of the two compartments to analyze. Can be \code{"Epi"} and \code{"Stroma"}.
 }
 }
 \details{
@@ -38,7 +38,7 @@
 %% ~put references to the literature/web site here ~
 }
 \author{
-%%  ~~who you are~~
+Aurora Savino, Raffaele M. Iannuzzi
 }
 \note{
 %%  ~~further notes~~
@@ -47,17 +47,12 @@
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-  \code{ST_spots_coords}
+\code{\link{ST_merged_dataset}}, \code{\link{ST_spots_coords}},
+\code{\link{ST_spots_filt}}, \code{\link{ST_midpoints_def}}.
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
+See package vignette.
 
-## The function is currently defined as
-function (x)
-{
-  }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

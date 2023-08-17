@@ -5,32 +5,32 @@
   ST_spots_coords
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+Defines the x and y coordinates of each spot in the array, assigning the value of 1 to the leftmost spot and considering an inter-spot x distance of 1.}
 }
 \usage{
-ST_spots_coords(x)
+ST_spots_coords(data)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{
-%%     ~~Describe \code{x} here~~
+  \item{data}{
+    Seurat object with the spatial transcriptomics data.
+}
+\item{br}{
+    Number of breaks (numeric) for finding the coordinate peaks. Needs to be higher than the number of actual x or y coordinates of spots in the array.
+    Default=\code{1000}
 }
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+Returns a matrix with two columns for x and y coordinates of each spot.
 }
 \references{
 %% ~put references to the literature/web site here ~
 }
 \author{
-%%  ~~who you are~~
+Aurora Savino, Raffaele M. Iannuzzi
 }
 \note{
 %%  ~~further notes~~
@@ -42,14 +42,10 @@ ST_spots_coords(x)
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
+See package vignette. 
 
 ## The function is currently defined as
-function (x)
-{
-  }
+
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

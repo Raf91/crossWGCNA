@@ -5,45 +5,41 @@
   clusteringWGCNA
 }
 \description{
-
+  Function to perform WGCNA clustering based on an adjacency matrix.
 }
 \usage{
-clusteringWGCNA(A, data)
+clusteringWGCNA(A, data, comp1, comp2, TOM, ds, crossOnly)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{A}{
-    Adjacency matrix. Must be a symmetric matrix. 
+    Adjacency matrix. Should be the output of the function \code{\link{Adjacency}}.
+    Must be a symmetric matrix.
 }
   \item{data}{
     Input data matrix, where rows are genes and columns are samples. Gene expression measures in the two tissues are combined by row.
 }
   \item{comp1}{
-    Suffix (string character) to identify genes of tissue 1. Default="_1".
+    Suffix (string character) to identify genes of tissue 1. Default=\code{"_1"}.
 }
   \item{comp2}{
-    Suffix (string character) to identify genes of tissue 2. Default="_2".
+    Suffix (string character) to identify genes of tissue 2. Default=\code{"_2"}.
 }
   \item{TOM}{
-    Boolean value. If TRUE, it computes the TOM similarity matrix. 
-    See WGCNA for details
+    Boolean value. If TRUE compute the Topological Overlap Matrix prior to clustering. Default=\code{TRUE}.
 }
   \item{ds}{
-%%     ~~Describe \code{ds} here~~
+    Parameter influencing the final number of clusters. It sets the \code{deepSplit} parameter in the \code{cutreeDynamic} function from the WGCNA package.
 }
   \item{crossOnly}{
-%%     ~~Describe \code{crossOnly} here~~
+    Boolean value. If \code{TRUE} remove intra-tissue adjacencies prior to clustering (set to 0). Default=\code{TRUE}.
 }
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+Returns a list of connectivities output of \code{\link{degrees}} and of gene clusters
 }
 \references{
 %% ~put references to the literature/web site here ~
@@ -58,21 +54,10 @@ Aurora Savina, Raffaele M. Iannuzzi
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+\code{\link{Adjacency}}, \code{\link{degrees}}.
 }
 \examples{
-library(crossWGCNA)
-library(WGCNA)
-inboth <- intersect(rownames(stroma), rownames(epi))
-stroma <- stroma[inboth,]
-epi <- epi[inboth,]
-rownames(stroma) <- paste(rownames(stroma), "S", sep="_")
-colnames(stroma) <- paste("Sample", c(1:34), sep="_")
-rownames(epi) <- paste(rownames(epi), "E", sep="_")
-colnames(epi) <- paste("Sample", c(1:34), sep="_")
-BC_merged <- rbind(stroma, epi)
-Adj <- Adjacency(data=BC_merged, method="netdiff", Adj_type="signed", comp1="_S", comp2="_E")
-cl <- clusteringWGCNA(A=Adj,data=BC_merged,ds=2,comp1="_S",comp2="_E")
+See package vignette
 }
 
 % Add one or more standard keywords, see file 'KEYWORDS' in the

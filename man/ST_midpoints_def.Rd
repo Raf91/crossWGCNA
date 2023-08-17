@@ -5,32 +5,31 @@
   ST_midpoints_def
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+  Defines boundaries between two tissues/compartments as the points equally distant from two neighbouring compartment1 and compartment2 spots.
 }
 \usage{
-ST_midpoints_def(x)
+ST_midpoints_def(coords, sel_spots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{
-%%     ~~Describe \code{x} here~~
+  \item{coords}{
+    X and y coordinates for each spot, obtained from the \code{\link{ST_spots_coords}} function.
+}
+  \item{sel_spots}{
+    List of two vectors of indexes (matched) for compartment 1 and compartment 2 spots. Output of the \code{\link{ST_boundary_spots}} function.
 }
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+List of two vectors with x and y coordinates of the midpoints.
 }
 \references{
 %% ~put references to the literature/web site here ~
 }
 \author{
-%%  ~~who you are~~
+Aurora Savino, Raffaele M. Iannuzzi.
 }
 \note{
 %%  ~~further notes~~
@@ -39,17 +38,11 @@ ST_midpoints_def(x)
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+\code{\link{ST_expr_smooth}}, \code{\link{ST_merged_dataset}}, \code{\link{ST_spots_coords}},
+\code{\link{ST_spots_filt}}, \code{\link{ST_boundary_spots}}
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (x)
-{
-  }
+See package vignette.
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

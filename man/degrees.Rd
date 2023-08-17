@@ -5,38 +5,42 @@
   degrees
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+  Function to compute the weighted degree of a gene with all genes of the same or of the alternate tissue/organ.
 }
 \usage{
-degrees(A, comp1 = "_1", comp2 = "_2")
+degrees(A, comp1="_1", comp2="_2")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{A}{
-%%     ~~Describe \code{A} here~~
+    Matrix of adjacencies, output of the function \code{Adjacency}.
 }
   \item{comp1}{
-%%     ~~Describe \code{comp1} here~~
+    Suffix (string character) to identify genes of tissue 1. Default=\code{"_1"}.
 }
   \item{comp2}{
-%%     ~~Describe \code{comp2} here~~
+    Suffix (string character) to identify genes of tissue 2. Default=\code{"_2"}.
 }
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
+A list of degrees' vectors:
 %%  ~Describe the value returned
 %%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+  \item{kInt1}{Intra-tissue degree for tissue 1}
+  \item{kInt2}{Intra-tissue degree for tissue 2}
+  \item{kExt1}{Inter-tissue degree for tissue 1 genes with tissue 2}
+  \item{kExt2}{Inter-tissue degree for tissue 2 genes with tissue 1}
+  \item{kTot1}{Overall connectivity of genes in tissue 1 with genes in both tissue 1 and 2}
+  \item{kTot2}{Overall connectivity of genes in tissue 2 with genes in both tissue 1 and 2}
 }
 \references{
 %% ~put references to the literature/web site here ~
 }
 \author{
-%%  ~~who you are~~
+Aurora Savino, Raffaele M. Iannuzzi
 }
 \note{
 %%  ~~further notes~~
@@ -48,37 +52,7 @@ degrees(A, comp1 = "_1", comp2 = "_2")
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (A, comp1 = "_1", comp2 = "_2") 
-{
-    comp1 <- paste(comp1, "$", sep = "")
-    comp2 <- paste(comp2, "$", sep = "")
-    genes1 <- gsub(comp1, "", rownames(A)[grep(comp1, rownames(A))])
-    genes2 <- gsub(comp2, "", rownames(A)[grep(comp2, rownames(A))])
-    Idx1 <- cbind(grep(comp1, rownames(A)), grep(comp2, rownames(A))[match(genes1, 
-        genes2)])
-    A[Idx1] <- 0
-    Idx2 <- cbind(grep(comp2, rownames(A)), grep(comp1, rownames(A))[match(genes2, 
-        genes1)])
-    A[Idx2] <- 0
-    kTot <- rowSums(A)
-    kInt_1 <- rowSums(A[grep(comp1, rownames(A)), grep(comp1, 
-        colnames(A))])
-    kInt_2 <- rowSums(A[grep(comp2, rownames(A)), grep(comp2, 
-        colnames(A))])
-    kExt_1 <- rowSums(A[grep(comp1, rownames(A)), grep(comp2, 
-        colnames(A))])
-    kExt_2 <- rowSums(A[grep(comp2, rownames(A)), grep(comp1, 
-        colnames(A))])
-    k <- list(kInt1 = kInt_1, kInt2 = kInt_2, kExt1 = kExt_1, 
-        kExt2 = kExt_2, kTot1 = kTot[grep(comp1, colnames(A))], 
-        kTot2 = kTot[grep(comp2, colnames(A))])
-    return(k)
-  }
+See package vignette
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

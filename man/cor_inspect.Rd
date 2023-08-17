@@ -5,44 +5,40 @@
   cor_inspect
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+Plot the correlation between two genes in the same or in different compartments/tissues.
 }
 \usage{
-cor_inspect(data = data_merged_GSE88715, gene1, gene2, comp1 = "_tis1", comp2 = "_tis2")
+cor_inspect(data, gene1, gene2, comp1="_tis1", comp2="_tis2")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{data}{
-%%     ~~Describe \code{data} here~~
+    Input data matrix, where rows are genes and columns are samples. Gene expression measures in the two tissues are combined by row.
 }
   \item{gene1}{
-%%     ~~Describe \code{gene1} here~~
+    First gene to plot
 }
   \item{gene2}{
-%%     ~~Describe \code{gene2} here~~
+    Second gene to plot
 }
   \item{comp1}{
-%%     ~~Describe \code{comp1} here~~
+    Suffix (string character) to identify genes of tissue 1. Default=\code{"_1"}.
 }
   \item{comp2}{
-%%     ~~Describe \code{comp2} here~~
+    Suffix (string character) to identify genes of tissue 2. Default=\code{"_2"}.
 }
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+A plot with four panels displaying the scatterplots of gene1 and gene2 relationships within and between tissues/compartments
 }
 \references{
 %% ~put references to the literature/web site here ~
 }
 \author{
-%%  ~~who you are~~
+Aurora Savino, Raffaele M. Iannzzi
 }
 \note{
 %%  ~~further notes~~
@@ -51,30 +47,10 @@ cor_inspect(data = data_merged_GSE88715, gene1, gene2, comp1 = "_tis1", comp2 = 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (data = data_merged_GSE88715, gene1, gene2, comp1 = "_tis1", 
-    comp2 = "_tis2") 
-{
-    df <- data.frame(gene1 = c(data[paste(gene1, comp1, sep = ""), 
-        ], data[paste(gene1, comp2, sep = ""), ], data[paste(gene1, 
-        comp1, sep = ""), ], data[paste(gene1, comp2, sep = ""), 
-        ]), gene2 = c(data[paste(gene2, comp1, sep = ""), ], 
-        data[paste(gene2, comp2, sep = ""), ], data[paste(gene2, 
-            comp2, sep = ""), ], data[paste(gene2, comp2, sep = ""), 
-            ]), compartment = c(rep(c("comp1 vs comp1", "comp2 vs comp2", 
-        "comp1 vs comp2", "comp2 vs comp1"), each = ncol(data))))
-    p <- ggplot(df, aes(x = gene1, y = gene2)) + geom_point() + 
-        facet_wrap(. ~ compartment) + geom_smooth(method = "lm") + 
-        theme_classic() + labs(x = gene1, y = gene2)
-    return(p)
-  }
+See package vignette
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

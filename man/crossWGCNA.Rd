@@ -5,74 +5,83 @@
   crossWGCNA
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+  One-step function to obtain connectivities of each gene with all genes of the same or of the alternate tissue/organ, 
+  and gene clusters based on inter-tissue connectivities.
 }
 \usage{
-crossWGCNA(data, method = "netdiff", Adj_type = "signed", cortype = "spearman", pval = "none", thr = 0.05, beta = 6, comp1 = "_1", comp2 = "_2", doTOM = T, ds = 1, crossOnly = T, sign_list = 1, compartment_sel = "none", selgenes = NA)
+crossWGCNA(data)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{data}{
-%%     ~~Describe \code{data} here~~
+    Input data matrix, where rows are genes and columns are samples. Gene expression measures in the two tissues are combined by row.
 }
   \item{method}{
-%%     ~~Describe \code{method} here~~
+    String character identifying the method to use to compute cross-tissue adjacencies. Can be \code{"self-loop"} or \code{"netdiff"}.
 }
   \item{Adj_type}{
-%%     ~~Describe \code{Adj_type} here~~
+    String character identifying the type of adjacency to compute. Can be \code{"signed"}, \code{"unsigned"} or \code{"keep sign"}. Default=\code{"signed"}. 
+    \code{"keep sign"} is equivalent to \code{"unsigned"} in absolute values, but with sign corresponding to the sign of correlation.
+    See WGCNA for details.
 }
   \item{cortype}{
-%%     ~~Describe \code{cortype} here~~
+    String character identifying the type of correlation. Can be \code{"pearson"}, \code{"spearman"} or \code{"bicor"}. Default=\code{"spearman"}. 
 }
   \item{pval}{
-%%     ~~Describe \code{pval} here~~
+    String character identifying whether to use the correlations' p-value in edge weight.
+    Possible values are: \code{"none"} (does not include p-values), \code{"threshold"} (discard edges with a p-value higher than a threshold),
+    \code{"weight"} (multiply edges' adjacencies by 1-pvalue). Default=\code{"none"}.
+    Can be used with \code{"pearson"} and \code{"spearman"} correlations.
 }
   \item{thr}{
-%%     ~~Describe \code{thr} here~~
+    Threshold for cutting edges based on p-values. Default=\code{0.05}.
 }
   \item{beta}{
-%%     ~~Describe \code{beta} here~~
+    Power for adjacency calculation. Default=\code{6}.
 }
   \item{comp1}{
-%%     ~~Describe \code{comp1} here~~
+    Suffix (string character) to identify genes of tissue 1. Default=\code{"_1"}.
 }
   \item{comp2}{
-%%     ~~Describe \code{comp2} here~~
+    Suffix (string character) to identify genes of tissue 2. Default=\code{"_2"}.
+}
+  \item{doClusters}{
+    Boolean value. If TRUE compute clusters. Default=\code{TRUE}.
 }
   \item{doTOM}{
-%%     ~~Describe \code{doTOM} here~~
+    Boolean value. If TRUE compute the Topological Overlap Matrix prior to clustering. Default=\code{TRUE}.
 }
   \item{ds}{
-%%     ~~Describe \code{ds} here~~
+    Parameter influencing the final number of clusters. It sets the \code{deepSplit} parameter in the \code{cutreeDynamic} function from the WGCNA package.
 }
   \item{crossOnly}{
-%%     ~~Describe \code{crossOnly} here~~
+    Boolean value. If \code{TRUE} remove intra-tissue adjacencies prior to clustering (set to 0). Default=\code{TRUE}.
 }
   \item{sign_list}{
-%%     ~~Describe \code{sign_list} here~~
+    When considering genes associated with a pathway with sign (activation: +1, inactivation: -1), a vector with a value for each gene in the pathway. 
+    Default=\code{1}, meaning that each gene has the same positive weight.
 }
   \item{compartment_sel}{
-%%     ~~Describe \code{compartment_sel} here~~
+    String character identifying the tissue to be considered when providing a pathway. Can be \code{"none"}, \code{"comp1"} or \code{"comp2"}.
 }
   \item{selgenes}{
-%%     ~~Describe \code{selgenes} here~~
+    Vector of genes associated with the pathway of interest.
+}
+  \item{verbose}{
+    Boolean value. If \code{TRUE} prints logging output. Default=\code{TRUE}.
 }
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+Returns a list of connectivities if \code{doClusters} is set to \code{FALSE}, otherwise returns both list of connectivities and gene modules.
 }
 \references{
 %% ~put references to the literature/web site here ~
 }
 \author{
-%%  ~~who you are~~
+Aurora Savino, Raffaele M. Iannuzzi
 }
 \note{
 %%  ~~further notes~~
@@ -81,31 +90,11 @@ crossWGCNA(data, method = "netdiff", Adj_type = "signed", cortype = "spearman", 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+\code{\link{Adjacency}}, \code{\link{clusteringWGCNA}}, 
+\code{\link{degrees}}.
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (data, method = "netdiff", Adj_type = "signed", cortype = "spearman", 
-    pval = "none", thr = 0.05, beta = 6, comp1 = "_1", comp2 = "_2", 
-    doTOM = T, ds = 1, crossOnly = T, sign_list = 1, compartment_sel = "none", 
-    selgenes = NA) 
-{
-    comp1 <- paste(comp1, "$", sep = "")
-    comp2 <- paste(comp2, "$", sep = "")
-    Adj <- Adjacency(data = data, method = method, Adj_type = Adj_type, 
-        cortype = cortype, pval = pval, thr = thr, beta = beta, 
-        comp1 = comp1, comp2 = comp2, sign_list = sign_list, 
-        compartment_sel = compartment_sel, selgenes = selgenes)
-    k <- degrees(A = Adj, comp1 = comp1, comp2 = comp2)
-    clusters <- clusteringWGCNA(A = Adj, data = data, comp1 = comp1, 
-        comp2 = comp2, TOM = doTOM, ds = ds, crossOnly = crossOnly)
-    net_out <- list(k, clusters)
-    return(net_out)
-  }
+See package vignette
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):
