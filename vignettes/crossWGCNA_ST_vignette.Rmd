@@ -24,31 +24,31 @@ library(ggnewscale)
 * Identify cluster identities based on marker genes' expression
 
 ```{r, include=T, warning=FALSE, message=F}
-pathTo10Xdata <- paste0(system.file("data",package="crossWGCNA"),"/10x/")
+pathTo10Xdata <- paste0(system.file("data", package="crossWGCNA"),"/10x/")
 BC <- Load10X_Spatial(data.dir=pathTo10Xdata,filename="Visium_Human_Breast_Cancer_filtered_feature_bc_matrix.h5")
-BC <- SCTransform(BC, assay = "Spatial", verbose = FALSE)
-BC <- RunPCA(BC, assay = "SCT", verbose = FALSE)
-BC <- FindNeighbors(BC, reduction = "pca", dims = 1:30)
+BC <- SCTransform(BC, assay="Spatial", verbose=FALSE)
+BC <- RunPCA(BC, assay="SCT", verbose=FALSE)
+BC <- FindNeighbors(BC, reduction = "pca", dims=1:30)
 BC <- FindClusters(BC, verbose = FALSE)
-BC <- RunUMAP(BC, reduction = "pca", dims = 1:30)
-p1 <- DimPlot(BC, reduction = "umap", label = TRUE)
+BC <- RunUMAP(BC, reduction = "pca", dims=1:30)
+p1 <- DimPlot(BC, reduction = "umap", label=TRUE)
 p1
 ```
 
 ```{r, include=T, warning=FALSE, message=F}
-p2 <- SpatialDimPlot(BC, label = TRUE, label.size = 3)
+p2 <- SpatialDimPlot(BC, label=TRUE, label.size=3)
 p2
 ```
 
 * Plot markers to define epithelial and stromal clusters
 
 ```{r, include=T, warning=FALSE, message=F}
-VlnPlot(BC, features = c("FAP", "COL1A1"), pt.size = 0.1, group.by="seurat_clusters")
+VlnPlot(BC, features=c("FAP", "COL1A1"), pt.size=0.1, group.by="seurat_clusters")
 ```
 
 
 ```{r, include=T, warning=FALSE, message=F}
-VlnPlot(BC, features = c("EPCAM", "KRT14"), pt.size = 0.1, group.by="seurat_clusters")
+VlnPlot(BC, features=c("EPCAM", "KRT14"), pt.size=0.1, group.by="seurat_clusters")
 ```
 
 * Extract expression levels from the Seurat object 
@@ -203,7 +203,7 @@ cor_inspect(md[[1]], gene1, gene2)
 * Find the most strongly inter-tissue connected genes with a specified gene. The parmeter comp1 should be set as the component where the chosen gene was measured.
 
 ```{r, include=T, warning=FALSE, message=F}
-df <- cytoscape_net(A = adj, 
+df <- cytoscape_net(A=adj, 
                     data=as.matrix(md[[1]]), 
                     gene="COL6A2", 
                     comp1="tis2", 
@@ -213,9 +213,9 @@ df <- cytoscape_net(A = adj,
 levels <- df$Target[df$Edge_type=="inter"][order(df$Weight[df$Edge_type=="inter"],decreasing = T)]
 df$Target <- factor(df$Target, levels=levels)
 
-ggplot(df, aes(x=Target, y=Weight)) + 
-  geom_col() + 
-  facet_grid(Edge_type~.) + 
+ggplot(df, aes(x=Target, y=Weight))+ 
+  geom_col()+ 
+  facet_grid(Edge_type~.)+ 
   theme_classic()
 
 ```
@@ -226,29 +226,29 @@ ggplot(df, aes(x=Target, y=Weight)) +
 
 ```{r, include=T, warning=FALSE, message=F}
 net <- crossWGCNA(data=md[[1]], 
-               Adj_type="signed", 
-               cortype="spearman", 
-               pval="none", 
-               thr=0.05, 
-               beta=6, 
-               comp1="_tis1", 
-               comp2="_tis2",
-               doClusters=FALSE)
+                  Adj_type="signed", 
+                  cortype="spearman", 
+                  pval="none", 
+                  thr=0.05, 
+                  beta=6, 
+                  comp1="_tis1", 
+                  comp2="_tis2",
+                  doClusters=FALSE)
 
 ```
 
 * Perform gene set enrichment analysis of genes ranked based on kRatio.
 
 ```{r, include=T, warning=FALSE, message=F}
-m_df <- msigdbr(species = "Homo sapiens", category = "C5")
-m_list <- m_df %>% split(x = .$gene_symbol, f = .$gs_name)
+m_df <- msigdbr(species="Homo sapiens", category="C5")
+m_list <- m_df %>% split(x=.$gene_symbol, f=.$gs_name)
 
 coef_gsea1 <- net$kExt1 / net$kInt1
 names(coef_gsea1) <- gsub("_tis1", "", names(coef_gsea1))
 
 fgseaRes1 <- fgseaMultilevel(m_list, coef_gsea1)
 fgseaRes1
-coef_gsea2 <- net$kExt2 / net$kInt2
+coef_gsea2 <- net$kExt2/net$kInt2
 names(coef_gsea2) <- gsub("_tis2", "", names(coef_gsea2))
 
 fgseaRes2 <- fgseaMultilevel(m_list, coef_gsea2)
@@ -309,10 +309,10 @@ df <- data.frame(x_coord=c(x_bin[epi_spots],x_bin[stroma_spots]),
 df_midpoint <- data.frame(x_coord= midpoints[[1]],
                           y_coord= midpoints[[2]])
 
-p1 <- ggplot(data=df, aes(x=x_coord, y=y_coord, colour=gene)) + 
-  geom_point() +
-  scale_color_continuous(type = "viridis") +
-  geom_point(data=df_midpoint, size=1, colour="black") + 
+p1 <- ggplot(data=df, aes(x=x_coord, y=y_coord, colour=gene))+ 
+  geom_point()+
+  scale_color_continuous(type = "viridis")+
+  geom_point(data=df_midpoint, size=1, colour="black")+ 
   theme_classic()
 
 #weighted mean of genes measured in tissue 2
@@ -324,10 +324,10 @@ df <- data.frame(x_coord=c(x_bin[epi_spots],x_bin[stroma_spots]),
 df_midpoint <- data.frame(x_coord= midpoints[[1]],
                           y_coord= midpoints[[2]])
 
-p2 <- ggplot(data=df, aes(x=x_coord, y=y_coord, colour=gene)) + 
-  geom_point() +
-  scale_color_continuous(type = "viridis") +
-  geom_point(data=df_midpoint, size=1, colour="black") + 
+p2 <- ggplot(data=df, aes(x=x_coord, y=y_coord, colour=gene))+ 
+  geom_point()+
+  scale_color_continuous(type = "viridis")+
+  geom_point(data=df_midpoint, size=1, colour="black")+ 
   theme_classic()
 
 p1

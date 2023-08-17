@@ -58,7 +58,7 @@ net <- crossWGCNA(data=BC_merged,
                   Adj_type="signed", 
                   ds=2, 
                   comp1="_S", 
-                  comp2="_E" )
+                  comp2="_E")
 ```
 
 # Step-by-step procedure
@@ -160,6 +160,7 @@ Showing the top 10 genes with the highest kRatio in cluster 3.
 ```{r, include=T, warning=FALSE, message=F}
 sort((k$kExt1/k$kInt1)[names(clusts$colors)[clusts$colors==3]],decreasing=T)[1:10]
 ```
+
 Performing functional enrichment of genes in cluster 3, for genes measured in the stroma and in the epithelium separately.
 
 ```{r, include=T, warning=FALSE, message=F}
@@ -186,6 +187,7 @@ dotplot(GO_E, showCategory=10)
 ```
 
 Indentify samples with the highest expression of a module
+
 ```{r, include=T, warning=FALSE}
 ME <- moduleEigengenes(expr = t(BC_merged), colors = clusts$colors)
 hist(ME$eigengenes[,"ME6"], xlab="Module Eigengene 6")

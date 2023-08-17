@@ -458,32 +458,27 @@ ST_spots_coords <- function(data, br=1000)
 #coords, output of spots_coords
 #spots_dist
 
-ST_expr_smooth <- function(
-  expr_data, 
-  coords, 
-  max_dist=5, 
-  spots_class, 
-  sel_class=c("Epi", "Stroma"))
-  {
-    spots_dist <- dist(coords)
-    averaged_expr_all <- matrix(ncol=ncol(expr_data), nrow=nrow(expr_data))
-    for(es in 1:ncol(expr_data)){
-      class_es <- spots_class[es]
-      if(class_es %in% sel_class){
-        dist_es <- as.matrix(spots_dist)[,es]
-        sel_spots <- which(dist_es<max_dist & spots_class==class_es)
-        weights <- 1/(dist_es[sel_spots]+1)
-        if(length(sel_spots)>1){
-          averaged_expr_all[,es] <- apply(
-            (exp(expr_data[,sel_spots])-1), 1, function(x){log(weighted.mean(x, weights)+1)})
-        } else {
-          averaged_expr_all[,es] <- expr_data[,sel_spots]
-        }
+ST_expr_smooth <- function(expr_data, coords, max_dist=5, spots_class, sel_class=c("Epi", "Stroma"))
+{
+  spots_dist <- dist(coords)
+  averaged_expr_all <- matrix(ncol=ncol(expr_data), nrow=nrow(expr_data))
+  for(es in 1:ncol(expr_data)){
+    class_es <- spots_class[es]
+    if(class_es %in% sel_class){
+      dist_es <- as.matrix(spots_dist)[,es]
+      sel_spots <- which(dist_es<max_dist & spots_class==class_es)
+      weights <- 1/(dist_es[sel_spots]+1)
+      if(length(sel_spots)>1){
+        averaged_expr_all[,es] <- apply(
+          (exp(expr_data[,sel_spots])-1), 1, function(x){log(weighted.mean(x, weights)+1)})
+      } else {
+        averaged_expr_all[,es] <- expr_data[,sel_spots]
       }
     }
-    rownames(averaged_expr_all) <- rownames(expr_data)
-    return(averaged_expr_all)
   }
+  rownames(averaged_expr_all) <- rownames(expr_data)
+  return(averaged_expr_all)
+}
 
 ###selects epi and stroma spots not isolated
 ##epi with at least 1 neighbouring epi spot
