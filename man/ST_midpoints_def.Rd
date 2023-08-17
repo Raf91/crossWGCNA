@@ -39,7 +39,7 @@ Aurora Savino, Raffaele M. Iannuzzi.
 
 \seealso{
 \code{\link{ST_expr_smooth}}, \code{\link{ST_merged_dataset}}, \code{\link{ST_spots_coords}},
-\code{\link{ST_spots_filt}}, \code{\link{ST_boundary_spots}}
+\code{\link{ST_spots_filt}}, \code{\link{ST_boundary_spots}}, 
 }
 \examples{
 See package vignette.

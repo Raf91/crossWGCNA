@@ -34,9 +34,7 @@ Aurora Savino, Raffaele M. Iannuzzi.
 \note{
 %%  ~~further notes~~
 }
-
 %% ~Make other sections like Warning with \section{Warning }{....} ~
-
 \seealso{
 \code{\link{ST_expr_smooth}}, \code{\link{ST_merged_dataset}}, \code{\link{ST_spots_coords}},
 \code{\link{ST_spots_filt}}, \code{\link{ST_midpoints_def}}.
