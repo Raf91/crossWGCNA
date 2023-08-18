@@ -37,7 +37,7 @@ A list of degrees' vectors:
   \item{kTot2}{Overall connectivity of genes in tissue 2 with genes in both tissue 1 and 2}
 }
 \references{
-  Langfelder P, Horvath S (2008). “WGCNA: an R package for weighted correlation network analysis.” BMC Bioinformatics, 559.
+  Langfelder P, Horvath S (2008). WGCNA: an R package for weighted correlation network analysis.Returns a list of connectivities  BMC Bioinformatics, 559.
 }
 \author{
 Aurora Savino, Raffaele M. Iannuzzi.

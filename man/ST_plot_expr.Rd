@@ -8,7 +8,8 @@ Plot gene expression in space
 Generates a plot showing the expression of a gene in space and the boundaries of the two compartments.
 }
 \usage{
-ST_plot_expr(gene, averaged_expr_all, coords, included_spots, tis1_spots, tis2_spots, midpoints)
+ST_plot_expr(gene, averaged_expr_all, coords, included_spots, 
+             tis1_spots, tis2_spots, midpoints)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -68,14 +69,7 @@ Aurora Savino, Raffaele M. Iannuzzi.
 \code{\link{ST_weighted_mod}}.
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (x)
-{
-  }
+See package vignette.
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

@@ -8,7 +8,7 @@
 Defines the x and y coordinates of each spot in the array, assigning the value of 1 to the leftmost spot and considering an inter-spot x distance of 1.
 }
 \usage{
-ST_spots_coords(data,br=\code{1000})
+ST_spots_coords(data,br=1000)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -50,9 +50,6 @@ Aurora Savino, Raffaele M. Iannuzzi.
 }
 \examples{
 See package vignette. 
-
-## The function is currently defined as
-
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

@@ -8,7 +8,8 @@
 Computes a weighted summmary of a module's expression based on the kExt of the genes measured in each compartment separately.
 }
 \usage{
-ST_weighted_mod(modules, kw, mod_sel, averaged_expr_all, comp1="_tis1", comp2="_tis2")
+ST_weighted_mod(modules, kw, mod_sel, averaged_expr_all, 
+                comp1="_tis1", comp2="_tis2")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

@@ -9,10 +9,10 @@
   and gene clusters based on inter-tissue connectivities.
 }
 \usage{
-crossWGCNA(data,method="netdiff",Adj_type="signed",cortype="spearman",pval="none",
-           thr=0.05, beta=6, comp1="_1", comp2="_2", doClusters=TRUE, doTOM=TRUE,
-           ds=1, crossOnly=TRUE, sign_list=1, compartment_sel="none", selgenes=NA,
-           verbose=TRUE)
+crossWGCNA(data,method="netdiff",Adj_type="signed",cortype="spearman",
+           pval="none", thr=0.05, beta=6, comp1="_1", comp2="_2", 
+           doClusters=TRUE, doTOM=TRUE, ds=1, crossOnly=TRUE, sign_list=1, 
+           compartment_sel="none", selgenes=NA,verbose=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -25,7 +25,7 @@ crossWGCNA(data,method="netdiff",Adj_type="signed",cortype="spearman",pval="none
   \item{Adj_type}{
     String character identifying the type of adjacency to compute. Can be \code{"signed"}, \code{"unsigned"} or \code{"keep sign"}. Default=\code{"signed"}. 
     \code{"keep sign"} is equivalent to \code{"unsigned"} in absolute values, but with sign corresponding to the sign of correlation.
-    See WGCNA for details.
+    See WGCNA package for details.
 }
   \item{cortype}{
     String character identifying the type of correlation. Can be \code{"pearson"}, \code{"spearman"} or \code{"bicor"}. Default=\code{"spearman"}. 
@@ -49,10 +49,10 @@ crossWGCNA(data,method="netdiff",Adj_type="signed",cortype="spearman",pval="none
     Suffix (string character) to identify genes of tissue 2. Default=\code{"_2"}.
 }
   \item{doClusters}{
-    Boolean value. If TRUE compute clusters. Default=\code{TRUE}.
+    Boolean value. If \code{TRUE} compute clusters. Default=\code{TRUE}.
 }
   \item{doTOM}{
-    Boolean value. If TRUE compute the Topological Overlap Matrix prior to clustering. Default=\code{TRUE}.
+    Boolean value. If \code{TRUE} compute the Topological Overlap Matrix prior to clustering. Default=\code{TRUE}.
 }
   \item{ds}{
     Parameter influencing the final number of clusters. It sets the \code{deepSplit} parameter in the \code{cutreeDynamic} function from the WGCNA package.
@@ -78,10 +78,10 @@ crossWGCNA(data,method="netdiff",Adj_type="signed",cortype="spearman",pval="none
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-Returns a list of connectivities if \code{doClusters} is set to \code{FALSE}, otherwise returns both list of connectivities and gene modules.
+If \code{doClusters} is set to \code{FALSE}, returns a list of connectivities otherwise returns both list of connectivities and gene modules.
 }
 \references{
-Langfelder P, Horvath S (2008). “WGCNA: an R package for weighted correlation network analysis.” BMC Bioinformatics, 559.
+Langfelder P, Horvath S (2008). WGCNA: an R package for weighted correlation network analysis. BMC Bioinformatics, 559.
 }
 \author{
 Aurora Savino, Raffaele M. Iannuzzi.

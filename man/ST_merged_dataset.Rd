@@ -8,7 +8,8 @@
   For each selected spot in compartment 1, takes the neighbouring spots in compartment 2 and creates a gene expression matrix with matched gene expression from the two selected compartments.
 }
 \usage{
-ST_merged_dataset(sel_spots, coords, averaged_expr_all, var_thr=0.75, comp1="_tis1", comp2="_tis2")
+ST_merged_dataset(sel_spots, coords, averaged_expr_all, var_thr=0.75, 
+                  comp1="_tis1", comp2="_tis2")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

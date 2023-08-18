@@ -8,8 +8,9 @@
   Function to compute cross-tissue gene expression adjacencies. 
 }
 \usage{
-  Adjacency(data, method="selfloop",comp1="_1",comp2="_2",Adj_type="signed",
-            cortype="spearman", pval="none", thr=0.05, beta=6, sign_list=1, compartment_sel="none",
+  Adjacency(data, method="selfloop",comp1="_1",comp2="_2",
+            Adj_type="signed", cortype="spearman", pval="none", 
+            thr=0.05, beta=6, sign_list=1, compartment_sel="none", 
             selgenes=NA, verbose=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -29,11 +30,11 @@
   \item{Adj_type}{
     String character identifying the type of adjacency to compute. Can be \code{"signed"}, \code{"unsigned"} or \code{"keep sign"}. Default=\code{"signed"}. 
     \code{"keep sign"} is equivalent to \code{"unsigned"} in absolute values, but with sign corresponding to the sign of correlation.
-    See WGCNA for details.
+    See WGCNA package for details.
   }
   \item{cortype}{
     String character identifying the type of correlation. Can be \code{"pearson"}, \code{"spearman"} or \code{"bicor"}. Default=\code{"spearman"}. 
-    See WGCNA for details.
+    See WGCNA package for details.
   }
   \item{pval}{
     String character identifying whether to use the correlations' p-value in edge weight.
@@ -65,10 +66,10 @@
   The adjacencies are computed accordingly to the method selected (i.e., \code{"self-loop"} or \code{"netdiff"}).
 }
 \value{
-Returns a matrix with pairwise gene adjacencies.
+Returns a matrix with pair-wise gene adjacencies.
 }
 \references{
-Langfelder P, Horvath S (2008). “WGCNA: an R package for weighted correlation network analysis.” BMC Bioinformatics, 559.
+Langfelder P, Horvath S (2008). WGCNA: an R package for weighted correlation network analysis. BMC Bioinformatics, 559.
 }
 \author{
 Aurora Savino, Raffaele M. Iannuzzi.
@@ -84,7 +85,7 @@ Aurora Savino, Raffaele M. Iannuzzi.
   \code{\link{rm_netdiff}}
 }
 \examples{
-See package vignette
+See package vignette.
 }
 
 

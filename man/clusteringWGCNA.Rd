@@ -26,7 +26,7 @@ clusteringWGCNA(A, data, comp1="_1", comp2="2", TOM=TRUE, ds=1, crossOnly=TRUE)
     Suffix (string character) to identify genes of tissue 2. Default=\code{"_2"}.
 }
   \item{TOM}{
-    Boolean value. If TRUE compute the Topological Overlap Matrix prior to clustering. Default=\code{TRUE}.
+    Boolean value. If \code{TRUE} compute the Topological Overlap Matrix prior to clustering. Default=\code{TRUE}.
 }
   \item{ds}{
     Parameter influencing the final number of clusters. It sets the \code{deepSplit} parameter in the \code{cutreeDynamic} function from the WGCNA package.
@@ -39,10 +39,10 @@ clusteringWGCNA(A, data, comp1="_1", comp2="2", TOM=TRUE, ds=1, crossOnly=TRUE)
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-Returns a list of connectivities output of \code{\link{degrees}} and of gene clusters
+Returns a list of connectivities (output of \code{\link{degrees}}) and of genes' clusters.
 }
 \references{
-Langfelder P, Horvath S (2008). “WGCNA: an R package for weighted correlation network analysis.” BMC Bioinformatics, 559.
+Langfelder P, Horvath S (2008). WGCNA: an R package for weighted correlation network analysis. BMC Bioinformatics, 559.
 }
 \author{
 Aurora Savino, Raffaele M. Iannuzzi.

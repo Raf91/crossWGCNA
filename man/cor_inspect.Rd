@@ -32,7 +32,7 @@ cor_inspect(data, gene1, gene2, comp1="_tis1", comp2="_tis2")
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-A plot with four panels displaying the scatterplots of gene1 and gene2 relationships within and between tissues/compartments
+A plot with four panels displaying the scatterplots of gene1 and gene2 relationships within and between tissues/compartments.
 }
 \references{
 }

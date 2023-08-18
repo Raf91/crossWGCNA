@@ -8,15 +8,16 @@
 Generates a plot showing the communication score of two genes along the boundries between the two tissues/compartments.
 }
 \usage{
-ST_plot_comm(gene1, gene2, averaged_expr_all, coords, included_spots, sel_spots, tis1_spots, tis2_spots, midpoints)
+ST_plot_comm(gene1, gene2, averaged_expr_all, coords, included_spots, 
+             sel_spots, tis1_spots, tis2_spots, midpoints)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{gene1}{
-    First gene, measured in compartment1.
+    First gene, measured in compartment 1.
 }
  \item{gene2}{
-    Second gene, measured in compartment2.
+    Second gene, measured in compartment 2.
 }
  \item{averaged_expr_all}{
     Gene expression data matrix where rows are genes and columns are spots. Output of the \code{ST_expr_smooth} function.
@@ -72,7 +73,7 @@ Aurosa Savino, Raffaele M. Iannuzzi.
 }
 
 \examples{
-
+See package vignette.
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

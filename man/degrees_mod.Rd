@@ -8,7 +8,9 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-degrees_mod(data, method = "netdiff", modules, Adj_type = "signed", cortype = "spearman", pval = "none", thr = 0.05, beta = 6, comp1 = "_1", comp2 = "_2")
+degrees_mod(data, method = "netdiff", modules, Adj_type = "signed", 
+            cortype = "spearman", pval = "none", thr = 0.05, 
+            beta = 6, comp1 = "_1", comp2 = "_2")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -62,7 +64,7 @@ For each module returns a list of degrees' vectors:
   \item{kTot2}{Overall connectivity of genes in tissue 2 with genes in both tissue 1 and 2}
 }
 \references{
-  Langfelder P, Horvath S (2008). “WGCNA: an R package for weighted correlation network analysis.” BMC Bioinformatics, 559.
+  Langfelder P, Horvath S (2008). WGCNA: an R package for weighted correlation network analysis. BMC Bioinformatics, 559.
 }
 \author{
 Aurora Savino, Raffaele M. Iannuzzi.
