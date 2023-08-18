@@ -209,8 +209,9 @@ Pathway-specific analyses can be performed in several ways
 In this example, we will use cell cycle genes with the corresponding information on the sign of their influence on cell cycle progression.
 
 ```{r, include=T, warning=FALSE, message=F}
-hippo <- read.xlsx("~/Project_crossWGCNA/data/Pathways.xlsx",2)[-1,1]
-sign_hippo <- read.xlsx("~/Project_crossWGCNA/data/Pathways.xlsx",2)[-1,3]
+pathToPathways <- paste0(system.file("data", package="crossWGCNA"),"/Pathways.xlsx")
+hippo <- read.xlsx(pathToPathways,2)[-1,1]
+sign_hippo <- read.xlsx(pathToPathways,2)[-1,3]
 sign_hippo[which(sign_hippo=="OG")] <- 1
 sign_hippo[which(sign_hippo=="TSG")] <- (-1)
 sign_hippo[-which(sign_hippo %in% c("1", "-1"))] <- NA
