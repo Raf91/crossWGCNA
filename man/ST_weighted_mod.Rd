@@ -5,32 +5,43 @@
   ST_weighted_mod
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+Computes a weighted summmary of a module's expression based on the kExt of the genes measured in each compartment separately.
 }
 \usage{
-ST_weighted_mod(x)
+ST_weighted_mod(modules, kw, mod_sel, averaged_expr_all, comp1="_tis1", comp2="_tis2")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{
-%%     ~~Describe \code{x} here~~
+  \item{modules}{
+    Vector with module labels for each gene.
+}
+  \item{kw}{
+    Connectivities computed with the function kwithin.
+}
+  \item{mod_sel}{
+    Label of the selected module.
+}
+  \item{averaged_expr_all}{
+    Gene expression data matrix where rows are genes and columns are spots. Output of the \code{\link{ST_expr_smooth}} function.
+}
+  \item{comp1}{
+    Suffix (string character) to identify genes of tissue 1. Default=\code{"_tis1"}.
+}
+  \item{comp2}{
+    Suffix (string character) to identify genes of tissue 2. Default=\code{"_tis2"}.
 }
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+List of two vectors with the weighted mean of the expression of module's genes belonging to compartment 1 or compartment 2.
 }
 \references{
 %% ~put references to the literature/web site here ~
 }
 \author{
-%%  ~~who you are~~
+Aurora Savino, Raffaele M. Iannuzzi.
 }
 \note{
 %%  ~~further notes~~
@@ -39,17 +50,17 @@ ST_weighted_mod(x)
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+\code{\link{ST_expr_smooth}}, 
+\code{\link{ST_merged_dataset}}, 
+\code{\link{ST_midpoints_def}},
+\code{\link{ST_plot_expr}},
+\code{\link{ST_plot_comm}},
+\code{\link{ST_spots_coords}},
+\code{\link{ST_spots_filt}}, 
+\code{\link{ST_boundary_spots}}.
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (x)
-{
-  }
+See package vignette.
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

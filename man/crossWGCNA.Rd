@@ -9,7 +9,10 @@
   and gene clusters based on inter-tissue connectivities.
 }
 \usage{
-crossWGCNA(data)
+crossWGCNA(data,method="netdiff",Adj_type="signed",cortype="spearman",pval="none",
+           thr=0.05, beta=6, comp1="_1", comp2="_2", doClusters=TRUE, doTOM=TRUE,
+           ds=1, crossOnly=TRUE, sign_list=1, compartment_sel="none", selgenes=NA,
+           verbose=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -78,10 +81,10 @@ crossWGCNA(data)
 Returns a list of connectivities if \code{doClusters} is set to \code{FALSE}, otherwise returns both list of connectivities and gene modules.
 }
 \references{
-%% ~put references to the literature/web site here ~
+Langfelder P, Horvath S (2008). “WGCNA: an R package for weighted correlation network analysis.” BMC Bioinformatics, 559.
 }
 \author{
-Aurora Savino, Raffaele M. Iannuzzi
+Aurora Savino, Raffaele M. Iannuzzi.
 }
 \note{
 %%  ~~further notes~~
@@ -90,11 +93,14 @@ Aurora Savino, Raffaele M. Iannuzzi
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link{Adjacency}}, \code{\link{clusteringWGCNA}}, 
-\code{\link{degrees}}.
+\code{\link{Adjacency}}, 
+\code{\link{rm_selfloop}},
+\code{\link{rm_netdiff}},
+\code{\link{degrees}},
+\code{\link{clusteringWGCNA}}.
 }
 \examples{
-See package vignette
+See package vignette.
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

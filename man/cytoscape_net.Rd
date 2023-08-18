@@ -8,7 +8,7 @@
 Finds the top cross-tissue interactors of a gene and saves them as a Cytoscape input.
 }
 \usage{
-cytoscape_net(A, data, gene, comp1, comp2, num, corr)
+cytoscape_net(A, data, gene, comp1, comp2, num, corr="spearman")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -41,29 +41,31 @@ cytoscape_net(A, data, gene, comp1, comp2, num, corr)
 \value{
 Dataframe with the top interactors of the selected gene and their pairwise adjacencies within and between tissues. Columns of the dataframe are:
 \item{Source}{
-source gene
+  source gene
 }
 \item{Target}{
-connected gene
+  connected gene
 }
 \item{Weight}{
-connection strenght: adjacency
+  connection strenght: adjacency
 }
 \item{Edge_type}{
-type of interaction: within compartment 1 (intra1), compartment 2 (intra2) or between compartments (inter)
+  type of interaction: within compartment 1 (intra1), compartment 2 (intra2) or between compartments (inter)
 }
 \item{Source_type}{
-label indicating whether the source gene has been measured in compartment 1 or compartment 2
+  label indicating whether the source gene has been measured in compartment 1 or compartment 2
 }
 \item{Target_type}{
-label indicating whether the target gene has been measured in compartment 1 or compartment 2
+  label indicating whether the target gene has been measured in compartment 1 or compartment 2
 }
 }
 \references{
-%% ~put references to the literature/web site here ~
+  Shannon P, Markiel A, Ozier O, Baliga NS, Wang JT, Ramage D, Amin N, Schwikowski B, Ideker T.
+  Cytoscape: a software environment for integrated models of biomolecular interaction networks.
+  Genome Research 2003 Nov; 13(11):2498-504 
 }
 \author{
-Aurora Savino, Raffaele M. Iannuzzi
+Aurora Savino, Raffaele M. Iannuzzi.
 }
 \note{
 %%  ~~further notes~~
@@ -75,7 +77,7 @@ Aurora Savino, Raffaele M. Iannuzzi
 
 }
 \examples{
-See package vignette
+See package vignette.
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

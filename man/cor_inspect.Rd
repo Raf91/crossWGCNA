@@ -35,10 +35,9 @@ cor_inspect(data, gene1, gene2, comp1="_tis1", comp2="_tis2")
 A plot with four panels displaying the scatterplots of gene1 and gene2 relationships within and between tissues/compartments
 }
 \references{
-%% ~put references to the literature/web site here ~
 }
 \author{
-Aurora Savino, Raffaele M. Iannzzi
+Aurora Savino, Raffaele M. Iannzzi.
 }
 \note{
 %%  ~~further notes~~
@@ -50,7 +49,7 @@ Aurora Savino, Raffaele M. Iannzzi
 
 }
 \examples{
-See package vignette
+See package vignette.
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

@@ -37,10 +37,10 @@ A list of degrees' vectors:
   \item{kTot2}{Overall connectivity of genes in tissue 2 with genes in both tissue 1 and 2}
 }
 \references{
-%% ~put references to the literature/web site here ~
+  Langfelder P, Horvath S (2008). “WGCNA: an R package for weighted correlation network analysis.” BMC Bioinformatics, 559.
 }
 \author{
-Aurora Savino, Raffaele M. Iannuzzi
+Aurora Savino, Raffaele M. Iannuzzi.
 }
 \note{
 %%  ~~further notes~~
@@ -49,10 +49,13 @@ Aurora Savino, Raffaele M. Iannuzzi
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+\code{\link{Adjacency}},
+\code{\link{clusteringWGCNA}},
+\code{\link{crossWGCNA}},
+\code{\link{degrees_mod}}.
 }
 \examples{
-See package vignette
+See package vignette.
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

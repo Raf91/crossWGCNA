@@ -8,7 +8,7 @@
   Function to perform WGCNA clustering based on an adjacency matrix.
 }
 \usage{
-clusteringWGCNA(A, data, comp1, comp2, TOM, ds, crossOnly)
+clusteringWGCNA(A, data, comp1="_1", comp2="2", TOM=TRUE, ds=1, crossOnly=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -42,10 +42,10 @@ clusteringWGCNA(A, data, comp1, comp2, TOM, ds, crossOnly)
 Returns a list of connectivities output of \code{\link{degrees}} and of gene clusters
 }
 \references{
-%% ~put references to the literature/web site here ~
+Langfelder P, Horvath S (2008). “WGCNA: an R package for weighted correlation network analysis.” BMC Bioinformatics, 559.
 }
 \author{
-Aurora Savina, Raffaele M. Iannuzzi
+Aurora Savino, Raffaele M. Iannuzzi.
 }
 \note{
 %%  ~~further notes~~
@@ -54,10 +54,13 @@ Aurora Savina, Raffaele M. Iannuzzi
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link{Adjacency}}, \code{\link{degrees}}.
+  \code{\link{Adjacency}}, 
+  \code{\link{rm_selfloop}},
+  \code{\link{degrees}},
+  \code{\link{degrees_mod}}.
 }
 \examples{
-See package vignette
+See package vignette.
 }
 
 % Add one or more standard keywords, see file 'KEYWORDS' in the

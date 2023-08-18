@@ -8,7 +8,9 @@
   Function to compute cross-tissue gene expression adjacencies. 
 }
 \usage{
-  Adjacency(data)
+  Adjacency(data, method="selfloop",comp1="_1",comp2="_2",Adj_type="signed",
+            cortype="spearman", pval="none", thr=0.05, beta=6, sign_list=1, compartment_sel="none",
+            selgenes=NA, verbose=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -66,10 +68,10 @@
 Returns a matrix with pairwise gene adjacencies.
 }
 \references{
-%% ~put references to the literature/web site here ~
+Langfelder P, Horvath S (2008). “WGCNA: an R package for weighted correlation network analysis.” BMC Bioinformatics, 559.
 }
 \author{
-Aurora Savino, Raffaele M. Iannuzzi
+Aurora Savino, Raffaele M. Iannuzzi.
 }
 \note{
 %%  ~~further notes~~
@@ -78,7 +80,8 @@ Aurora Savino, Raffaele M. Iannuzzi
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+  \code{\link{rm_selfloop}},
+  \code{\link{rm_netdiff}}
 }
 \examples{
 See package vignette

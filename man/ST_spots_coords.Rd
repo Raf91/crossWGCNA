@@ -5,10 +5,10 @@
   ST_spots_coords
 }
 \description{
-Defines the x and y coordinates of each spot in the array, assigning the value of 1 to the leftmost spot and considering an inter-spot x distance of 1.}
+Defines the x and y coordinates of each spot in the array, assigning the value of 1 to the leftmost spot and considering an inter-spot x distance of 1.
 }
 \usage{
-ST_spots_coords(data)
+ST_spots_coords(data,br=\code{1000})
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -30,7 +30,7 @@ Returns a matrix with two columns for x and y coordinates of each spot.
 %% ~put references to the literature/web site here ~
 }
 \author{
-Aurora Savino, Raffaele M. Iannuzzi
+Aurora Savino, Raffaele M. Iannuzzi.
 }
 \note{
 %%  ~~further notes~~
@@ -39,7 +39,14 @@ Aurora Savino, Raffaele M. Iannuzzi
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+\code{\link{ST_expr_smooth}}, 
+\code{\link{ST_merged_dataset}}, 
+\code{\link{ST_midpoints_def}},
+\code{\link{ST_plot_expr}},
+\code{\link{ST_plot_comm}}
+\code{\link{ST_spots_filt}}, 
+\code{\link{ST_boundary_spots}}, 
+\code{\link{ST_weighted_mod}}.
 }
 \examples{
 See package vignette. 

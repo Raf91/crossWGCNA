@@ -52,7 +52,7 @@ Returns a plot.
 %% ~put references to the literature/web site here ~
 }
 \author{
-%%  ~~who you are~~
+Aurosa Savino, Raffaele M. Iannuzzi.
 }
 \note{
 %%  ~~further notes~~
@@ -61,21 +61,18 @@ Returns a plot.
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{ST_expr_smooth},
-\code{ST_spots_coords},
-\code{ST_boundary_spots},
-\code{ST_midpoints_df}
+\code{\link{ST_expr_smooth}}, 
+\code{\link{ST_merged_dataset}}, 
+\code{\link{ST_midpoints_def}},
+\code{\link{ST_plot_expr}},
+\code{\link{ST_spots_coords}},
+\code{\link{ST_spots_filt}}, 
+\code{\link{ST_boundary_spots}}, 
+\code{\link{ST_weighted_mod}}.
 }
 
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
 
-## The function is currently defined as
-function (x)
-{
-  }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

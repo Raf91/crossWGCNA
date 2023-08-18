@@ -13,51 +13,59 @@ degrees_mod(data, method = "netdiff", modules, Adj_type = "signed", cortype = "s
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{data}{
-%%     ~~Describe \code{data} here~~
+    Input data matrix, where rows are genes and columns are samples. Gene expression measures in the two tissues are combined by row.
 }
   \item{method}{
-%%     ~~Describe \code{method} here~~
+    String character identifying the method to use to compute cross-tissue adjacencies. Can be \code{"self-loop"} or \code{"netdiff"}.
 }
   \item{modules}{
-%%     ~~Describe \code{modules} here~~
+    List of co-expression modules. Output of \code{\link{clusteringWGCNA}}
 }
   \item{Adj_type}{
-%%     ~~Describe \code{Adj_type} here~~
+    String character identifying the type of adjacency to compute. Can be \code{"signed"}, \code{"unsigned"} or \code{"keep sign"}. Default=\code{"signed"}. 
+    \code{"keep sign"} is equivalent to \code{"unsigned"} in absolute values, but with sign corresponding to the sign of correlation.
+    See WGCNA for details.
 }
   \item{cortype}{
-%%     ~~Describe \code{cortype} here~~
+    String character identifying the type of correlation. Can be \code{"pearson"}, \code{"spearman"} or \code{"bicor"}. Default=\code{"spearman"}. 
+    See WGCNA for details.
 }
   \item{pval}{
-%%     ~~Describe \code{pval} here~~
+    String character identifying whether to use the correlations' p-value in edge weight.
+    Possible values are: \code{"none"} (does not include p-values), \code{"threshold"} (discard edges with a p-value higher than a threshold),
+    \code{"weight"} (multiply edges' adjacencies by 1-pvalue). Default=\code{"none"}.
+    Can be used with \code{"pearson"} and \code{"spearman"} correlations.
 }
   \item{thr}{
-%%     ~~Describe \code{thr} here~~
+    Threshold for cutting edges based on p-values. Default=\code{0.05}.
 }
   \item{beta}{
-%%     ~~Describe \code{beta} here~~
+    Power for adjacency calculation. Default=\code{6}.
 }
   \item{comp1}{
-%%     ~~Describe \code{comp1} here~~
+    Suffix (string character) to identify genes of tissue 1. Default=\code{"_1"}.
 }
   \item{comp2}{
-%%     ~~Describe \code{comp2} here~~
+    Suffix (string character) to identify genes of tissue 2. Default=\code{"_2"}.
 }
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+For each module returns a list of degrees' vectors:
+  \item{kInt1}{Intra-tissue degree for tissue 1}
+  \item{kInt2}{Intra-tissue degree for tissue 2}
+  \item{kExt1}{Inter-tissue degree for tissue 1 genes with tissue 2}
+  \item{kExt2}{Inter-tissue degree for tissue 2 genes with tissue 1}
+  \item{kTot1}{Overall connectivity of genes in tissue 1 with genes in both tissue 1 and 2}
+  \item{kTot2}{Overall connectivity of genes in tissue 2 with genes in both tissue 1 and 2}
 }
 \references{
-%% ~put references to the literature/web site here ~
+  Langfelder P, Horvath S (2008). “WGCNA: an R package for weighted correlation network analysis.” BMC Bioinformatics, 559.
 }
 \author{
-%%  ~~who you are~~
+Aurora Savino, Raffaele M. Iannuzzi.
 }
 \note{
 %%  ~~further notes~~
@@ -66,31 +74,13 @@ degrees_mod(data, method = "netdiff", modules, Adj_type = "signed", cortype = "s
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+  \code{\link{degrees}},
+  \code{\link{Adjacency}},
+  \code{\link{clusteringWGCNA}},
+  \code{\link{crossWGCNA}}
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (data, method = "netdiff", modules, Adj_type = "signed", 
-    cortype = "spearman", pval = "none", thr = 0.05, beta = 6, 
-    comp1 = "_1", comp2 = "_2") 
-{
-    k <- list()
-    for (i in 1:length(unique(modules))) {
-        mod <- names(modules)[which(modules == unique(modules)[i])]
-        genes <- unique(gsub(comp2, "", gsub(comp1, "", mod)))
-        Adj <- Adjacency(data = data[c(paste(genes, comp1, sep = ""), 
-            paste(genes, comp2, sep = "")), ], method = method, 
-            Adj_type = Adj_type, cortype = cortype, pval = pval, 
-            thr = thr, beta = beta, comp1 = comp1, comp2 = comp2)
-        Adj <- Adj[mod, mod]
-        k[[i]] <- degrees(A = Adj, comp1 = comp1, comp2 = comp2)
-    }
-    return(k)
-  }
+See package vignette.
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

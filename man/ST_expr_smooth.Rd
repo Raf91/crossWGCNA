@@ -38,7 +38,7 @@
 %% ~put references to the literature/web site here ~
 }
 \author{
-Aurora Savino, Raffaele M. Iannuzzi
+Aurora Savino, Raffaele M. Iannuzzi.
 }
 \note{
 %%  ~~further notes~~
@@ -47,8 +47,14 @@ Aurora Savino, Raffaele M. Iannuzzi
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link{ST_merged_dataset}}, \code{\link{ST_spots_coords}},
-\code{\link{ST_spots_filt}}, \code{\link{ST_midpoints_def}}.
+\code{\link{ST_boundary_spots}}, 
+\code{\link{ST_merged_dataset}},
+\code{\link{ST_midpoints_def}},
+\code{\link{ST_plot_comm}},
+\code{\link{ST_plot_expr}},
+\code{\link{ST_spots_coords}},
+\code{\link{ST_spots_filt}}, 
+\code{\link{ST_weighted_mod}}.
 }
 \examples{
 See package vignette.

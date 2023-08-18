@@ -5,32 +5,37 @@
   rm_netdiff
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+Removes the average connectivity between each gene pair from both tissues’ networks. 
 }
 \usage{
-rm_netdiff(x)
+rm_netdiff(A, comp1="_1", comp2="_2", verbose=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{
-%%     ~~Describe \code{x} here~~
+  \item{A}{
+    Matrix of adjacencies, output of the function \code{Adjacency}.
+}
+  \item{comp1}{
+    Suffix (string character) to identify genes of tissue 1. Default=\code{"_1"}.
+}
+  \item{comp2}{
+    Suffix (string character) to identify genes of tissue 2. Default=\code{"_2"}.
+}
+  \item{verbose}{
+    Boolean value. If \code{TRUE} prints logging output. Default=\code{FALSE}.
 }
 }
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+See the manuscript for further details.
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+Returns the adjusted Adjacency matrix. 
 }
 \references{
 %% ~put references to the literature/web site here ~
 }
 \author{
-%%  ~~who you are~~
+Aurora Savino, Raffaele M. Iannuzzi.
 }
 \note{
 %%  ~~further notes~~
@@ -39,17 +44,10 @@ rm_netdiff(x)
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+\code{\link{rm_netdiff}}
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
 
-## The function is currently defined as
-function (x)
-{
-  }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):
