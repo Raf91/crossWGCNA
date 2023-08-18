@@ -32,7 +32,7 @@ ST_plot_expr(gene, averaged_expr_all, coords, included_spots, tis1_spots, tis2_s
 }
   \item{midpoints}{
     List of two vectors with x and y coordinates of the midpoints between neighbouring compartment 1 and compartment 2 spots. 
-    Output of the \code{\link{ST_midpoints_df}} function.
+    Output of the \code{\link{ST_midpoints_def}} function.
 }
 }
 \details{

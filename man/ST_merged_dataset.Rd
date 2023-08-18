@@ -13,7 +13,7 @@ ST_merged_dataset(sel_spots, coords, averaged_expr_all, var_thr=0.75, comp1="_ti
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{sel_spots}{
-    List of two vectors, one for each compartment, with indexes of spots to be included. Output of the \code{\link{ST_spots_filt function}}.
+    List of two vectors, one for each compartment, with indexes of spots to be included. Output of the \code{\link{ST_spots_filt}} function.
 }
   \item{coords}{
      X and y coordinates for each spot, obtained from the \code{\link{ST_spots_coords}} function.
