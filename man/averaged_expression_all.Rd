@@ -7,12 +7,12 @@ Averaged gene expression of \code{BC@assays$SCT@data}
 \description{
 Pre-computed smooths spatial transcriptomics gene expression using the weighted mean of neighbouring spots in one compartment.
 }
-\usage{load("ST_expr_smooth_output.RData")}
+\usage{load("ST_expr_smooth_out.RData")}
 \format{
-  A data frame 20227 genes x 4898 spots
+  A data frame \code{20227} genes \code{x} \code{4898} spots. 
 }
 \details{
-  Output of ST_expr_smooth function. 
+  Output of \code{ST_expr_smooth} function. 
   The object is available for download at zenodo web page: code{\url{https://zenodo.org/record/8268805}} . 
 }
 \source{
@@ -22,8 +22,11 @@ Pre-computed smooths spatial transcriptomics gene expression using the weighted 
 %%  ~~ possibly secondary sources and usages ~~
 }
 \examples{
-  options(timeout=100)
+  options(timeout=200)
   download.file(url="https://zenodo.org/record/8268805/files/ST_expr_smooth_out.RData?download=1",destfile="~/ST_expr_smooth_out.RData")
-  load("~/ST_expr_smooth_output.RData")
+  load("~/ST_expr_smooth_out.RData")
+}
+\seealso{
+\code{\link{ST_expr_smooth}}
 }
 \keyword{datasets}

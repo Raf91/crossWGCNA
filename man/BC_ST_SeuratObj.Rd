@@ -14,7 +14,8 @@
 }
 
 \examples{
-    download.file(url="https://zenodo.org/record/8268805/files/BC.RData?download=1", destfile = "~/BC.RData")
+    download.file(url="https://zenodo.org/record/8268805/files/BC.RData?download=1", 
+                  destfile = "~/BC.RData")
     load("~/BC.RData")
 }
 
