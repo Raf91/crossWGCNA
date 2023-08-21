@@ -87,7 +87,7 @@ ST_expr_smooth_out <- ST_expr_smooth(expr_data=expr_data,
 # uncomment to download and load pre-computed object
 # options(timeout=100)
 # download.file(url="https://zenodo.org/record/8268805/files/ST_expr_smooth_out.RData?download=1",destfile="~/ST_expr_smooth_out.RData")
-# load("~/ST_expr_smooth_output.RData")
+# load("~/ST_expr_smooth_out.RData")
 ```
 
 * Refine cluster selection for running crossWGCNA and filter non-isolated spots
