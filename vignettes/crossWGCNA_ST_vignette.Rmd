@@ -78,13 +78,13 @@ y_bin <- coords[,2]
 * Compute smoothed gene expression using the weighted mean (weight = 1/(dist+1)) of neighbouring spots in the same compartment (epithelial or stromal) with a maximum distance of 5 (set through the max_dist parameter). Remove the hashtag to run the computation.
 
 ```{r, include=T, warning=FALSE, message=F}
-ST_expr_smooth_out <- ST_expr_smooth(expr_data=expr_data, 
-                                        coords=coords, 
-                                        max_dist=5, 
-                                        spots_class=class, 
-                                        sel_class=c("Epi", "Stroma"))
+averaged_expr_all_fun <- ST_expr_smooth(expr_data=expr_data, 
+                                     coords=coords, 
+                                     max_dist=5, 
+                                     spots_class=class, 
+                                     sel_class=c("Epi", "Stroma"))
 
-# uncomment to download and load pre-computed object
+# uncomment to download and load pre-computed "averaged_expr_all_fun" object
 # options(timeout=200)
 # download.file(url="https://zenodo.org/record/8268805/files/ST_expr_smooth_out.RData?download=1",destfile="~/ST_expr_smooth_out.RData")
 # load("~/ST_expr_smooth_out.RData")
@@ -103,7 +103,7 @@ sf <- ST_spots_filt(coords, tis1_spots=epi_spots, tis2_spots=stroma_spots)
 ```{r, include=T, warning=FALSE, message=F}
 md <- ST_merged_dataset(sel_spots=sf, 
                         coords=coords, 
-                        averaged_expr_all=ST_expr_smooth_out, 
+                        averaged_expr_all=averaged_expr_all_fun, 
                         var_thr=0.75, 
                         comp1="_tis1", 
                         comp2="_tis2")
