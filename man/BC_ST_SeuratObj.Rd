@@ -5,7 +5,7 @@
 
 \description{
     Pre-computed clusters from a Breast Cancer spatial transcriptomics dataset provided by Illumina (Visium platform).
-    A common Seurat (version 4.1.3) analysis pipeline has been applied on the \code{"h5"} file to finally obtain clusters and umaps. 
+    A common Seurat (version \code{4.1.3}) analysis pipeline has been applied on the \code{"h5"} file to finally obtain clusters and umaps. 
 }
 
 \details{
