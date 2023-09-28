@@ -344,3 +344,9 @@ ggplot(data=df, aes(x=x_coord, y=y_coord))+
   scale_color_continuous(type = "viridis")+
   theme_classic()
 ```
+
+# References
+
+1. Langfelder P, Horvath S (2008). WGCNA: an R package for weighted correlation network analysis. BMC Bioinformatics, 559.
+
+2. Hao Y et al. (2021). Integrated analysis of multimodal single-cell data. Cell. 
