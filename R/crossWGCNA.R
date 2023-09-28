@@ -51,9 +51,6 @@ Adjacency <- function(
   pval="none",
   thr=0.05,
   beta=6,
-  #sign_list=1,
-  #compartment_sel="none",
-  #selgenes=NA,
   verbose=FALSE)
   {
     if(!(method %in% c("netdiff","selfloop"))){
@@ -74,15 +71,11 @@ Adjacency <- function(
     if(!is.numeric(beta)){
       stop("'beta' argument should be an integer. Default is 6.")
     }
-    #if(!is.numeric(sign_list)){
-    #  stop("'sign_list' argument should be a positive or negative integer (i.e., +1 or -1)")
-    #}
-    #if(!(compartment_sel %in% c("none","comp1","comp2"))){
-    #  stop("'compartment_sel' argument is different from all the admitted values.\n Please refer to manual for further details.")
-    #}
+
     if(verbose){
       cat("Computing correlation matrix...\n")
     }
+
     if (pval=="none") {
       if (cortype=="bicor") {
         A <- bicor(t(data))
@@ -118,41 +111,6 @@ Adjacency <- function(
     if(method=="netdiff"){
       A <- rm_netdiff(A,comp1=comp1,comp2=comp2)
     }
-
-    #suppressWarnings(if(!all(is.na(selgenes)) & is.character(na.omit(selgenes)))
-    #{
-    #  if(compartment_sel!="none")
-    #  {
-    #    sign_list <- sign_list[which(!is.na(sign_list))]
-    #    comp <- ifelse(compartment_sel=="comp2",comp2,comp1)
-    #    names(sign_list) <- paste(names(sign_list), gsub("\\$", "", comp), sep = "")
-    #    selgenes <- intersect(paste(selgenes, gsub("\\$", "", comp), sep = ""), rownames(A))
-    #    sel1 <- c(grep(comp1, rownames(A)), which(rownames(A) %in% selgenes))
-    #    sel2 <- c(which(rownames(A) %in% selgenes), grep(comp2, rownames(A)))
-      
-    #    if(compartment_sel=="comp2"){
-    #      A <- A[sel1,sel1]
-    #    } else {
-    #      A <- A[sel2,sel2]
-    #    }
-
-    #    genes_comp1 <- grep(comp1, rownames(A))
-    #    genes_comp2 <- grep(comp2, rownames(A))
-
-    #    if(compartment_sel=="comp2"){
-    #      A[genes_comp2, genes_comp1] <- A[genes_comp2, genes_comp1]*(sign_list[rownames(A)[genes_comp2]])
-    #      A[genes_comp1, genes_comp2] <- t(A[genes_comp2, genes_comp1]*(sign_list[rownames(A)[genes_comp2]]))
-    #    } else {
-    #      A[genes_comp1, genes_comp2] <- A[genes_comp1, genes_comp2]*(sign_list[rownames(A)[genes_comp1]])
-    #      A[genes_comp2, genes_comp1] <- t(A[genes_comp1, genes_comp2]*(sign_list[rownames(A)[genes_comp1]]))
-    #    }
-    #  } else {
-    #    stop("'compartment_sel' can't be 'none' when 'selgenes' is specified")
-    #  }
-    #} else {
-    #  warning("No subsets of genes selected.. using all the genome\n")
-    #}
-    #)
 
     if(verbose){
       cat("Computing adjacency matrix...\n")
@@ -244,9 +202,6 @@ crossWGCNA <- function(
   doTOM=TRUE,
   ds=1,
   crossOnly=TRUE,
-  #sign_list=1,
-  #compartment_sel="none",
-  #selgenes=NA,
   verbose=TRUE)
   {
     comp1 <- paste(comp1, "$", sep = "")
@@ -262,9 +217,6 @@ crossWGCNA <- function(
       beta=beta,
       comp1=comp1,
       comp2=comp2,
-      #sign_list=sign_list,
-      #compartment_sel=compartment_sel,
-      #selgenes=selgenes,
       verbose=TRUE
     )
 

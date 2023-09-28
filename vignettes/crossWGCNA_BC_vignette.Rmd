@@ -82,6 +82,7 @@ Adj <- Adjacency(data=BC_merged,
 
 Genes' intra- and inter-tissue degrees are computed as the sum of intra- and inter-tissue adjacencies after removing self loops.
 Again, suffixes need to be specified.
+
 ```{r, include=T, warning=FALSE}
 k <- degrees(A=Adj, comp1="_S", comp2="_E")
 ```
@@ -98,6 +99,7 @@ kRatio_E<-k$kExt2/k$kInt2
 head(sort(kRatio_S, decreasing = T))
 head(sort(kRatio_E, decreasing = T))
 ```
+
 kExt/kInt is employed to score highly coupled with the alternate tissue's gene expression, and these scores can be analyzed through GSEA to investigate their enrichment in functional categories.
 
 ```{r, include=T, warning=FALSE, message=F}
@@ -138,6 +140,7 @@ ggplot(df, aes(x=cluster, fill=region))+
 ```
 
 # Visualize results
+
 The adjacency of clusters is higher than inter-cluster adjacency, as shown for clusters 2 and 4.
 
 ```{r, include=T, warning=FALSE, message=F}
@@ -196,74 +199,8 @@ abline(v=quantile(ME$eigengenes[,"ME6"], 0.9), col="red")
 rownames(ME$eigengenes)[order(ME$eigengenes[,"ME6"], decreasing=T)[1:10]]
 ```
 
-# Pathway-specific analyses
-
-Pathway-specific analyses can be performed in several ways
-
-* filtering a posteriori the genes belonging to the pathway of interest, keeping in mind that connectivities were computed with the whole set of input genes
-
-* filtering a priori the genes belonging to the pathway of interest without providing any sign of individual genes' influence on the pathway activity
-
-* filtering a priori the genes belonging to the pathway of interest providing the additional information on the sign of individual genes' influence on the pathway activity
-
-In this example, we will use cell cycle genes with the corresponding information on the sign of their influence on cell cycle progression.
-
-```{r, include=T, warning=FALSE, message=F}
-pathToPathways <- paste0(system.file("data", package="crossWGCNA"),"/Pathways.xlsx")
-hippo <- read.xlsx(pathToPathways,2)[-1,1]
-sign_hippo <- read.xlsx(pathToPathways,2)[-1,3]
-sign_hippo[which(sign_hippo=="OG")] <- 1
-sign_hippo[which(sign_hippo=="TSG")] <- (-1)
-sign_hippo[-which(sign_hippo %in% c("1", "-1"))] <- NA
-hippo <- hippo[which(sign_hippo %in% c("1", "-1"))]
-sign_hippo <- as.numeric(sign_hippo[which(sign_hippo %in% c("1", "-1"))])
-names(sign_hippo) <- hippo
-```
-
-In the first case, the previously-computed interaction network will be filtered to retrieve information on stromal genes interacting with cell cycle genes in the epithelium.
-
-```{r, include=T, warning=FALSE, message=F}
-genes_tokeep <- c(rownames(BC_merged)[grep("_S$", rownames(BC_merged))],
-                intersect(rownames(BC_merged), paste(hippo,"_E", sep="")))
-Adj_sel <- Adj[genes_tokeep, genes_tokeep]
-k <- degrees(A=Adj_sel, comp1="_S", comp2="_E")
-kRatio_S< - k$kExt1/k$kInt1
-head(sort(kRatio_S, decreasing = T))
-```
-
-In the second and third cases, the adjacency is computed considering only the selected subset of genes. 
-The compartment with gene filtering is specified in the "compartment_sel" parameter ("comp2" in this case, as cell cycle genes are selected in the epithelium). 
-Selected genes are provided through the "selgenes" parameter.
-Finally, the direction of each gene's influence on the specified pathway can be provided in the "sign_net" parameter, a named vector of 1 and -1 corresponding to genes in "selgenes", with matching names.
-
-When signs are not known, do not indicate them, and they will be considered positive by default.
-
-```{r, include=T, warning=FALSE, message=F}
-#sign list contains the signs of the genes from the selected pathway -> leads to discard genes not in the list in the selected compartment (which.sign)
-
-sign_net <- na.omit(sign_hippo[gsub("_E$","",rownames(BC_merged)[grep("_E$",rownames(BC_merged))])])
-
-Adj_hippo <- Adjacency(data=BC_merged, 
-                       method="netdiff",
-                       Adj_type="keep sign", 
-                       cortype="pearson", 
-                       pval="none", 
-                       thr=0.05, 
-                       beta=6, 
-                       comp1="_S", 
-                       comp2="_E", 
-                       sign_list=sign_net, 
-                       compartment_sel = "comp2", 
-                       selgenes=names(sign_net))
-
-k <- degrees(A=Adj_hippo, comp1="_S", comp2="_E")
-kRatio_S <- k$kExt1/k$kInt1
-head(sort(kRatio_S, decreasing = T))
-head(sort(k$kExt1, decreasing = T))
-
-sort(Adj_hippo["PTGDS_S",grep("_E", colnames(Adj_hippo))], decreasing=T)
-sort(Adj_hippo["PTGDS_S",grep("_S", colnames(Adj_hippo))], decreasing=T)[2:11]
-```
-
-
 # References
+
+1. Langfelder P, Horvath S (2008). WGCNA: an R package for weighted correlation network analysis. BMC Bioinformatics, 559.
+
+2. Savino, A., de Marzo, N., Provero, P. & Poli, V. Meta-analysis of microdissected breast tumors reveals genes regulated in the stroma but hidden in bulk analysis. Cancers (Basel) 13, (2021).
