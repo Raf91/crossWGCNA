@@ -5,7 +5,7 @@
 Plot gene expression in space
 }
 \description{
-Generates a plot showing the expression of a gene in space and the boundaries of the two compartments.
+Generates a plot showing the expression of a gene in space and the boundaries of the two tissue compartments for spatial transcriptomics data.
 }
 \usage{
 ST_plot_expr(gene, averaged_expr_all, coords, included_spots, 

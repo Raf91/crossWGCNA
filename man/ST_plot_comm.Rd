@@ -5,7 +5,7 @@
     ST_plot_comm
 }
 \description{
-Generates a plot showing the communication score of two genes along the boundries between the two tissues/compartments.
+Generates a plot showing the communication score of two genes along the boundries between the two tissue compartments for spatial transcriptomics data.
 }
 \usage{
 ST_plot_comm(gene1, gene2, averaged_expr_all, coords, included_spots, 

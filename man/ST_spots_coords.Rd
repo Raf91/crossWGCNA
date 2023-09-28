@@ -5,7 +5,7 @@
   ST_spots_coords
 }
 \description{
-Defines the x and y coordinates of each spot in the array, assigning the value of 1 to the leftmost spot and considering an inter-spot x distance of 1.
+Defines the x and y coordinates of each spot in the array for spatial transcriptomics data.
 }
 \usage{
 ST_spots_coords(data,br=1000)
@@ -21,7 +21,7 @@ ST_spots_coords(data,br=1000)
 }
 }
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+Assign the value of 1 to the leftmost spot considering an inter-spot x distance of 1
 }
 \value{
 Returns a matrix with two columns for x and y coordinates of each spot.

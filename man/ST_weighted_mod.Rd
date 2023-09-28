@@ -5,7 +5,7 @@
   ST_weighted_mod
 }
 \description{
-Computes a weighted summmary of a module's expression based on the kExt of the genes measured in each compartment separately.
+Computes a weighted summmary of a module's expression for spatial transcriptomics data.
 }
 \usage{
 ST_weighted_mod(modules, kw, mod_sel, averaged_expr_all, 
@@ -33,7 +33,7 @@ ST_weighted_mod(modules, kw, mod_sel, averaged_expr_all,
 }
 }
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+The computation is based on the kExt of the genes measured in each compartment separately.
 }
 \value{
 List of two vectors with the weighted mean of the expression of module's genes belonging to compartment 1 or compartment 2.

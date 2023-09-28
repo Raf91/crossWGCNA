@@ -5,7 +5,7 @@
   Select non-isolated spots.
 }
 \description{
-  Selects spots with at least one neighbouring spot belonging to the same compartment.
+  Selects spots with at least one neighbouring spot belonging to the same tissue compartment for spatial transcriptomics data.
 }
 \usage{
   ST_spots_filt(coords, tis1_spots, tis2_spots)

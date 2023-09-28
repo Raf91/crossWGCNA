@@ -8,7 +8,8 @@
   Function to perform WGCNA clustering based on an adjacency matrix.
 }
 \usage{
-clusteringWGCNA(A, data, comp1="_tis1", comp2="_tis2", TOM=TRUE, ds=1, crossOnly=TRUE)
+clusteringWGCNA(A, data, comp1="_tis1", comp2="_tis2", 
+                TOM=TRUE, ds=1, crossOnly=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
