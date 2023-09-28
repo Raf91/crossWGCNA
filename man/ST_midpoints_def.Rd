@@ -5,7 +5,7 @@
   ST_midpoints_def
 }
 \description{
-  Defines boundaries between two tissues/compartments as the points equally distant from two neighbouring compartment1 and compartment2 spots.
+  Defines boundaries between two tissues compartments as the points equally distant from two neighbouring spots for spatial transcriptomics data.
 }
 \usage{
 ST_midpoints_def(coords, sel_spots)

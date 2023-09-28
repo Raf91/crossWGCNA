@@ -8,7 +8,7 @@
   Function to perform WGCNA clustering based on an adjacency matrix.
 }
 \usage{
-clusteringWGCNA(A, data, comp1="_1", comp2="2", TOM=TRUE, ds=1, crossOnly=TRUE)
+clusteringWGCNA(A, data, comp1="_tis1", comp2="_tis2", TOM=TRUE, ds=1, crossOnly=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,10 +20,10 @@ clusteringWGCNA(A, data, comp1="_1", comp2="2", TOM=TRUE, ds=1, crossOnly=TRUE)
     Input data matrix, where rows are genes and columns are samples. Gene expression measures in the two tissues are combined by row.
 }
   \item{comp1}{
-    Suffix (string character) to identify genes of tissue 1. Default=\code{"_1"}.
+    Suffix (string character) to identify genes of tissue 1. Default=\code{"_tis1"}.
 }
   \item{comp2}{
-    Suffix (string character) to identify genes of tissue 2. Default=\code{"_2"}.
+    Suffix (string character) to identify genes of tissue 2. Default=\code{"_tis2"}.
 }
   \item{TOM}{
     Boolean value. If \code{TRUE} compute the Topological Overlap Matrix prior to clustering. Default=\code{TRUE}.

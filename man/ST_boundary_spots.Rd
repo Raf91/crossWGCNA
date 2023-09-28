@@ -5,7 +5,7 @@
   ST_boundary_spots
 }
 \description{
-  Generates matched vectors of indexes for compartment1 and compartment2 spots.
+  Generates matched vectors of indexes for compartment1 and compartment2 spots for spatial transcriptomics data.
 }
 \usage{
   ST_boundary_spots(included_spots, coords)

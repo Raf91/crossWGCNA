@@ -5,7 +5,8 @@
 Averaged gene expression of \code{BC@assays$SCT@data}
 }
 \description{
-Pre-computed smooths spatial transcriptomics gene expression using the weighted mean of neighbouring spots in one compartment.
+Pre-computed smooths spatial transcriptomics gene expression profiles using the weighted mean of neighbouring spots in one compartment.
+Data were derived from a Breast Cancer Visium dataset provided by the 10x genomics.
 }
 \usage{load("ST_expr_smooth_out.RData")}
 \format{

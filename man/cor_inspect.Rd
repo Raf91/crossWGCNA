@@ -45,9 +45,6 @@ Aurora Savino, Raffaele M. Iannzzi.
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
-\seealso{
-
-}
 \examples{
 See package vignette.
 }

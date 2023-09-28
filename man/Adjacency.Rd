@@ -8,10 +8,9 @@
   Function to compute cross-tissue gene expression adjacencies. 
 }
 \usage{
-  Adjacency(data, method="selfloop",comp1="_1",comp2="_2",
+  Adjacency(data, method="selfloop",comp1="_tis1",comp2="_tis2",
             Adj_type="signed", cortype="spearman", pval="none", 
-            thr=0.05, beta=6, sign_list=1, compartment_sel="none", 
-            selgenes=NA, verbose=FALSE)
+            thr=0.05, beta=6, verbose=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -22,10 +21,10 @@
     String character identifying the method to use to compute cross-tissue adjacencies. Can be \code{"self-loop"} or \code{"netdiff"}.
   }
   \item{comp1}{
-    Suffix (string character) to identify genes of tissue 1. Default=\code{"_1"}.
+    Suffix (string character) to identify genes of tissue 1. Default=\code{"_tis1"}.
   }
   \item{comp2}{
-    Suffix (string character) to identify genes of tissue 2. Default=\code{"_2"}.
+    Suffix (string character) to identify genes of tissue 2. Default=\code{"_tis2"}.
   }
   \item{Adj_type}{
     String character identifying the type of adjacency to compute. Can be \code{"signed"}, \code{"unsigned"} or \code{"keep sign"}. Default=\code{"signed"}. 
@@ -47,16 +46,6 @@
   }
   \item{beta}{
     Power for adjacency calculation. Default=\code{6}.
-  }
-  \item{sign_list}{
-    When considering genes associated with a pathway with sign (activation: +1, inactivation: -1), a vector with a value for each gene in the pathway. 
-    Default=\code{1}, meaning that each gene has the same positive weight.
-  }
-  \item{compartment_sel}{
-    String character identifying the tissue to be considered when providing a pathway. Can be \code{"none"}, \code{"comp1"} or \code{"comp2"}.
-  }
-  \item{selgenes}{
-    Vector of genes associated with the pathway of interest.
   }
   \item{verbose}{
     Boolean value. If \code{TRUE} prints logging output. Default=\code{FALSE}.

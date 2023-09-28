@@ -11,8 +11,7 @@
 \usage{
 crossWGCNA(data,method="netdiff",Adj_type="signed",cortype="spearman",
            pval="none", thr=0.05, beta=6, comp1="_1", comp2="_2", 
-           doClusters=TRUE, doTOM=TRUE, ds=1, crossOnly=TRUE, sign_list=1, 
-           compartment_sel="none", selgenes=NA,verbose=TRUE)
+           doClusters=TRUE, doTOM=TRUE, ds=1, crossOnly=TRUE,verbose=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -59,16 +58,6 @@ crossWGCNA(data,method="netdiff",Adj_type="signed",cortype="spearman",
 }
   \item{crossOnly}{
     Boolean value. If \code{TRUE} remove intra-tissue adjacencies prior to clustering (set to 0). Default=\code{TRUE}.
-}
-  \item{sign_list}{
-    When considering genes associated with a pathway with sign (activation: +1, inactivation: -1), a vector with a value for each gene in the pathway. 
-    Default=\code{1}, meaning that each gene has the same positive weight.
-}
-  \item{compartment_sel}{
-    String character identifying the tissue to be considered when providing a pathway. Can be \code{"none"}, \code{"comp1"} or \code{"comp2"}.
-}
-  \item{selgenes}{
-    Vector of genes associated with the pathway of interest.
 }
   \item{verbose}{
     Boolean value. If \code{TRUE} prints logging output. Default=\code{TRUE}.

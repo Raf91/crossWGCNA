@@ -5,7 +5,7 @@
 Stroma transcriptome profile.
 }
 \description{
-LCM dataset with matched epithelium transcriptome profiles from the same tumor (GSE5847).
+Laser Capture Microdissection (LCM) reduced toy dataset with matched epithelium transcriptome profiles from the same tumor (GSE5847).
 }
 \usage{load("stroma_GSE5847.RData")}
 \format{
