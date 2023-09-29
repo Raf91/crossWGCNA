@@ -5,7 +5,7 @@
   ST_expr_smooth
 }
 \description{
-  Smooths gene expression using the weighted mean of neighbouring spots in the same tissue compartment for spatial transcriptomics data..
+  Smooths gene expression using the weighted mean of neighbouring spots in the same tissue compartment for spatial transcriptomics data.
 }
 \usage{
   ST_expr_smooth(expr_data, coords, max_dist, spots_class, sel_class)

@@ -24,8 +24,9 @@ Data were derived from a Breast Cancer Visium dataset provided by the 10x genomi
 }
 \examples{
   options(timeout=200)
-  download.file(url="https://zenodo.org/record/8268805/files/ST_expr_smooth_out.RData?download=1",
-                destfile="~/ST_expr_smooth_out.RData")
+  download.file(
+    url="https://zenodo.org/record/8268805/files/ST_expr_smooth_out.RData?download=1",
+    destfile="~/ST_expr_smooth_out.RData")
   load("~/ST_expr_smooth_out.RData")
 }
 \seealso{

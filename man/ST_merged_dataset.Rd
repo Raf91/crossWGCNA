@@ -2,10 +2,10 @@
 \alias{ST_merged_dataset}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-  Creates a merged dataset with gene expression from the two selected tissue compartments in spatial transcriptomics data.
+  ST_merged_dataset
 }
 \description{
-  For each selected spot in compartment 1, takes the neighbouring spots in compartment 2 and creates a gene expression matrix with matched gene expression from the two selected tissue compartments.
+  Creates a merged dataset with gene expression from the two selected tissue compartments for spatial transcriptomics data.
 }
 \usage{
 ST_merged_dataset(sel_spots, coords, averaged_expr_all, var_thr=0.75, 
@@ -34,7 +34,7 @@ ST_merged_dataset(sel_spots, coords, averaged_expr_all, var_thr=0.75,
   }
 }
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+For each selected spot in compartment 1, takes the neighbouring spots in compartment 2 and creates a gene expression matrix with matched gene expression from the two selected tissue compartments.
 }
 \value{
 List of two values:
