@@ -10,7 +10,7 @@
 }
 \usage{
 crossWGCNA(data,method="netdiff",Adj_type="signed",cortype="spearman",
-           pval="none", thr=0.05, beta=6, comp1="_1", comp2="_2", 
+           pval="none", thr=0.05, beta=6, comp1="_tis1", comp2="_tis2", 
            doClusters=TRUE, doTOM=TRUE, ds=1, crossOnly=TRUE,verbose=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -42,10 +42,10 @@ crossWGCNA(data,method="netdiff",Adj_type="signed",cortype="spearman",
     Power for adjacency calculation. Default=\code{6}.
 }
   \item{comp1}{
-    Suffix (string character) to identify genes of tissue 1. Default=\code{"_1"}.
+    Suffix (string character) to identify genes of tissue 1. Default=\code{"_tis1"}.
 }
   \item{comp2}{
-    Suffix (string character) to identify genes of tissue 2. Default=\code{"_2"}.
+    Suffix (string character) to identify genes of tissue 2. Default=\code{"_tis2"}.
 }
   \item{doClusters}{
     Boolean value. If \code{TRUE} compute clusters. Default=\code{TRUE}.

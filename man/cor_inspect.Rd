@@ -22,10 +22,10 @@ cor_inspect(data, gene1, gene2, comp1="_tis1", comp2="_tis2")
     Second gene to plot
 }
   \item{comp1}{
-    Suffix (string character) to identify genes of tissue 1. Default=\code{"_1"}.
+    Suffix (string character) to identify genes of tissue 1. Default=\code{"_tis1"}.
 }
   \item{comp2}{
-    Suffix (string character) to identify genes of tissue 2. Default=\code{"_2"}.
+    Suffix (string character) to identify genes of tissue 2. Default=\code{"_tis2"}.
 }
 }
 \details{

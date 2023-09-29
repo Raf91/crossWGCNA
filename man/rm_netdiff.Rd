@@ -8,7 +8,7 @@
 Removes the average connectivity between each gene pair from both tissues’ networks. 
 }
 \usage{
-rm_netdiff(A, comp1="_1", comp2="_2", verbose=TRUE)
+rm_netdiff(A, comp1="_tis1", comp2="_tis2", verbose=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -16,10 +16,10 @@ rm_netdiff(A, comp1="_1", comp2="_2", verbose=TRUE)
     Matrix of adjacencies, output of the function \code{Adjacency}.
 }
   \item{comp1}{
-    Suffix (string character) to identify genes of tissue 1. Default=\code{"_1"}.
+    Suffix (string character) to identify genes of tissue 1. Default=\code{"_tis1"}.
 }
   \item{comp2}{
-    Suffix (string character) to identify genes of tissue 2. Default=\code{"_2"}.
+    Suffix (string character) to identify genes of tissue 2. Default=\code{"_tis2"}.
 }
   \item{verbose}{
     Boolean value. If \code{TRUE} prints logging output. Default=\code{FALSE}.

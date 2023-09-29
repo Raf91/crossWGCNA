@@ -8,7 +8,7 @@
   Function to compute the weighted degree of a gene with all genes of the same or of the alternate tissue/organ.
 }
 \usage{
-degrees(A, comp1="_1", comp2="_2")
+degrees(A, comp1="_tis1", comp2="_tis2")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -16,10 +16,10 @@ degrees(A, comp1="_1", comp2="_2")
     Matrix of adjacencies, output of the function \code{Adjacency}.
 }
   \item{comp1}{
-    Suffix (string character) to identify genes of tissue 1. Default=\code{"_1"}.
+    Suffix (string character) to identify genes of tissue 1. Default=\code{"_tis1"}.
 }
   \item{comp2}{
-    Suffix (string character) to identify genes of tissue 2. Default=\code{"_2"}.
+    Suffix (string character) to identify genes of tissue 2. Default=\code{"_tis2"}.
 }
 }
 \details{

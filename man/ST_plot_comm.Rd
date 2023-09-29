@@ -26,21 +26,21 @@ ST_plot_comm(gene1, gene2, averaged_expr_all, coords, included_spots,
     X and y coordinates for each spot, obtained from the \code{ST_spots_coords} function.
 }
  \item{included_spots}{
-    Spots of compartment1 along the boundaries of compartment1 and 2.
+    Spots of compartment1 along the boundaries of compartment 1 and 2.
 }
  \item{sel_spots}{
-    List of two vectors of indexes (matched) for compartment1 and compartment2 spots. 
+    List of two vectors of indexes (matched) for compartment 1 and compartment 2 spots. 
     Output of the \code{ST_boundary_spots} function.
 }
  \item{tis1_spots}{
-    Indexes of compartment1 spots.
+    Indexes of compartment 1 spots.
 }
  \item{tis2_spots}{
-    Indexes of compartment2 spots.
+    Indexes of compartment 2 spots.
 }
  \item{midpoints}{
     List of two vectors with x and y coordinates of the midpoints between 
-    neighbouring compartment1 and compartment2 spots. Output of the \code{ST_midpoints_df} function.
+    neighbouring compartment 1 and compartment 2 spots. Output of the \code{ST_midpoints_df} function.
 }
 }
 \details{

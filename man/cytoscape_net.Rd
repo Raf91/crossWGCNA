@@ -8,7 +8,7 @@
 Finds the top cross-tissue interactors of a gene and saves them as a Cytoscape input.
 }
 \usage{
-cytoscape_net(A, data, gene, comp1, comp2, num, corr="spearman")
+cytoscape_net(A, data, gene, comp1="_tis1", comp2="_tis2", num, corr="spearman")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -23,10 +23,10 @@ cytoscape_net(A, data, gene, comp1, comp2, num, corr="spearman")
     Gene to be analyzed (string character).
 }
   \item{comp1}{
-    Suffix (string character) to identify genes of tissue 1. Default=\code{"_1"}.
+    Suffix (string character) to identify genes of tissue 1. Default=\code{"_tis1"}.
 }
   \item{comp2}{
-    Suffix (string character) to identify genes of tissue 2. Default=\code{"_2"}.
+    Suffix (string character) to identify genes of tissue 2. Default=\code{"_tis2"}.
 }
   \item{num}{
     Number (numeric) of first closest neigbours of the selected genes to consider.

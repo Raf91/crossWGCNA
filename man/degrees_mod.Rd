@@ -8,9 +8,9 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-degrees_mod(data, method = "netdiff", modules, Adj_type = "signed", 
-            cortype = "spearman", pval = "none", thr = 0.05, 
-            beta = 6, comp1 = "_1", comp2 = "_2")
+degrees_mod(data, method = "netdiff", modules, Adj_type="signed", 
+            cortype="spearman", pval="none", thr=0.05, 
+            beta=6, comp1="_tis1", comp2="_tis2")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -45,10 +45,10 @@ degrees_mod(data, method = "netdiff", modules, Adj_type = "signed",
     Power for adjacency calculation. Default=\code{6}.
 }
   \item{comp1}{
-    Suffix (string character) to identify genes of tissue 1. Default=\code{"_1"}.
+    Suffix (string character) to identify genes of tissue 1. Default=\code{"_tis1"}.
 }
   \item{comp2}{
-    Suffix (string character) to identify genes of tissue 2. Default=\code{"_2"}.
+    Suffix (string character) to identify genes of tissue 2. Default=\code{"_tis2"}.
 }
 }
 \details{
