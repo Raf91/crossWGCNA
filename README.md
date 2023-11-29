@@ -41,3 +41,21 @@ The crossWGCNA pipeline involves several key steps for analyzing subject-matched
 ### Usage
 
 For details on how to apply crossWGCNA to matched stroma-epithelium RNAseq bulk data or Spatial Transcriptomics data please refer to vignettes provided within the package ![here](https://github.com/Raf91/crossWGCNA/blob/main/vignettes/). These are fully computable R.markdown guiding the user through each step of the pipeline analyses. 
+
+## References
+
+1. Langfelder P, Horvath S (2008). WGCNA: an R package for weighted correlation network analysis. BMC Bioinformatics, 559.
+
+3. Shannon P et al. Cytoscape: a software environment for integrated models of biomolecular interaction networks.
+Genome Research 2003 Nov
+
+4. Hao Y et al. (2023). “Dictionary learning for integrative, multimodal and scalable single-cell analysis.” Nature Biotechnology. 
+
+5. Hao Y et al. (2021). “Integrated analysis of multimodal single-cell data.” Cell. doi:10.1016/j.cell.2021.04.048.
+
+6. Stuart T et al. (2019). “Comprehensive Integration of Single-Cell Data.” Cell, 177, 1888-1902. doi:10.1016/j.cell.2019.05.031.
+    
+7. Butler A et al. (2018). “Integrating single-cell transcriptomic data across different conditions, technologies, and species.” Nature Biotechnology, 36, 411-420.
+
+8. Satija R et al. (2015). “Spatial reconstruction of single-cell gene expression data.” Nature Biotechnology, 33, 495-502. 
+
