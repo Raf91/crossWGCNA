@@ -52,7 +52,7 @@ devtools::github_install(Raf91/crossWGCNA)
 ```
 
 For details on how to apply crossWGCNA to matched stroma-epithelium RNAseq bulk data or Spatial Transcriptomics data please refer to vignettes provided within the package ![here](https://github.com/Raf91/crossWGCNA/blob/main/vignettes/). 
-These are fully computable and reproducible R.markdown files guiding the user through each step of the pipeline analysis. For further details please refer to manual ![here](https://github.com/Raf91/crossWGCNA/blob/main/man/crossWGCNA_manual.pdf)
+These are fully computable and reproducible R.markdown files guiding the user through each step of the pipeline analysis. For further details please refer to manual ![here](https://github.com/Raf91/crossWGCNA/blob/main/man/crossWGCNA_manual.pdf).
 
 ## References
 
