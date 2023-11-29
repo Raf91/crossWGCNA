@@ -38,9 +38,20 @@ The crossWGCNA pipeline involves several key steps for analyzing subject-matched
 - Dynamic Tree Cut: A dynamic tree cut algorithm is applied using the cutreeDynamic function with a distance metric of 1-TOMsimilarity and the method set to "average."
 - Modules are identified using the mergeCloseModules function with a cutHeight of 0.25.
 
-### Usage
+### Built with 
 
-For details on how to apply crossWGCNA to matched stroma-epithelium RNAseq bulk data or Spatial Transcriptomics data please refer to vignettes provided within the package ![here](https://github.com/Raf91/crossWGCNA/blob/main/vignettes/). These are fully computable R.markdown guiding the user through each step of the pipeline analyses. 
+R (>= 4.2)
+
+### Installation and usage
+
+You can install the released version of crossWGCNA with:
+
+```
+# install.packages("devtools")
+devtools::github_install(Raf91/crossWGCNA)
+```
+
+For details on how to apply crossWGCNA to matched stroma-epithelium RNAseq bulk data or Spatial Transcriptomics data please refer to vignettes provided within the package ![here](https://github.com/Raf91/crossWGCNA/blob/main/vignettes/). These are fully computable and reproducible R.markdown files guiding the user through each step of the pipeline analysis. 
 
 ## References
 
