@@ -35,8 +35,7 @@ The crossWGCNA pipeline involves several key steps for analyzing subject-matched
 - Hierarchical clustering is performed on the TOM after setting self-loops and intra-tissue TOMs to zero.
 
 #### 5. Clustering:
-- Dynamic Tree Cut: A dynamic tree cut algorithm is applied using the cutreeDynamic function with a distance metric of 1-TOMsimilarity and the method set to "average."
-- Modules are identified using the mergeCloseModules function with a cutHeight of 0.25.
+- A dynamic tree cut algorithm is applied using the cutreeDynamic to identifies modules of communicating genes.
 
 ### Built with 
 
