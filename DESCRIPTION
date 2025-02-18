@@ -3,7 +3,7 @@ Type: Package
 Title: Cross-Species WGCNA for Gene Network Analysis
 Version: 0.1.0
 Author: Aurora Savino, Raffaele M. Iannuzzi
-Maintainer: aurora.savino@fht.org
+Maintainer: Aurora Savino <aurora.savino@fht.org>
 Description: This package provides tools for cross-species Weighted Gene Co-expression Network Analysis (WGCNA).
     It integrates functionalities from WGCNA, Seurat, and ggplot2 to analyze co-expression networks and spatial transcriptomics data.
 License: MIT + file LICENSE
