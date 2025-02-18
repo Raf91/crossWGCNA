@@ -9,12 +9,8 @@ Description: This package provides tools for cross-species Weighted Gene Co-expr
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-
-# Specify R version dependency (if needed)
 Depends: 
     R (>= 4.0.0)
-
-# List packages your code directly calls (e.g., via `import()` in NAMESPACE)
 Imports: 
     WGCNA,
     Seurat,
@@ -22,14 +18,3 @@ Imports:
     ggplot2,
     ggnewscale,
     Hmisc
-
-# Optional: Suggest packages for examples, vignettes, or extended functionality
-Suggests:
-    BiocManager,
-    devtools,
-    roxygen2,
-    knitr,
-    rmarkdown
-
-# If you use vignettes, specify the vignette builder
-VignetteBuilder: knitr
