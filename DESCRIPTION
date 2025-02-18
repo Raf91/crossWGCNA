@@ -9,5 +9,5 @@ Description: This package provides tools for cross-species Weighted Gene Co-expr
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Depends: R (>= 4.0.0), WGCNA, Seurat, dynamicTreeCut, ggplot2, ggnewscale, Hmisc, BiocManager, stats, stringrDepends
+Depends: R (>= 4.0.0), WGCNA, Seurat, dynamicTreeCut, ggplot2, ggnewscale, Hmisc, BiocManager, stats, stringr
 Import: WGCNA, Seurat, dynamicTreeCut, ggplot2, ggnewscale, Hmisc, BiocManager, stats, stringr
