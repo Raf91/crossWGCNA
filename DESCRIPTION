@@ -1,11 +1,35 @@
 Package: crossWGCNA
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Cross-Species WGCNA for Gene Network Analysis
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: Aurora Savino, Raffaele M. Iannuzzi
+Maintainer: aurora.savino@fht.org
+Description: This package provides tools for cross-species Weighted Gene Co-expression Network Analysis (WGCNA).
+    It integrates functionalities from WGCNA, Seurat, and ggplot2 to analyze co-expression networks and spatial transcriptomics data.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+
+# Specify R version dependency (if needed)
+Depends: 
+    R (>= 4.0.0)
+
+# List packages your code directly calls (e.g., via `import()` in NAMESPACE)
+Imports: 
+    WGCNA,
+    Seurat,
+    dynamicTreeCut,
+    ggplot2,
+    ggnewscale,
+    Hmisc
+
+# Optional: Suggest packages for examples, vignettes, or extended functionality
+Suggests:
+    BiocManager,
+    devtools,
+    roxygen2,
+    knitr,
+    rmarkdown
+
+# If you use vignettes, specify the vignette builder
+VignetteBuilder: knitr
