@@ -46,8 +46,9 @@ R (>= 4.2)
 You can install the released version of crossWGCNA with:
 
 ```
-# install.packages("devtools")
-devtools::github_install(Raf91/crossWGCNA)
+install.packages("BiocManager")
+BiocManager::install(c("AnnotationDbi", "GO.db", "preprocessCore", "impute"))
+remotes::install_git("git@github.com:Raf91/crossWGCNA.git")
 ```
 
 For details on how to apply crossWGCNA to matched stroma-epithelium RNAseq bulk data or Spatial Transcriptomics data please refer to vignettes provided within the package ![here](https://github.com/Raf91/crossWGCNA/blob/main/vignettes/). 
